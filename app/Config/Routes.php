@@ -33,4 +33,12 @@ $routes->group('admin', function($routes) {
     $routes->post('sliders/update/(:num)', 'Admin\Sliders::update/$1');
     $routes->get('sliders/delete/(:num)', 'Admin\Sliders::delete/$1');
     $routes->post('sliders/toggle-status/(:num)', 'Admin\Sliders::toggleStatus/$1');
+
+    // CRUD Schools
+    $routes->get('schools', 'Admin\Schools::index');
+    $routes->get('schools/create', 'Admin\Schools::create');
+    $routes->post('schools/store', 'Admin\Schools::store');
+    $routes->get('schools/edit/(:num)', 'Admin\Schools::edit/$1');
+    $routes->post('schools/update/(:num)', 'Admin\Schools::update/$1');
+    $routes->get('schools/delete/(:num)', 'Admin\Schools::delete/$1');
 });

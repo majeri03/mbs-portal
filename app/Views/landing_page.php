@@ -203,33 +203,141 @@
 <?php endif; ?>
 
 <!-- ============================================================== -->
-<!-- SECTION 3: NAVIGASI JENJANG (3 KARTU UTAMA) -->
+<!-- SECTION: JENJANG PENDIDIKAN (DINAMIS DARI DATABASE) -->
 <!-- ============================================================== -->
-<section id="jenjang-sekolah" class="py-5 bg-white">
-    <div class="container py-5">
+<section class="py-5 bg-light" id="jenjang-sekolah">
+    <div class="container">
         <div class="text-center mb-5">
-            <h6 class="text-uppercase fw-bold text-secondary ls-2">Pendidikan</h6>
-            <h2 class="fw-bold display-6 text-purple">Jenjang Pendidikan</h2>
-            <div class="divider mx-auto mt-3 bg-purple" style="width: 60px; height: 3px;"></div>
+            <span class="badge bg-light text-purple text-uppercase mb-3 px-4 py-2 fw-bold">PENDIDIKAN</span>
+            <h2 class="display-5 fw-bold text-purple mb-3">Jenjang Pendidikan</h2>
+            <p class="lead text-muted mx-auto" style="max-width: 600px;">
+                Tiga jenjang pendidikan berkualitas dengan sistem pesantren modern
+            </p>
         </div>
-
+        
         <div class="row g-4">
-            <?php foreach ($schools as $school) : ?>
-                <div class="col-lg-4 col-md-6">
-                    <div class="card border-0 shadow-sm h-100 overflow-hidden group-hover">
+            <?php if (!empty($schools)) : ?>
+                <?php foreach ($schools as $index => $school) : ?>
+                <div class="col-md-6 col-lg-4">
+                    <div class="card border-0 shadow-sm h-100 hover-lift-school">
+                        <!-- School Image -->
                         <div class="position-relative overflow-hidden" style="height: 250px;">
-                            <img src="https://source.unsplash.com/600x400/?student,<?= $school['slug'] ?>" class="img-fluid w-100 h-100 object-fit-cover transition-transform" alt="<?= esc($school['name']) ?>">
-                            <div class="overlay-hover position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center" style="background: rgba(88, 44, 131, 0.85); opacity: 0; transition: all 0.3s;">
-                                <a href="<?= base_url('sekolah/' . esc($school['slug'])) ?>" class="btn btn-outline-light rounded-0 text-uppercase fw-bold px-4 py-2">Lihat Profil</a>
+                            <?php if (!empty($school['image_url']) && file_exists($school['image_url'])) : ?>
+                                <img src="<?= base_url($school['image_url']) ?>" 
+                                     class="w-100 h-100 object-fit-cover" 
+                                     alt="<?= esc($school['name']) ?>">
+                            <?php elseif (!empty($school['hero_image']) && file_exists($school['hero_image'])) : ?>
+                                <!-- Fallback ke hero_image jika ada -->
+                                <img src="<?= base_url($school['hero_image']) ?>" 
+                                     class="w-100 h-100 object-fit-cover" 
+                                     alt="<?= esc($school['name']) ?>">
+                            <?php else : ?>
+                                <!-- Placeholder dengan gradient -->
+                                <div class="w-100 h-100 d-flex align-items-center justify-content-center text-white"
+                                     style="background: linear-gradient(135deg, 
+                                            <?= $index == 0 ? '#582C83, #7A4E9F' : ($index == 1 ? '#3b82f6, #60a5fa' : '#10b981, #34d399') ?>);">
+                                    <div class="text-center">
+                                        <i class="bi bi-building" style="font-size: 4rem;"></i>
+                                        <h4 class="mt-3 fw-bold"><?= esc($school['name']) ?></h4>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
+                            
+                                                        <!-- Badge Akreditasi (Dinamis dengan Auto Color) -->
+                            <div class="position-absolute top-0 end-0 m-3">
+                                <?php
+                                    $accreditation = $school['accreditation_status'] ?? 'A';
+                                    
+                                    // Format text badge (tambahkan "Akreditasi" jika hanya huruf A/B/C)
+                                    $badgeText = $accreditation;
+                                    if (in_array($accreditation, ['A', 'B', 'C'])) {
+                                        $badgeText = 'Akreditasi ' . $accreditation;
+                                    }
+                                    
+                                    // Auto detect warna badge berdasarkan status
+                                    if (stripos($accreditation, 'A') !== false) {
+                                        $badgeClass = 'bg-success';
+                                        $icon = 'bi-star-fill';
+                                    } elseif (stripos($accreditation, 'B') !== false) {
+                                        $badgeClass = 'bg-primary';
+                                        $icon = 'bi-star-fill';
+                                    } elseif (stripos($accreditation, 'C') !== false) {
+                                        $badgeClass = 'bg-info';
+                                        $icon = 'bi-star';
+                                    } elseif (stripos($accreditation, 'Belum') !== false || stripos($accreditation, 'Proses') !== false) {
+                                        $badgeClass = 'bg-secondary';
+                                        $icon = 'bi-hourglass-split';
+                                    } else {
+                                        $badgeClass = 'bg-dark';
+                                        $icon = 'bi-award-fill';
+                                    }
+                                ?>
+                                <span class="badge <?= $badgeClass ?> text-white px-3 py-2 shadow-sm">
+                                    <i class="bi <?= $icon ?> me-1"></i>
+                                    <?= esc($badgeText) ?>
+                                </span>
                             </div>
                         </div>
-                        <div class="card-body text-center p-4 bg-white">
-                            <h3 class="card-title h4 fw-bold mb-2"><?= esc($school['name']) ?></h3>
-                            <p class="text-muted small"><?= esc($school['description']) ?></p>
+                        
+                        <!-- Card Body -->
+                        <div class="card-body p-4">
+                            <h4 class="card-title fw-bold text-purple mb-3">
+                                <i class="bi bi-mortarboard-fill me-2"></i>
+                                <?= esc($school['name']) ?>
+                            </h4>
+                            <p class="card-text text-muted mb-4" style="min-height: 80px;">
+                                <?= esc($school['description']) ?>
+                            </p>
+                            
+                            <!-- Info Kontak (Jika Ada) -->
+                            <?php if (!empty($school['contact_person']) || !empty($school['phone'])) : ?>
+                                <div class="mb-3 small text-muted">
+                                    <?php if (!empty($school['contact_person'])) : ?>
+                                        <div class="mb-1">
+                                            <i class="bi bi-person-badge me-2"></i>
+                                            <?= esc($school['contact_person']) ?>
+                                        </div>
+                                    <?php endif; ?>
+                                    
+                                    <?php if (!empty($school['phone'])) : ?>
+                                        <div>
+                                            <i class="bi bi-telephone me-2"></i>
+                                            <a href="tel:<?= esc($school['phone']) ?>" class="text-muted">
+                                                <?= esc($school['phone']) ?>
+                                            </a>
+                                        </div>
+                                    <?php endif; ?>
+                                </div>
+                            <?php endif; ?>
+                            
+                            <!-- Button -->
+                            <?php if (!empty($school['website_url'])) : ?>
+                                <a href="<?= esc($school['website_url']) ?>" 
+                                   target="_blank" 
+                                   rel="noopener noreferrer" 
+                                   class="btn btn-outline-purple w-100">
+                                    <i class="bi bi-box-arrow-up-right me-2"></i>
+                                    Kunjungi Website
+                                </a>
+                            <?php else : ?>
+                                <a href="#kontak" class="btn btn-outline-purple w-100">
+                                    <i class="bi bi-info-circle me-2"></i>
+                                    Info Lebih Lanjut
+                                </a>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
-            <?php endforeach; ?>
+                <?php endforeach; ?>
+            <?php else : ?>
+                <!-- Fallback jika belum ada data -->
+                <div class="col-12">
+                    <div class="alert alert-info text-center">
+                        <i class="bi bi-info-circle me-2"></i>
+                        Data jenjang pendidikan sedang diperbarui. Silakan hubungi admin untuk informasi lebih lanjut.
+                    </div>
+                </div>
+            <?php endif; ?>
         </div>
     </div>
 </section>
@@ -505,6 +613,37 @@
         .hero-slide .lead {
             font-size: 1rem !important;
         }
+    }
+
+        /* ========== SECTION SCHOOLS (JENJANG PENDIDIKAN) ========== */
+    .hover-lift-school {
+        transition: all 0.3s ease;
+    }
+    
+    .hover-lift-school:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(88, 44, 131, 0.2) !important;
+    }
+    
+    .btn-outline-purple {
+        border: 2px solid var(--mbs-purple);
+        color: var(--mbs-purple);
+        font-weight: 600;
+        transition: all 0.3s;
+    }
+    
+    .btn-outline-purple:hover {
+        background: var(--mbs-purple);
+        color: white;
+        transform: scale(1.05);
+    }
+    
+    .text-purple {
+        color: var(--mbs-purple);
+    }
+    
+    .object-fit-cover {
+        object-fit: cover;
     }
 </style>
 

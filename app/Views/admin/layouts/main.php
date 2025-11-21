@@ -235,10 +235,183 @@
                 margin-left: 0;
             }
         }
+            /* ========== MOBILE HAMBURGER BUTTON ========== */
+    .mobile-menu-toggle {
+        display: none;
+        position: fixed;
+        top: 15px;
+        left: 15px;
+        z-index: 1001;
+        background: var(--mbs-purple);
+        color: white;
+        border: none;
+        width: 45px;
+        height: 45px;
+        border-radius: 8px;
+        font-size: 1.3rem;
+        cursor: pointer;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        transition: all 0.3s;
+    }
+    
+    .mobile-menu-toggle:hover {
+        background: var(--mbs-purple-dark);
+        transform: scale(1.05);
+    }
+    
+    /* Overlay Background saat sidebar terbuka di mobile */
+    .sidebar-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 999;
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+    
+    .sidebar-overlay.active {
+        display: block;
+        opacity: 1;
+    }
+    
+    /* ========== RESPONSIVE: TABLET & MOBILE ========== */
+    @media (max-width: 992px) {
+        /* Tampilkan hamburger button */
+        .mobile-menu-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Sidebar hidden by default di mobile */
+        .sidebar {
+            left: -260px;
+            transition: left 0.3s ease;
+        }
+        
+        .sidebar.active {
+            left: 0;
+            box-shadow: 5px 0 15px rgba(0,0,0,0.3);
+        }
+        
+        /* Topbar & Main Content full width */
+        .topbar, .main-content {
+            left: 0 !important;
+            margin-left: 0 !important;
+        }
+        
+        /* Topbar padding untuk hamburger button */
+        .topbar {
+            padding-left: 70px;
+        }
+        
+        /* Hide user info text di mobile */
+        .topbar-user .user-info {
+            display: none !important;
+        }
+        
+        /* Card columns di mobile */
+        .stat-card {
+            margin-bottom: 15px;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .topbar-title h5 {
+            font-size: 1rem;
+        }
+        
+        .topbar-title small {
+            display: none;
+        }
+        
+        .main-content {
+            padding: 20px 15px;
+        }
+    }
+
+        /* ========== RESPONSIVE TABLE ========== */
+    .table-responsive-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin-bottom: 1rem;
+    }
+    
+    @media (max-width: 768px) {
+        .table-responsive-wrapper {
+            border-radius: 8px;
+            box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1);
+        }
+        
+        /* Perkecil font table di mobile */
+        .table {
+            font-size: 0.85rem;
+        }
+        
+        .table th,
+        .table td {
+            padding: 10px 8px !important;
+            white-space: nowrap;
+        }
+        
+        /* Hide kolom yang tidak penting di mobile */
+        .table th.hide-mobile,
+        .table td.hide-mobile {
+            display: none;
+        }
+        
+        /* Button action lebih kecil */
+        .table .btn-sm {
+            padding: 4px 8px;
+            font-size: 0.75rem;
+        }
+        
+        /* Badge lebih kecil */
+        .table .badge {
+            font-size: 0.7rem;
+            padding: 3px 6px;
+        }
+    }
+        /* Scroll indicator untuk tabel di mobile */
+    @media (max-width: 768px) {
+        .table-responsive-wrapper::after {
+            content: '← Geser untuk melihat lebih banyak →';
+            display: block;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #999;
+            padding: 8px;
+            background: linear-gradient(to right, transparent, #f5f6fa 20%, #f5f6fa 80%, transparent);
+        }
+        
+        .table-responsive-wrapper::-webkit-scrollbar {
+            height: 6px;
+        }
+        
+        .table-responsive-wrapper::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        .table-responsive-wrapper::-webkit-scrollbar-thumb {
+            background: var(--mbs-purple);
+            border-radius: 10px;
+        }
+    }
     </style>
 </head>
 <body>
-
+    <!-- Mobile Hamburger Button -->
+    <button class="mobile-menu-toggle" id="mobileMenuToggle">
+        <i class="bi bi-list"></i>
+    </button>
+    
+    <!-- Sidebar Overlay (untuk nutup sidebar di mobile) -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
     <!-- SIDEBAR -->
     <div class="sidebar" id="sidebar">
         <div class="sidebar-logo">
@@ -276,9 +449,7 @@
                 <i class="bi bi-gear-fill"></i> Pengaturan
             </a></li>
             
-            <li style="margin-top: 30px;"><a href="<?= base_url('admin/logout') ?>">
-                <i class="bi bi-box-arrow-right"></i> Logout
-            </a></li>
+
         </ul>
     </div>
 
@@ -324,7 +495,64 @@
     <!-- DataTables JS -->
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+        <!-- DataTables (untuk tabel berita nanti) -->
+    <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
     
+    <!-- DataTables Responsive Extension -->
+    <link href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css" rel="stylesheet">
     <?= $this->renderSection('scripts') ?>
+
+        <script>
+        // ========== MOBILE SIDEBAR TOGGLE ==========
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebar = document.getElementById('sidebar');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
+            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+            
+            // Cek apakah elemen ada (untuk prevent error)
+            if (!mobileMenuToggle || !sidebar || !sidebarOverlay) {
+                console.error('Mobile menu elements not found!');
+                return;
+            }
+            
+            // Toggle sidebar saat klik hamburger
+            mobileMenuToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('active');
+                sidebarOverlay.classList.toggle('active');
+                
+                // Ganti icon hamburger jadi X saat terbuka
+                const icon = this.querySelector('i');
+                if (sidebar.classList.contains('active')) {
+                    icon.classList.replace('bi-list', 'bi-x');
+                } else {
+                    icon.classList.replace('bi-x', 'bi-list');
+                }
+            });
+            
+            // Tutup sidebar saat klik overlay
+            sidebarOverlay.addEventListener('click', function() {
+                sidebar.classList.remove('active');
+                sidebarOverlay.classList.remove('active');
+                const icon = mobileMenuToggle.querySelector('i');
+                if (icon.classList.contains('bi-x')) {
+                    icon.classList.replace('bi-x', 'bi-list');
+                }
+            });
+            
+            // Tutup sidebar saat klik menu link di mobile
+            if (window.innerWidth <= 992) {
+                document.querySelectorAll('.sidebar-menu a').forEach(link => {
+                    link.addEventListener('click', function() {
+                        sidebar.classList.remove('active');
+                        sidebarOverlay.classList.remove('active');
+                        const icon = mobileMenuToggle.querySelector('i');
+                        if (icon.classList.contains('bi-x')) {
+                            icon.classList.replace('bi-x', 'bi-list');
+                        }
+                    });
+                });
+            }
+        });
+    </script>
 </body>
 </html>

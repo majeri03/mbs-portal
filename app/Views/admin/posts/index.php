@@ -33,6 +33,7 @@
 <!-- Data Table -->
 <div class="card border-0 shadow-sm">
     <div class="card-body">
+        <div class="table-responsive-wrapper">
         <table id="postsTable" class="table table-hover">
             <thead>
                 <tr>
@@ -91,11 +92,18 @@
 <script>
     $(document).ready(function() {
         $('#postsTable').DataTable({
+            "responsive": true,
             "language": {
                 "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/id.json"
             },
             "pageLength": 10,
-            "order": [[4, "desc"]] // Sort by date
+            "order": [[5, "desc"]], // Sort by date (kolom ke-6, karena ada kolom penulis)
+            "columnDefs": [
+                { "orderable": false, "targets": [0, 1, 7] }, // No, Thumbnail, Aksi tidak bisa di-sort
+                { "className": "text-center", "targets": [0, 7] }
+            ],
+            "autoWidth": false,
+            "scrollX": false
         });
     });
 </script>

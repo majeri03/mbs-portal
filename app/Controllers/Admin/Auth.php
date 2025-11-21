@@ -27,7 +27,7 @@ class Auth extends BaseController
     }
 
     // Proses Login
-        public function attemptLogin()
+           public function attemptLogin()
     {
         $rules = [
             'username' => 'required',
@@ -41,29 +41,29 @@ class Auth extends BaseController
         $username = $this->request->getPost('username');
         $password = $this->request->getPost('password');
 
-        $user = $this->userModel->verifyLogin($username, $password);
+        $result = $this->userModel->verifyLogin($username, $password);
 
-        // === BAGIAN YANG DITAMBAHKAN (CEK ERROR AKUN TERKUNCI) ===
-        if (is_array($user) && isset($user['error'])) {
-            // Jika ada pesan error dari Model (misal: akun terkunci)
-            return redirect()->back()->withInput()->with('error', $user['error']);
+        // CEK: Apakah return berupa array error (akun terkunci atau password salah dengan info)
+        if (is_array($result) && isset($result['error'])) {
+            return redirect()->back()->withInput()->with('error', $result['error']);
         }
-        // === AKHIR PENAMBAHAN ===
 
-        if ($user) {
+        // CEK: Apakah login berhasil (return berupa array user data)
+        if ($result) {
             // Simpan data user ke session
             session()->set([
-                'user_id'    => $user['id'],
-                'username'   => $user['username'],
-                'full_name'  => $user['full_name'],
-                'role'       => $user['role'],
+                'user_id'    => $result['id'],
+                'username'   => $result['username'],
+                'full_name'  => $result['full_name'],
+                'role'       => $result['role'],
                 'logged_in'  => true,
             ]);
 
-            return redirect()->to('/admin/dashboard')->with('success', 'Selamat datang, ' . esc($user['full_name']) . '!');
-        } else {
-            return redirect()->back()->withInput()->with('error', 'Username atau Password salah!');
+            return redirect()->to('/admin/dashboard')->with('success', 'Selamat datang, ' . esc($result['full_name']) . '!');
         }
+
+        // Default error (seharusnya tidak sampai sini)
+        return redirect()->back()->withInput()->with('error', 'Username atau Password salah!');
     }
 
     // Logout
