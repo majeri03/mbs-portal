@@ -1,0 +1,103 @@
+/* public/assets/css/style.css */
+:root {
+    --mbs-purple: #582C83; /* Ungu Tua Elegan */
+    --mbs-purple-light: #7A4E9F;
+    --mbs-white: #FFFFFF;
+    --mbs-gray: #F4F4F4;
+    --mbs-text: #333333;
+    --font-primary: 'Inter', sans-serif; /* Font modern mirip Temasek */
+}
+
+body {
+    font-family: var(--font-primary);
+    color: var(--mbs-text);
+    background-color: var(--mbs-white);
+    overflow-x: hidden;
+}
+
+/* === HEADER & NAVBAR === */
+.top-bar {
+    background-color: var(--mbs-purple);
+    color: white;
+    font-size: 0.85rem;
+    padding: 8px 0;
+}
+
+.navbar-mbs {
+    background-color: white;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+    padding: 15px 0;
+    transition: all 0.3s;
+}
+
+.navbar-brand img {
+    height: 50px; /* Sesuaikan ukuran logo */
+}
+
+.nav-link {
+    color: var(--mbs-text) !important;
+    font-weight: 500;
+    padding: 10px 20px !important;
+    position: relative;
+    transition: color 0.3s;
+}
+
+/* Efek Hover Garis Ungu Bawah */
+.nav-link::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 3px;
+    display: block;
+    margin-top: 5px;
+    right: 0;
+    background: var(--mbs-purple);
+    transition: width 0.3s ease;
+    -webkit-transition: width 0.3s ease;
+}
+
+.nav-link:hover::after {
+    width: 100%;
+    left: 0;
+    background: var(--mbs-purple);
+}
+
+.nav-link:hover {
+    color: var(--mbs-purple) !important;
+}
+
+/* === FOOTER === */
+footer {
+    background-color: #F9F9F9;
+    border-top: 4px solid var(--mbs-purple);
+    padding-top: 60px;
+    font-size: 0.9rem;
+}
+
+.footer-title {
+    color: var(--mbs-purple);
+    font-weight: 700;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    font-size: 1rem;
+}
+
+.footer-link a {
+    color: #555;
+    text-decoration: none;
+    display: block;
+    margin-bottom: 10px;
+    transition: 0.3s;
+}
+
+.footer-link a:hover {
+    color: var(--mbs-purple);
+    padding-left: 5px;
+}
+
+.copyright {
+    background-color: var(--mbs-purple);
+    color: white;
+    padding: 20px 0;
+    margin-top: 40px;
+}

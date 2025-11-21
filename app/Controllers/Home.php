@@ -1,0 +1,51 @@
+<?php
+
+namespace App\Controllers;
+
+use App\Models\SettingModel;
+use App\Models\SchoolModel;
+use App\Models\AnnouncementModel;
+use App\Models\PostModel;
+use App\Models\EventModel;
+use App\Models\GalleryModel;
+use App\Models\TeacherModel;
+class Home extends BaseController
+{
+    protected $settingModel;
+    protected $schoolModel;
+    protected $announcementModel;
+    protected $postModel;
+    protected $eventModel;
+    protected $galleryModel;
+    protected $teacherModel;
+    public function __construct()
+    {
+        // Load Model di constructor agar bisa dipakai di semua fungsi
+        $this->settingModel = new SettingModel();
+        $this->schoolModel = new SchoolModel();
+        $this->announcementModel = new AnnouncementModel();
+        $this->postModel = new PostModel();
+        $this->eventModel = new EventModel();
+        $this->galleryModel = new GalleryModel();
+        $this->teacherModel = new \App\Models\TeacherModel();
+    }
+
+     public function index()
+    {
+        // 1. Settings (Footer/Header)
+        $data['site'] = $this->settingModel->getSiteSettings();
+        $data['title'] = "Beranda - " . ($data['site']['site_name'] ?? 'MBS Portal');
+
+        // 2. Data Sekolah (Untuk 3 Kartu Utama)
+        $data['schools'] = $this->schoolModel->findAll();
+
+        // 3. Pengumuman Aktif (Untuk Running Text)
+        $data['announcements'] = $this->announcementModel->getActiveAnnouncements();
+
+        $data['latest_news'] = $this->postModel->getLatestNews(3);
+        $data['upcoming_events'] = $this->eventModel->getUpcomingEvents(4);
+        $data['latest_photos'] = $this->galleryModel->getLatestPhotos(8);
+        $data['leaders'] = $this->teacherModel->getLeaders();
+        return view('landing_page', $data);
+    }
+}
