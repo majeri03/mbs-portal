@@ -3,31 +3,79 @@
 <?= $this->section('content') ?>
 
 <!-- ============================================================== -->
-<!-- SECTION 2: HERO IMAGE (BACKGROUND BESAR) -->
+<!-- SECTION 2: HERO SLIDER (DINAMIS DARI DATABASE) -->
 <!-- ============================================================== -->
-<section class="hero-section position-relative d-flex align-items-center text-white" style="min-height: 85vh; padding-bottom: 150px;">
+<section class="hero-slider-section position-relative" style="padding-bottom: 0;">
     
-    <!-- 1. Background Image (Ganti URL ini dengan foto sekolah asli nanti) -->
-    <div class="position-absolute top-0 start-0 w-100 h-100" 
-         style="background: url('https://images.unsplash.com/photo-1541339907198-e08756dedf3f?q=80&w=1600&auto=format&fit=crop') no-repeat center center/cover; z-index: -2;">
-    </div>
-    
-    <!-- 2. Overlay Gelap (Agar teks terbaca) -->
-    <div class="position-absolute top-0 start-0 w-100 h-100" 
-         style="background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.7)); z-index: -1;">
-    </div>
-
-    <!-- 3. Konten Teks Hero -->
-    <div class="container position-relative z-index-1 mt-n5">
-        <div class="row">
-            <div class="col-lg-8">
-                <span class="badge bg-white text-dark text-uppercase mb-3 px-3 py-2 fw-bold ls-2">MBS Boarding School</span>
-                <h1 class="display-3 fw-bold mb-4">Membangun Generasi<br>Qur'ani Berkemajuan</h1>
-                <p class="lead mb-5 text-light opacity-90 w-75">
-                    Lembaga pendidikan Islam modern yang mengintegrasikan kurikulum nasional, kepesantrenan, dan pengembangan karakter.
-                </p>
-            </div>
+    <!-- Swiper Slider Container -->
+    <div class="swiper heroSwiper">
+        <div class="swiper-wrapper">
+            <?php if (!empty($sliders)) : ?>
+                <?php foreach ($sliders as $slider) : ?>
+                    <div class="swiper-slide">
+                        <!-- Background Image -->
+                        <div class="hero-slide position-relative d-flex align-items-center text-white" 
+                             style="min-height: 85vh; 
+                                    padding-bottom: 150px;
+                                    background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.7)), 
+                                                url('<?= base_url($slider['image_url']) ?>') no-repeat center center/cover;">
+                            
+                            <!-- Content -->
+                            <div class="container position-relative z-index-1" style="padding-top: 80px;">
+                                <div class="row">
+                                    <div class="col-lg-8">
+                                        <span class="badge bg-white text-dark text-uppercase mb-3 px-3 py-2 fw-bold ls-2">
+                                            MBS Boarding School
+                                        </span>
+                                        <h1 class="display-3 fw-bold mb-4 animate__animated animate__fadeInUp">
+                                            <?= esc($slider['title']) ?>
+                                        </h1>
+                                        <?php if (!empty($slider['description'])) : ?>
+                                            <p class="lead mb-5 text-light opacity-90 w-75 animate__animated animate__fadeInUp animate__delay-1s">
+                                                <?= esc($slider['description']) ?>
+                                            </p>
+                                        <?php endif; ?>
+                                        
+                                                                                <?php if (!empty($slider['button_text']) && !empty($slider['button_link'])) : ?>
+                                            <?php 
+                                                // Cek apakah link external (http/https) atau internal (#)
+                                                $isExternal = (strpos($slider['button_link'], 'http://') === 0 || strpos($slider['button_link'], 'https://') === 0);
+                                                $targetBlank = $isExternal ? 'target="_blank" rel="noopener noreferrer"' : '';
+                                            ?>
+                                            <a href="<?= esc($slider['button_link']) ?>" 
+                                               <?= $targetBlank ?>
+                                               class="btn btn-light btn-lg px-5 py-3 rounded-pill fw-bold animate__animated animate__fadeInUp animate__delay-2s">
+                                                <?= esc($slider['button_text']) ?>
+                                                <i class="bi bi-arrow-right ms-2"></i>
+                                            </a>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            <?php else : ?>
+                <!-- Default Slide jika database kosong -->
+                <div class="swiper-slide">
+                    <div class="hero-slide position-relative d-flex align-items-center text-white" 
+                         style="min-height: 85vh; 
+                                background: linear-gradient(to bottom, rgba(88, 44, 131, 0.8), rgba(61, 31, 92, 0.9));">
+                        <div class="container text-center">
+                            <h1 class="display-3 fw-bold mb-4">Selamat Datang di MBS</h1>
+                            <p class="lead">Belum ada hero slider. Silakan tambahkan di Admin Panel.</p>
+                        </div>
+                    </div>
+                </div>
+            <?php endif; ?>
         </div>
+        
+        <!-- Navigation Buttons -->
+        <!-- <div class="swiper-button-next"></div>
+        <div class="swiper-button-prev"></div> -->
+        
+        <!-- Pagination Dots -->
+        <div class="swiper-pagination"></div>
     </div>
 </section>
 
@@ -109,10 +157,21 @@
                                             </p>
 
                                             <!-- Tanggal (Footer Kartu) -->
-                                            <div class="mt-auto pt-3 border-top border-light text-muted x-small">
-                                                <i class="bi bi-calendar-event me-2"></i> 
-                                                <?= date('d M Y', strtotime($news['created_at'])) ?>
+                                                                                    <!-- Info Meta (Tanggal & Penulis) -->
+                                        <div class="mt-auto pt-2 border-top">
+                                            <div class="d-flex justify-content-between align-items-center text-muted small">
+                                                <span>
+                                                    <i class="bi bi-calendar-event me-1"></i> 
+                                                    <?= date('d M Y', strtotime($news['created_at'])) ?>
+                                                </span>
+                                                <?php if (!empty($news['author'])) : ?>
+                                                    <span>
+                                                        <i class="bi bi-person-fill me-1"></i>
+                                                        <?= esc($news['author']) ?>
+                                                    </span>
+                                                <?php endif; ?>
                                             </div>
+                                        </div>
                                         </div>
                                     </div>
                                 </div>
@@ -324,6 +383,10 @@
     .hover-purple:hover { color: var(--mbs-purple) !important; }
 
     /* HERO & FLOATING SECTION (KUNCI DESIGN) */
+    .floating-section {
+        position: relative;
+        z-index: 100; /* Pastikan di atas hero */
+    }
     /* Di layar besar, tarik section berita ke atas (-100px) */
     @media (min-width: 992px) {
         .floating-section {
@@ -384,7 +447,65 @@
         overflow: hidden;
     }
     
-    .lh-sm { line-height: 1.4; } 
+    .lh-sm { line-height: 1.4; }
+
+        /* ========== HERO SLIDER CUSTOM STYLE ========== */
+    .hero-slider-section {
+        position: relative;
+    }
+    
+    .heroSwiper {
+        width: 100%;
+        height: 100%;
+    }
+    
+    .hero-slide {
+        transition: all 0.5s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    /* Hilangkan panah navigasi (jika masih muncul) */
+    .heroSwiper .swiper-button-next,
+    .heroSwiper .swiper-button-prev {
+        display: none !important;
+    }
+    
+    /* Pagination Dots Custom (lebih cantik) */
+    .heroSwiper .swiper-pagination {
+        bottom: 30px !important;
+    }
+    
+    .heroSwiper .swiper-pagination-bullet {
+        width: 12px;
+        height: 12px;
+        background: white;
+        opacity: 0.5;
+        transition: all 0.3s;
+    }
+    
+    .heroSwiper .swiper-pagination-bullet-active {
+        opacity: 1;
+        background: white;
+        width: 35px;
+        border-radius: 10px;
+    }
+    
+    /* Responsive: Spacing di Mobile */
+    @media (max-width: 991px) {
+        .hero-slide .container {
+            padding-top: 40px !important;
+        }
+        
+        .hero-slide h1 {
+            font-size: 2rem !important;
+        }
+        
+        .hero-slide .lead {
+            font-size: 1rem !important;
+        }
+    }
 </style>
 
 <script>
@@ -406,6 +527,32 @@
                     slidesPerView: 2.5, // Tampilan Desktop
                     spaceBetween: 30,
                 },
+            },
+        });
+    });
+    // ========== HERO SLIDER SWIPER ==========
+        // ========== HERO SLIDER SWIPER ==========
+    document.addEventListener("DOMContentLoaded", function() {
+        var heroSwiper = new Swiper(".heroSwiper", {
+            loop: true,
+            autoplay: {
+                delay: 5000, // Auto slide tiap 5 detik
+                disableOnInteraction: false,
+            },
+            effect: 'fade', // Efek transisi fade
+            fadeEffect: {
+                crossFade: true
+            },
+            speed: 1000, // Durasi transisi (ms)
+            // Navigation di-disable (panah dihilangkan)
+            // navigation: {
+            //     nextEl: ".swiper-button-next",
+            //     prevEl: ".swiper-button-prev",
+            // },
+            pagination: {
+                el: ".swiper-pagination",
+                clickable: true,
+                dynamicBullets: true, // Dots lebih dinamis
             },
         });
     });

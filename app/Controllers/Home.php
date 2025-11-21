@@ -9,6 +9,7 @@ use App\Models\PostModel;
 use App\Models\EventModel;
 use App\Models\GalleryModel;
 use App\Models\TeacherModel;
+use App\Models\SliderModel;
 class Home extends BaseController
 {
     protected $settingModel;
@@ -18,6 +19,7 @@ class Home extends BaseController
     protected $eventModel;
     protected $galleryModel;
     protected $teacherModel;
+    protected $sliderModel;
     public function __construct()
     {
         // Load Model di constructor agar bisa dipakai di semua fungsi
@@ -28,6 +30,7 @@ class Home extends BaseController
         $this->eventModel = new EventModel();
         $this->galleryModel = new GalleryModel();
         $this->teacherModel = new \App\Models\TeacherModel();
+        $this->sliderModel = new SliderModel();
     }
 
      public function index()
@@ -35,7 +38,7 @@ class Home extends BaseController
         // 1. Settings (Footer/Header)
         $data['site'] = $this->settingModel->getSiteSettings();
         $data['title'] = "Beranda - " . ($data['site']['site_name'] ?? 'MBS Portal');
-
+        $data['sliders'] = $this->sliderModel->getActiveSliders();
         // 2. Data Sekolah (Untuk 3 Kartu Utama)
         $data['schools'] = $this->schoolModel->findAll();
 

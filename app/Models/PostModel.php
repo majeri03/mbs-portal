@@ -8,7 +8,7 @@ class PostModel extends Model
 {
     protected $table = 'posts';
     protected $primaryKey = 'id';
-    protected $allowedFields = ['school_id', 'title', 'slug', 'content', 'thumbnail', 'is_published', 'views'];
+    protected $allowedFields = ['school_id', 'title', 'slug', 'author','content', 'thumbnail', 'is_published', 'views'];
     protected $useTimestamps = true;
 
     // Ambil berita terbaru + Nama Sekolahnya (Join)
