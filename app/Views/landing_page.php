@@ -6,7 +6,7 @@
 <!-- SECTION 2: HERO SLIDER (DINAMIS DARI DATABASE) -->
 <!-- ============================================================== -->
 <section class="hero-slider-section position-relative" style="padding-bottom: 0;">
-    
+
     <!-- Swiper Slider Container -->
     <div class="swiper heroSwiper">
         <div class="swiper-wrapper">
@@ -14,12 +14,12 @@
                 <?php foreach ($sliders as $slider) : ?>
                     <div class="swiper-slide">
                         <!-- Background Image -->
-                        <div class="hero-slide position-relative d-flex align-items-center text-white" 
-                             style="min-height: 85vh; 
+                        <div class="hero-slide position-relative d-flex align-items-center text-white"
+                            style="min-height: 85vh; 
                                     padding-bottom: 150px;
                                     background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.7)), 
                                                 url('<?= base_url($slider['image_url']) ?>') no-repeat center center/cover;">
-                            
+
                             <!-- Content -->
                             <div class="container position-relative z-index-1" style="padding-top: 80px;">
                                 <div class="row">
@@ -35,16 +35,16 @@
                                                 <?= esc($slider['description']) ?>
                                             </p>
                                         <?php endif; ?>
-                                        
-                                                                                <?php if (!empty($slider['button_text']) && !empty($slider['button_link'])) : ?>
-                                            <?php 
-                                                // Cek apakah link external (http/https) atau internal (#)
-                                                $isExternal = (strpos($slider['button_link'], 'http://') === 0 || strpos($slider['button_link'], 'https://') === 0);
-                                                $targetBlank = $isExternal ? 'target="_blank" rel="noopener noreferrer"' : '';
+
+                                        <?php if (!empty($slider['button_text']) && !empty($slider['button_link'])) : ?>
+                                            <?php
+                                            // Cek apakah link external (http/https) atau internal (#)
+                                            $isExternal = (strpos($slider['button_link'], 'http://') === 0 || strpos($slider['button_link'], 'https://') === 0);
+                                            $targetBlank = $isExternal ? 'target="_blank" rel="noopener noreferrer"' : '';
                                             ?>
-                                            <a href="<?= esc($slider['button_link']) ?>" 
-                                               <?= $targetBlank ?>
-                                               class="btn btn-light btn-lg px-5 py-3 rounded-pill fw-bold animate__animated animate__fadeInUp animate__delay-2s">
+                                            <a href="<?= esc($slider['button_link']) ?>"
+                                                <?= $targetBlank ?>
+                                                class="btn btn-light btn-lg px-5 py-3 rounded-pill fw-bold animate__animated animate__fadeInUp animate__delay-2s">
                                                 <?= esc($slider['button_text']) ?>
                                                 <i class="bi bi-arrow-right ms-2"></i>
                                             </a>
@@ -58,8 +58,8 @@
             <?php else : ?>
                 <!-- Default Slide jika database kosong -->
                 <div class="swiper-slide">
-                    <div class="hero-slide position-relative d-flex align-items-center text-white" 
-                         style="min-height: 85vh; 
+                    <div class="hero-slide position-relative d-flex align-items-center text-white"
+                        style="min-height: 85vh; 
                                 background: linear-gradient(to bottom, rgba(88, 44, 131, 0.8), rgba(61, 31, 92, 0.9));">
                         <div class="container text-center">
                             <h1 class="display-3 fw-bold mb-4">Selamat Datang di MBS</h1>
@@ -69,11 +69,11 @@
                 </div>
             <?php endif; ?>
         </div>
-        
+
         <!-- Navigation Buttons -->
         <!-- <div class="swiper-button-next"></div>
         <div class="swiper-button-prev"></div> -->
-        
+
         <!-- Pagination Dots -->
         <div class="swiper-pagination"></div>
     </div>
@@ -87,13 +87,13 @@
     <div class="container">
         <!-- Kartu Putih Besar yang Timbul -->
         <div class="bg-white shadow-lg rounded-4 p-4 p-md-5 border-top border-5 border-purple">
-            
+
             <div class="row">
                 <!-- KOLOM KIRI: Judul & Navigasi -->
                 <div class="col-lg-4 mb-5 mb-lg-0 border-end-lg pe-lg-5 d-flex flex-column justify-content-center">
                     <span class="text-uppercase fw-bold text-secondary ls-2 mb-2 small">MBS Stories</span>
                     <h2 class="fw-bold display-6 mb-3 text-dark">Kabar Terbaru &<br>Informasi Pondok</h2>
-                    
+
                     <!-- Dropdown Filter -->
                     <div class="mb-4">
                         <select class="form-select form-select-lg rounded-pill fs-6 border-secondary text-secondary">
@@ -134,7 +134,7 @@
                                                 </span>
                                             </div>
                                         </div>
-                                        
+
                                         <!-- Teks & Konten -->
                                         <div class="d-flex flex-column h-100 px-1">
                                             <!-- Judul -->
@@ -146,32 +146,32 @@
 
                                             <!-- [BARU] Ringkasan Berita -->
                                             <p class="text-muted small mb-3 text-clamp-3 lh-sm">
-                                                <?php 
-                                                    // Ambil 100 karakter pertama, hilangkan tag HTML
-                                                    $excerpt = strip_tags($news['content']);
-                                                    if (strlen($excerpt) > 100) {
-                                                        $excerpt = substr($excerpt, 0, 100) . "...";
-                                                    }
-                                                    echo esc($excerpt);
+                                                <?php
+                                                // Ambil 100 karakter pertama, hilangkan tag HTML
+                                                $excerpt = strip_tags($news['content']);
+                                                if (strlen($excerpt) > 100) {
+                                                    $excerpt = substr($excerpt, 0, 100) . "...";
+                                                }
+                                                echo esc($excerpt);
                                                 ?>
                                             </p>
 
                                             <!-- Tanggal (Footer Kartu) -->
-                                                                                    <!-- Info Meta (Tanggal & Penulis) -->
-                                        <div class="mt-auto pt-2 border-top">
-                                            <div class="d-flex justify-content-between align-items-center text-muted small">
-                                                <span>
-                                                    <i class="bi bi-calendar-event me-1"></i> 
-                                                    <?= date('d M Y', strtotime($news['created_at'])) ?>
-                                                </span>
-                                                <?php if (!empty($news['author'])) : ?>
+                                            <!-- Info Meta (Tanggal & Penulis) -->
+                                            <div class="mt-auto pt-2 border-top">
+                                                <div class="d-flex justify-content-between align-items-center text-muted small">
                                                     <span>
-                                                        <i class="bi bi-person-fill me-1"></i>
-                                                        <?= esc($news['author']) ?>
+                                                        <i class="bi bi-calendar-event me-1"></i>
+                                                        <?= date('d M Y', strtotime($news['created_at'])) ?>
                                                     </span>
-                                                <?php endif; ?>
+                                                    <?php if (!empty($news['author'])) : ?>
+                                                        <span>
+                                                            <i class="bi bi-person-fill me-1"></i>
+                                                            <?= esc($news['author']) ?>
+                                                        </span>
+                                                    <?php endif; ?>
+                                                </div>
                                             </div>
-                                        </div>
                                         </div>
                                     </div>
                                 </div>
@@ -185,45 +185,55 @@
 </section>
 
 <!-- ============================================================== -->
-<!-- SECTION: INFO PENTING / PENGUMUMAN (DINAMIS) -->
+<!-- SECTION: INFO PENTING / PENGUMUMAN (TAMPILKAN SEMUA) -->
 <!-- ============================================================== -->
+<!-- SECTION: INFO PENTING / PENGUMUMAN -->
 <?php if (!empty($announcements)) : ?>
-<section class="announcement-ticker-section py-3 mt-0" id="announcement-ticker" style="margin-top: 70px;">
-    <div class="container">
-        <div class="d-flex align-items-center">
-            <!-- Badge Label -->
-            <span class="badge announcement-badge fw-bold me-3 px-3 py-2" id="announcementBadge">
-                INFO PENTING
-            </span>
-            
-            <!-- Ticker Wrapper -->
-            <div class="ticker-wrapper flex-grow-1 position-relative overflow-hidden">
-                <?php foreach ($announcements as $index => $announcement) : ?>
-                    <?php
-                        // Badge color by category
-                        $bgClass = match($announcement['category']) {
-                            'urgent'    => 'bg-danger',
-                            'important' => 'bg-warning',
-                            'normal'    => 'bg-info',
-                            default     => 'bg-secondary'
-                        };
-                    ?>
-                    <div class="ticker-content <?= $index == 0 ? 'active' : '' ?>" 
-                         data-category="<?= $announcement['category'] ?>"
-                         data-bg-class="<?= $bgClass ?>"
-                         data-icon="<?= esc($announcement['icon']) ?>">
-                        <i class="bi <?= esc($announcement['icon']) ?> me-2"></i>
-                        <strong><?= esc($announcement['title']) ?></strong>
-                        <span class="mx-2">•</span>
-                        <span class="text-opacity-90"><?= esc($announcement['content']) ?></span>
+    <section class="announcement-section py-2 mt-4" style="background-color: var(--mbs-purple);">
+        <div class="container">
+            <div class="d-flex align-items-center py-2">
+                <!-- Badge Label -->
+                <span class="badge bg-white text-purple fw-bold me-3 px-3 py-2" style="font-size: 0.7rem; letter-spacing: 1px;">
+                    PENGUMUMAN
+                </span>
+
+                <!-- Scrolling Container -->
+                <div class="announcement-scroll-container flex-grow-1 overflow-hidden position-relative">
+                    <div class="announcement-scroll-content">
+                        <?php foreach ($announcements as $index => $announcement) : ?>
+                            <?php
+                            // Tentukan warna strip berdasarkan prioritas
+                            $stripColor = match ($announcement['category']) {
+                                'urgent'    => '#dc3545',  // Merah
+                                'important' => '#ffc107',  // Kuning
+                                'normal'    => '#28a745',  // Hijau
+                                default     => '#6c757d'   // Abu-abu (fallback)
+                            };
+                            ?>
+
+                            <!-- Item Pengumuman -->
+                            <span class="announcement-item">
+                                <!-- Strip Prioritas -->
+                                <span class="priority-strip" style="background-color: <?= $stripColor ?>;"></span>
+
+                                <!-- Icon dari Database -->
+                                <i class="bi <?= esc($announcement['icon']) ?> me-2"></i>
+
+                                <!-- Judul & Konten -->
+                                <strong><?= esc($announcement['title']) ?></strong>
+                                <span class="mx-2">•</span>
+                                <span><?= esc($announcement['content']) ?></span>
+                            </span>
+
+                            <?php if ($index < count($announcements) - 1) : ?>
+                                <span class="mx-4">•</span>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
                     </div>
-                <?php endforeach; ?>
+                </div>
             </div>
-            
-            
         </div>
-    </div>
-</section>
+    </section>
 <?php endif; ?>
 
 <!-- ============================================================== -->
@@ -238,46 +248,46 @@
                 Tiga jenjang pendidikan berkualitas dengan sistem pesantren modern
             </p>
         </div>
-        
+
         <div class="row g-4">
             <?php if (!empty($schools)) : ?>
                 <?php foreach ($schools as $index => $school) : ?>
-                <div class="col-md-6 col-lg-4">
-                    <div class="card border-0 shadow-sm h-100 hover-lift-school">
-                        <!-- School Image -->
-                        <div class="position-relative overflow-hidden" style="height: 250px;">
-                            <?php if (!empty($school['image_url']) && file_exists($school['image_url'])) : ?>
-                                <img src="<?= base_url($school['image_url']) ?>" 
-                                     class="w-100 h-100 object-fit-cover" 
-                                     alt="<?= esc($school['name']) ?>">
-                            <?php elseif (!empty($school['hero_image']) && file_exists($school['hero_image'])) : ?>
-                                <!-- Fallback ke hero_image jika ada -->
-                                <img src="<?= base_url($school['hero_image']) ?>" 
-                                     class="w-100 h-100 object-fit-cover" 
-                                     alt="<?= esc($school['name']) ?>">
-                            <?php else : ?>
-                                <!-- Placeholder dengan gradient -->
-                                <div class="w-100 h-100 d-flex align-items-center justify-content-center text-white"
-                                     style="background: linear-gradient(135deg, 
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card border-0 shadow-sm h-100 hover-lift-school">
+                            <!-- School Image -->
+                            <div class="position-relative overflow-hidden" style="height: 250px;">
+                                <?php if (!empty($school['image_url']) && file_exists($school['image_url'])) : ?>
+                                    <img src="<?= base_url($school['image_url']) ?>"
+                                        class="w-100 h-100 object-fit-cover"
+                                        alt="<?= esc($school['name']) ?>">
+                                <?php elseif (!empty($school['hero_image']) && file_exists($school['hero_image'])) : ?>
+                                    <!-- Fallback ke hero_image jika ada -->
+                                    <img src="<?= base_url($school['hero_image']) ?>"
+                                        class="w-100 h-100 object-fit-cover"
+                                        alt="<?= esc($school['name']) ?>">
+                                <?php else : ?>
+                                    <!-- Placeholder dengan gradient -->
+                                    <div class="w-100 h-100 d-flex align-items-center justify-content-center text-white"
+                                        style="background: linear-gradient(135deg, 
                                             <?= $index == 0 ? '#582C83, #7A4E9F' : ($index == 1 ? '#3b82f6, #60a5fa' : '#10b981, #34d399') ?>);">
-                                    <div class="text-center">
-                                        <i class="bi bi-building" style="font-size: 4rem;"></i>
-                                        <h4 class="mt-3 fw-bold"><?= esc($school['name']) ?></h4>
+                                        <div class="text-center">
+                                            <i class="bi bi-building" style="font-size: 4rem;"></i>
+                                            <h4 class="mt-3 fw-bold"><?= esc($school['name']) ?></h4>
+                                        </div>
                                     </div>
-                                </div>
-                            <?php endif; ?>
-                            
-                                                        <!-- Badge Akreditasi (Dinamis dengan Auto Color) -->
-                            <div class="position-absolute top-0 end-0 m-3">
-                                <?php
+                                <?php endif; ?>
+
+                                <!-- Badge Akreditasi (Dinamis dengan Auto Color) -->
+                                <div class="position-absolute top-0 end-0 m-3">
+                                    <?php
                                     $accreditation = $school['accreditation_status'] ?? 'A';
-                                    
+
                                     // Format text badge (tambahkan "Akreditasi" jika hanya huruf A/B/C)
                                     $badgeText = $accreditation;
                                     if (in_array($accreditation, ['A', 'B', 'C'])) {
                                         $badgeText = 'Akreditasi ' . $accreditation;
                                     }
-                                    
+
                                     // Auto detect warna badge berdasarkan status
                                     if (stripos($accreditation, 'A') !== false) {
                                         $badgeClass = 'bg-success';
@@ -295,63 +305,63 @@
                                         $badgeClass = 'bg-dark';
                                         $icon = 'bi-award-fill';
                                     }
-                                ?>
-                                <span class="badge <?= $badgeClass ?> text-white px-3 py-2 shadow-sm">
-                                    <i class="bi <?= $icon ?> me-1"></i>
-                                    <?= esc($badgeText) ?>
-                                </span>
+                                    ?>
+                                    <span class="badge <?= $badgeClass ?> text-white px-3 py-2 shadow-sm">
+                                        <i class="bi <?= $icon ?> me-1"></i>
+                                        <?= esc($badgeText) ?>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Card Body -->
+                            <div class="card-body p-4">
+                                <h4 class="card-title fw-bold text-purple mb-3">
+                                    <i class="bi bi-mortarboard-fill me-2"></i>
+                                    <?= esc($school['name']) ?>
+                                </h4>
+                                <p class="card-text text-muted mb-4" style="min-height: 80px;">
+                                    <?= esc($school['description']) ?>
+                                </p>
+
+                                <!-- Info Kontak (Jika Ada) -->
+                                <?php if (!empty($school['contact_person']) || !empty($school['phone'])) : ?>
+                                    <div class="mb-3 small text-muted">
+                                        <?php if (!empty($school['contact_person'])) : ?>
+                                            <div class="mb-1">
+                                                <i class="bi bi-person-badge me-2"></i>
+                                                <?= esc($school['contact_person']) ?>
+                                            </div>
+                                        <?php endif; ?>
+
+                                        <?php if (!empty($school['phone'])) : ?>
+                                            <div>
+                                                <i class="bi bi-telephone me-2"></i>
+                                                <a href="tel:<?= esc($school['phone']) ?>" class="text-muted">
+                                                    <?= esc($school['phone']) ?>
+                                                </a>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+                                <?php endif; ?>
+
+                                <!-- Button -->
+                                <?php if (!empty($school['website_url'])) : ?>
+                                    <a href="<?= esc($school['website_url']) ?>"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        class="btn btn-outline-purple w-100">
+                                        <i class="bi bi-box-arrow-up-right me-2"></i>
+                                        Kunjungi Website
+                                    </a>
+                                <?php else : ?>
+                                    <a href="#kontak" class="btn btn-outline-purple w-100">
+                                        <i class="bi bi-info-circle me-2"></i>
+                                        Info Lebih Lanjut
+                                    </a>
+                                <?php endif; ?>
                             </div>
                         </div>
-                        
-                        <!-- Card Body -->
-                        <div class="card-body p-4">
-                            <h4 class="card-title fw-bold text-purple mb-3">
-                                <i class="bi bi-mortarboard-fill me-2"></i>
-                                <?= esc($school['name']) ?>
-                            </h4>
-                            <p class="card-text text-muted mb-4" style="min-height: 80px;">
-                                <?= esc($school['description']) ?>
-                            </p>
-                            
-                            <!-- Info Kontak (Jika Ada) -->
-                            <?php if (!empty($school['contact_person']) || !empty($school['phone'])) : ?>
-                                <div class="mb-3 small text-muted">
-                                    <?php if (!empty($school['contact_person'])) : ?>
-                                        <div class="mb-1">
-                                            <i class="bi bi-person-badge me-2"></i>
-                                            <?= esc($school['contact_person']) ?>
-                                        </div>
-                                    <?php endif; ?>
-                                    
-                                    <?php if (!empty($school['phone'])) : ?>
-                                        <div>
-                                            <i class="bi bi-telephone me-2"></i>
-                                            <a href="tel:<?= esc($school['phone']) ?>" class="text-muted">
-                                                <?= esc($school['phone']) ?>
-                                            </a>
-                                        </div>
-                                    <?php endif; ?>
-                                </div>
-                            <?php endif; ?>
-                            
-                            <!-- Button -->
-                            <?php if (!empty($school['website_url'])) : ?>
-                                <a href="<?= esc($school['website_url']) ?>" 
-                                   target="_blank" 
-                                   rel="noopener noreferrer" 
-                                   class="btn btn-outline-purple w-100">
-                                    <i class="bi bi-box-arrow-up-right me-2"></i>
-                                    Kunjungi Website
-                                </a>
-                            <?php else : ?>
-                                <a href="#kontak" class="btn btn-outline-purple w-100">
-                                    <i class="bi bi-info-circle me-2"></i>
-                                    Info Lebih Lanjut
-                                </a>
-                            <?php endif; ?>
-                        </div>
                     </div>
-                </div>
                 <?php endforeach; ?>
             <?php else : ?>
                 <!-- Fallback jika belum ada data -->
@@ -397,12 +407,12 @@
 <section class="py-5 bg-white">
     <div class="container">
         <div class="d-flex justify-content-between align-items-center mb-4">
-             <h3 class="fw-bold" style="color: var(--mbs-purple);">Agenda Mendatang</h3>
-             <a href="#" class="text-decoration-none fw-bold" style="color: var(--mbs-purple);">Lihat Kalender <i class="bi bi-arrow-right"></i></a>
+            <h3 class="fw-bold" style="color: var(--mbs-purple);">Agenda Mendatang</h3>
+            <a href="#" class="text-decoration-none fw-bold" style="color: var(--mbs-purple);">Lihat Kalender <i class="bi bi-arrow-right"></i></a>
         </div>
-        
+
         <div class="row g-3">
-             <?php foreach ($upcoming_events as $event) : ?>
+            <?php foreach ($upcoming_events as $event) : ?>
                 <div class="col-md-6 col-lg-3">
                     <div class="border rounded p-3 d-flex align-items-center gap-3 shadow-sm h-100">
                         <div class="text-center rounded p-2 text-white flex-shrink-0" style="background: var(--mbs-purple); width: 60px;">
@@ -415,7 +425,7 @@
                         </div>
                     </div>
                 </div>
-             <?php endforeach; ?>
+            <?php endforeach; ?>
         </div>
     </div>
 </section>
@@ -434,17 +444,17 @@
             <?php foreach ($latest_photos as $index => $photo) : ?>
                 <!-- Logika Layout: Foto pertama & kelima besar (col-md-6), sisanya kecil (col-md-3) -->
                 <?php $colClass = ($index == 0 || $index == 4) ? 'col-md-6' : 'col-md-3 col-6'; ?>
-                
+
                 <div class="<?= $colClass ?>">
                     <div class="gallery-item position-relative overflow-hidden rounded shadow-sm h-100 group-hover">
-                        <img src="<?= esc($photo['image_url']) ?>" 
-                             class="w-100 h-100 object-fit-cover transition-transform" 
-                             alt="<?= esc($photo['title']) ?>"
-                             style="min-height: 250px;">
-                        
+                        <img src="<?= esc($photo['image_url']) ?>"
+                            class="w-100 h-100 object-fit-cover transition-transform"
+                            alt="<?= esc($photo['title']) ?>"
+                            style="min-height: 250px;">
+
                         <!-- Overlay Hover Info -->
-                        <div class="overlay-hover position-absolute top-0 start-0 w-100 h-100 d-flex flex-column justify-content-end p-3" 
-                             style="background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); opacity: 0; transition: all 0.3s;">
+                        <div class="overlay-hover position-absolute top-0 start-0 w-100 h-100 d-flex flex-column justify-content-end p-3"
+                            style="background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); opacity: 0; transition: all 0.3s;">
                             <span class="badge bg-warning text-dark mb-2 w-auto align-self-start"><?= esc(ucfirst($photo['category'])) ?></span>
                             <h6 class="text-white fw-bold mb-0"><?= esc($photo['title']) ?></h6>
                         </div>
@@ -475,7 +485,7 @@
                 <p class="lead opacity-75 mb-4">
                     "MBS berkomitmen mencetak kader ulama yang intelek dan intelektual yang ulama. Kami memadukan kedalaman ilmu agama dengan wawasan sains modern."
                 </p>
-                
+
                 <div class="d-flex align-items-center mt-4">
                     <!-- Foto Direktur (Placeholder) -->
                     <img src="https://ui-avatars.com/api/?name=Direktur+MBS&background=random&size=128" class="rounded-circle border border-3 border-white me-3" width="60" alt="Direktur">
@@ -490,11 +500,11 @@
             <div class="col-lg-6 position-relative z-index-2">
                 <div class="ratio ratio-16x9 rounded-4 shadow-lg border border-5 border-white overflow-hidden" style="transform: rotate(2deg);">
                     <!-- Ambil link youtube dari database settings jika ada, atau default -->
-                    <?php 
-                        // Logic sederhana ubah link watch jadi embed
-                        $yt_url = $site['youtube_url'] ?? 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
-                        // (Note: Di real project nanti kita buat helper function untuk parsing ID youtube yang benar)
-                        // Untuk dummy, kita hardcode iframe dulu agar tampil rapi
+                    <?php
+                    // Logic sederhana ubah link watch jadi embed
+                    $yt_url = $site['youtube_url'] ?? 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
+                    // (Note: Di real project nanti kita buat helper function untuk parsing ID youtube yang benar)
+                    // Untuk dummy, kita hardcode iframe dulu agar tampil rapi
                     ?>
                     <iframe src="https://www.youtube.com/embed/EngW7tLk6R8?si=dummy" title="Profil MBS" allowfullscreen></iframe>
                 </div>
@@ -509,32 +519,48 @@
 <!-- ============================================================== -->
 <style>
     /* VARIABLE WARNA */
-    .text-purple { color: var(--mbs-purple); }
-    .bg-purple { background-color: var(--mbs-purple); }
-    .border-purple { border-color: var(--mbs-purple) !important; }
-    .hover-purple:hover { color: var(--mbs-purple) !important; }
+    .text-purple {
+        color: var(--mbs-purple);
+    }
+
+    .bg-purple {
+        background-color: var(--mbs-purple);
+    }
+
+    .border-purple {
+        border-color: var(--mbs-purple) !important;
+    }
+
+    .hover-purple:hover {
+        color: var(--mbs-purple) !important;
+    }
 
     /* HERO & FLOATING SECTION (KUNCI DESIGN) */
     .floating-section {
         position: relative;
-        z-index: 100; /* Pastikan di atas hero */
+        z-index: 100;
+        /* Pastikan di atas hero */
     }
+
     /* Di layar besar, tarik section berita ke atas (-100px) */
     @media (min-width: 992px) {
         .floating-section {
-            margin-top: -120px; /* INI KUNCINYA: Menarik ke atas */
+            margin-top: -120px;
+            /* INI KUNCINYA: Menarik ke atas */
         }
+
         .border-end-lg {
             border-right: 1px solid #dee2e6;
         }
     }
-    
+
     /* Di layar HP, jangan ditarik (biar tidak numpuk berantakan) */
     @media (max-width: 991px) {
         .hero-section {
             min-height: 60vh !important;
             padding-bottom: 50px !important;
         }
+
         .floating-section {
             margin-top: -30px;
             padding-left: 15px;
@@ -547,21 +573,41 @@
         color: var(--mbs-purple);
         border-color: var(--mbs-purple);
     }
+
     .btn-view-all:hover {
         background-color: var(--mbs-purple);
         color: white;
     }
 
     /* CARD HOVER EFFECTS */
-    .group-hover:hover img { transform: scale(1.05); }
-    .transition-transform { transition: transform 0.5s ease; }
-    .hover-top { transition: transform 0.3s ease; }
-    .hover-top:hover { transform: translateY(-5px); }
+    .group-hover:hover img {
+        transform: scale(1.05);
+    }
+
+    .transition-transform {
+        transition: transform 0.5s ease;
+    }
+
+    .hover-top {
+        transition: transform 0.3s ease;
+    }
+
+    .hover-top:hover {
+        transform: translateY(-5px);
+    }
 
     /* UTILS */
-    .ls-2 { letter-spacing: 2px; }
-    .object-fit-cover { object-fit: cover; }
-    .x-small { font-size: 0.75rem; }
+    .ls-2 {
+        letter-spacing: 2px;
+    }
+
+    .object-fit-cover {
+        object-fit: cover;
+    }
+
+    .x-small {
+        font-size: 0.75rem;
+    }
 
     .text-clamp-2 {
         display: -webkit-box;
@@ -570,45 +616,48 @@
         -webkit-box-orient: vertical;
         overflow: hidden;
     }
-    
+
     .text-clamp-3 {
         display: -webkit-box;
-        -webkit-line-clamp: 3; /* Maksimal 3 baris deskripsi */
+        -webkit-line-clamp: 3;
+        /* Maksimal 3 baris deskripsi */
         line-clamp: 3;
         -webkit-box-orient: vertical;
         overflow: hidden;
     }
-    
-    .lh-sm { line-height: 1.4; }
 
-        /* ========== HERO SLIDER CUSTOM STYLE ========== */
+    .lh-sm {
+        line-height: 1.4;
+    }
+
+    /* ========== HERO SLIDER CUSTOM STYLE ========== */
     .hero-slider-section {
         position: relative;
     }
-    
+
     .heroSwiper {
         width: 100%;
         height: 100%;
     }
-    
+
     .hero-slide {
         transition: all 0.5s ease;
         display: flex;
         align-items: center;
         justify-content: center;
     }
-    
+
     /* Hilangkan panah navigasi (jika masih muncul) */
     .heroSwiper .swiper-button-next,
     .heroSwiper .swiper-button-prev {
         display: none !important;
     }
-    
+
     /* Pagination Dots Custom (lebih cantik) */
     .heroSwiper .swiper-pagination {
         bottom: 30px !important;
     }
-    
+
     .heroSwiper .swiper-pagination-bullet {
         width: 12px;
         height: 12px;
@@ -616,153 +665,164 @@
         opacity: 0.5;
         transition: all 0.3s;
     }
-    
+
     .heroSwiper .swiper-pagination-bullet-active {
         opacity: 1;
         background: white;
         width: 35px;
         border-radius: 10px;
     }
-    
+
     /* Responsive: Spacing di Mobile */
     @media (max-width: 991px) {
         .hero-slide .container {
             padding-top: 40px !important;
         }
-        
+
         .hero-slide h1 {
             font-size: 2rem !important;
         }
-        
+
         .hero-slide .lead {
             font-size: 1rem !important;
         }
     }
 
-        /* ========== SECTION SCHOOLS (JENJANG PENDIDIKAN) ========== */
+    /* ========== SECTION SCHOOLS (JENJANG PENDIDIKAN) ========== */
     .hover-lift-school {
         transition: all 0.3s ease;
     }
-    
+
     .hover-lift-school:hover {
         transform: translateY(-10px);
         box-shadow: 0 20px 40px rgba(88, 44, 131, 0.2) !important;
     }
-    
+
     .btn-outline-purple {
         border: 2px solid var(--mbs-purple);
         color: var(--mbs-purple);
         font-weight: 600;
         transition: all 0.3s;
     }
-    
+
     .btn-outline-purple:hover {
         background: var(--mbs-purple);
         color: white;
         transform: scale(1.05);
     }
-    
+
     .text-purple {
         color: var(--mbs-purple);
     }
-    
+
     .object-fit-cover {
         object-fit: cover;
     }
 
-        /* ========== ANNOUNCEMENT TICKER (AUTO-ROTATE) ========== */
-    .announcement-ticker-section {
-        background: var(--mbs-purple);
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        transition: background 0.5s ease;
+    /* ========== ANNOUNCEMENT SECTION (SINGLE LINE SCROLL) ========== */
+    .announcement-section {
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
     }
-    
-    .announcement-badge {
-        background: white;
-        color: var(--mbs-purple);
-        font-size: 0.75rem;
-        letter-spacing: 1px;
+
+    /* Badge Info Penting */
+    .announcement-section .badge {
         white-space: nowrap;
-        transition: all 0.5s ease;
+        flex-shrink: 0;
     }
-    
-    .ticker-wrapper {
-        height: 30px;
+
+    /* Container Scroll */
+    .announcement-scroll-container {
+        height: 35px;
+        position: relative;
+    }
+
+    /* Content yang akan scroll */
+    .announcement-scroll-content {
+        display: inline-block;
+        white-space: nowrap;
         color: white;
-    }
-    
-    .ticker-content {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        white-space: nowrap;
-        opacity: 0;
-        transform: translateX(100%);
-        animation: none;
         font-size: 0.95rem;
-        line-height: 30px;
-        transition: opacity 0.5s ease;
+        line-height: 35px;
+        padding-left: 100%;
+        animation: scroll-announcement 40s linear infinite;
     }
-    
-    .ticker-content.active {
-        opacity: 1;
-        animation: tickerScroll 20s linear infinite;
-    }
-    
-    @keyframes tickerScroll {
+
+    /* Animasi Scrolling */
+    @keyframes scroll-announcement {
         0% {
-            transform: translateX(100%);
+            transform: translateX(0);
         }
+
         100% {
             transform: translateX(-100%);
         }
     }
-    
-    /* Progress Ring Animation */
-    .announcement-progress-wrapper {
-        position: relative;
-        width: 40px;
-        height: 40px;
+
+    /* HOVER = PAUSE */
+    .announcement-scroll-container:hover .announcement-scroll-content {
+        animation-play-state: paused;
     }
-    
-    .announcement-progress-ring {
-        transform: rotate(-90deg);
+
+    /* Style untuk setiap item pengumuman */
+    .announcement-item {
+        display: inline-flex;
+        align-items: center;
+        margin-right: 3rem;
+        /* Jarak agak longgar antar pengumuman */
     }
-    
-    .announcement-progress-circle {
-        stroke-dasharray: 100;
-        stroke-dashoffset: 100;
-        transition: stroke-dashoffset 0.1s linear;
+
+    /* Strip Vertikal Prioritas */
+    .priority-strip {
+        display: inline-block;
+        width: 3px;
+        height: 20px;
+        margin-right: 10px;
+        border-radius: 2px;
+        vertical-align: middle;
     }
-    
-    .announcement-timer {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        color: white;
+
+    /* Icon styling */
+    .announcement-item i {
+        font-size: 1.1rem;
+        vertical-align: middle;
+    }
+
+    /* Bullet separator */
+    .announcement-scroll-content>.mx-4 {
+        color: rgba(255, 255, 255, 0.5);
         font-weight: bold;
-        font-size: 0.9rem;
     }
-    
-    /* Responsive */
+
+    /* Responsive - Mobile */
     @media (max-width: 768px) {
-        .ticker-content {
+        .announcement-scroll-content {
             font-size: 0.85rem;
-            animation: tickerScroll 15s linear infinite;
+            animation: scroll-announcement 30s linear infinite;
         }
-        
-        .announcement-badge {
-            font-size: 0.65rem;
-            padding: 0.3rem 0.6rem !important;
+
+        .announcement-section .badge {
+            font-size: 0.65rem !important;
+            padding: 0.4rem 0.7rem !important;
+        }
+
+        .priority-strip {
+            height: 16px;
+            width: 2.5px;
+        }
+
+        .announcement-item {
+            margin-right: 2rem;
         }
     }
-    
+
     @media (max-width: 576px) {
-        .ticker-content {
+        .announcement-scroll-content {
             font-size: 0.8rem;
-            animation: tickerScroll 12s linear infinite;
+            animation: scroll-announcement 25s linear infinite;
+        }
+
+        .announcement-scroll-container {
+            height: 30px;
         }
     }
 </style>
@@ -789,8 +849,8 @@
             },
         });
     });
+
     // ========== HERO SLIDER SWIPER ==========
-        // ========== HERO SLIDER SWIPER ==========
     document.addEventListener("DOMContentLoaded", function() {
         var heroSwiper = new Swiper(".heroSwiper", {
             loop: true,
@@ -803,11 +863,6 @@
                 crossFade: true
             },
             speed: 1000, // Durasi transisi (ms)
-            // Navigation di-disable (panah dihilangkan)
-            // navigation: {
-            //     nextEl: ".swiper-button-next",
-            //     prevEl: ".swiper-button-prev",
-            // },
             pagination: {
                 el: ".swiper-pagination",
                 clickable: true,
@@ -815,105 +870,6 @@
             },
         });
     });
-
-        // ========== ANNOUNCEMENT TICKER AUTO-ROTATE ==========
-    <?php if (!empty($announcements) && count($announcements) > 1) : ?>
-    (function() {
-        const tickers = document.querySelectorAll('.ticker-content');
-        const section = document.querySelector('.announcement-ticker-section');
-        const badge = document.getElementById('announcementBadge');
-        const timer = document.getElementById('announcementTimer');
-        const progressCircle = document.getElementById('progressCircle');
-        
-        if (tickers.length === 0) return;
-        
-        let currentIndex = 0;
-        let countdown = 5; // Detik per pengumuman
-        let intervalId;
-        let countdownId;
-        
-        // Function to switch announcement
-        function switchAnnouncement() {
-            // Hide current
-            tickers[currentIndex].classList.remove('active');
-            
-            // Next index
-            currentIndex = (currentIndex + 1) % tickers.length;
-            
-            // Show next
-            const nextTicker = tickers[currentIndex];
-            nextTicker.classList.add('active');
-            
-            // Update background color by category
-            const bgClass = nextTicker.dataset.bgClass;
-            section.className = 'announcement-ticker-section py-2 ' + bgClass;
-            
-            // Update badge color
-            if (bgClass === 'bg-danger') {
-                badge.style.background = 'white';
-                badge.style.color = '#dc3545';
-            } else if (bgClass === 'bg-warning') {
-                badge.style.background = 'white';
-                badge.style.color = '#ffc107';
-            } else if (bgClass === 'bg-info') {
-                badge.style.background = 'white';
-                badge.style.color = '#0dcaf0';
-            } else {
-                badge.style.background = 'white';
-                badge.style.color = '#6c757d';
-            }
-            
-            // Reset countdown
-            countdown = 5;
-            if (timer) timer.textContent = countdown;
-            if (progressCircle) progressCircle.style.strokeDashoffset = 100;
-        }
-        
-        // Countdown timer
-        function startCountdown() {
-            countdownId = setInterval(() => {
-                countdown--;
-                if (timer) timer.textContent = countdown;
-                
-                // Update progress ring
-                if (progressCircle) {
-                    const offset = 100 - ((5 - countdown) / 5 * 100);
-                    progressCircle.style.strokeDashoffset = offset;
-                }
-                
-                if (countdown <= 0) {
-                    switchAnnouncement();
-                }
-            }, 1000);
-        }
-        
-        // Start auto-rotate
-        startCountdown();
-        
-        // Pause on hover (optional)
-        section.addEventListener('mouseenter', () => {
-            clearInterval(countdownId);
-        });
-        
-        section.addEventListener('mouseleave', () => {
-            countdown = 5;
-            if (timer) timer.textContent = countdown;
-            startCountdown();
-        });
-    })();
-    <?php endif; ?>
-            // Click to pause/resume
-        section.style.cursor = 'pointer';
-        section.addEventListener('click', () => {
-            if (countdownId) {
-                clearInterval(countdownId);
-                countdownId = null;
-                if (timer) timer.textContent = '⏸';
-            } else {
-                countdown = 5;
-                startCountdown();
-            }
-        });
 </script>
 
 <?= $this->endSection() ?>

@@ -50,4 +50,19 @@ $routes->group('admin', function ($routes) {
     $routes->post('announcements/update/(:num)', 'Admin\Announcements::update/$1');
     $routes->get('announcements/delete/(:num)', 'Admin\Announcements::delete/$1');
     $routes->post('announcements/toggle-active/(:num)', 'Admin\Announcements::toggleActive/$1');
+
+    // CRUD Events (TAMBAHKAN INI) 
+    $routes->get('events', 'Admin\Events::index');
+    $routes->get('events/create', 'Admin\Events::create');
+    $routes->post('events/store', 'Admin\Events::store');
+    $routes->get('events/edit/(:num)', 'Admin\Events::edit/$1');
+    $routes->post('events/update/(:num)', 'Admin\Events::update/$1');
+    $routes->get('events/delete/(:num)', 'Admin\Events::delete/$1');
+    $routes->get('events/getEvents', 'Admin\Events::getEvents');
 });
+
+// Public Routes untuk Kalender
+$routes->get('events', 'Events::calendar');
+$routes->get('events/calendar', 'Events::calendar');
+$routes->get('events/getEvents', 'Events::getEvents');
+$routes->get('events/(:segment)', 'Events::show/$1');

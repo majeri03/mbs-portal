@@ -6,15 +6,102 @@ use CodeIgniter\Model;
 
 class EventModel extends Model
 {
-    protected $table = 'events';
-    protected $primaryKey = 'id';
-    protected $allowedFields = ['school_id', 'title', 'slug', 'event_date', 'time_start', 'location', 'description'];
+    protected $table            = 'events';
+    protected $primaryKey       = 'id';
+    protected $useAutoIncrement = true;
+    protected $returnType       = 'array';
+    protected $useSoftDeletes   = false;
+    protected $protectFields    = true;
+    protected $allowedFields    = [
+        'school_id', 
+        'title', 
+        'slug', 
+        'event_date', 
+        'time_start', 
+        'time_end', 
+        'location', 
+        'description'
+    ];
 
-    // Ambil agenda yang belum lewat tanggalnya
-    public function getUpcomingEvents($limit = 4)
+    protected bool $allowEmptyInserts = false;
+    protected bool $updateOnlyChanged = true;
+
+    // Dates
+    protected $useTimestamps = true;
+    protected $dateFormat    = 'datetime';
+    protected $createdField  = 'created_at';
+    protected $updatedField  = false;
+    protected $deletedField  = 'deleted_at';
+
+    // Validation
+    protected $validationRules = [
+        'title'      => 'required|min_length[3]|max_length[255]',
+        'slug'       => 'required|max_length[255]',
+        'event_date' => 'required|valid_date'
+    ];
+
+    protected $validationMessages = [
+        'title' => [
+            'required' => 'Judul agenda harus diisi',
+            'min_length' => 'Judul agenda minimal 3 karakter',
+            'max_length' => 'Judul agenda maksimal 255 karakter'
+        ],
+        'event_date' => [
+            'required' => 'Tanggal kegiatan harus diisi',
+            'valid_date' => 'Format tanggal tidak valid'
+        ]
+    ];
+
+    /**
+     * Get upcoming events
+     */
+    public function getUpcomingEvents($limit = 5)
     {
         return $this->where('event_date >=', date('Y-m-d'))
                     ->orderBy('event_date', 'ASC')
-                    ->findAll($limit);
+                    ->limit($limit)
+                    ->findAll();
+    }
+
+    /**
+     * Get events by date range
+     */
+    public function getEventsByDateRange($startDate, $endDate)
+    {
+        return $this->where('event_date >=', $startDate)
+                    ->where('event_date <=', $endDate)
+                    ->orderBy('event_date', 'ASC')
+                    ->findAll();
+    }
+
+    /**
+     * Get events by month
+     */
+    public function getEventsByMonth($year, $month)
+    {
+        return $this->where('YEAR(event_date)', $year)
+                    ->where('MONTH(event_date)', $month)
+                    ->orderBy('event_date', 'ASC')
+                    ->findAll();
+    }
+
+    /**
+     * Get event by slug
+     */
+    public function getBySlug($slug)
+    {
+        return $this->where('slug', $slug)->first();
+    }
+
+    /**
+     * Search events
+     */
+    public function searchEvents($keyword)
+    {
+        return $this->like('title', $keyword)
+                    ->orLike('description', $keyword)
+                    ->orLike('location', $keyword)
+                    ->orderBy('event_date', 'DESC')
+                    ->findAll();
     }
 }
