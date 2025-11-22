@@ -31,6 +31,7 @@ class Home extends BaseController
         $this->galleryModel = new GalleryModel();
         $this->teacherModel = new \App\Models\TeacherModel();
         $this->sliderModel = new SliderModel();
+        
     }
 
      public function index()
@@ -41,7 +42,7 @@ class Home extends BaseController
         $data['sliders'] = $this->sliderModel->getActiveSliders();
         // 2. Data Sekolah (Untuk 3 Kartu Utama)
         $data['schools'] = $this->schoolModel->findAll();
-
+        
         // 3. Pengumuman Aktif (Untuk Running Text)
         $data['announcements'] = $this->announcementModel->getActiveAnnouncements();
 

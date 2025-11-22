@@ -185,21 +185,45 @@
 </section>
 
 <!-- ============================================================== -->
-<!-- SECTION 4: PENGUMUMAN (Running Text) -->
+<!-- SECTION: INFO PENTING / PENGUMUMAN (DINAMIS) -->
 <!-- ============================================================== -->
 <?php if (!empty($announcements)) : ?>
-<div class="bg-light border-bottom border-top py-2 mt-5">
-    <div class="container d-flex align-items-center">
-        <span class="badge bg-danger me-3 rounded-0">INFO PENTING</span>
-        <div class="flex-grow-1 overflow-hidden">
-            <marquee class="mb-0 text-dark small fw-bold" scrollamount="8">
-                <?php foreach ($announcements as $info) : ?>
-                    <span class="me-5"><i class="bi bi-megaphone-fill text-secondary me-1"></i> <?= esc($info['content']) ?></span>
+<section class="announcement-ticker-section py-3 mt-0" id="announcement-ticker" style="margin-top: 70px;">
+    <div class="container">
+        <div class="d-flex align-items-center">
+            <!-- Badge Label -->
+            <span class="badge announcement-badge fw-bold me-3 px-3 py-2" id="announcementBadge">
+                INFO PENTING
+            </span>
+            
+            <!-- Ticker Wrapper -->
+            <div class="ticker-wrapper flex-grow-1 position-relative overflow-hidden">
+                <?php foreach ($announcements as $index => $announcement) : ?>
+                    <?php
+                        // Badge color by category
+                        $bgClass = match($announcement['category']) {
+                            'urgent'    => 'bg-danger',
+                            'important' => 'bg-warning',
+                            'normal'    => 'bg-info',
+                            default     => 'bg-secondary'
+                        };
+                    ?>
+                    <div class="ticker-content <?= $index == 0 ? 'active' : '' ?>" 
+                         data-category="<?= $announcement['category'] ?>"
+                         data-bg-class="<?= $bgClass ?>"
+                         data-icon="<?= esc($announcement['icon']) ?>">
+                        <i class="bi <?= esc($announcement['icon']) ?> me-2"></i>
+                        <strong><?= esc($announcement['title']) ?></strong>
+                        <span class="mx-2">•</span>
+                        <span class="text-opacity-90"><?= esc($announcement['content']) ?></span>
+                    </div>
                 <?php endforeach; ?>
-            </marquee>
+            </div>
+            
+            
         </div>
     </div>
-</div>
+</section>
 <?php endif; ?>
 
 <!-- ============================================================== -->
@@ -645,6 +669,102 @@
     .object-fit-cover {
         object-fit: cover;
     }
+
+        /* ========== ANNOUNCEMENT TICKER (AUTO-ROTATE) ========== */
+    .announcement-ticker-section {
+        background: var(--mbs-purple);
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        transition: background 0.5s ease;
+    }
+    
+    .announcement-badge {
+        background: white;
+        color: var(--mbs-purple);
+        font-size: 0.75rem;
+        letter-spacing: 1px;
+        white-space: nowrap;
+        transition: all 0.5s ease;
+    }
+    
+    .ticker-wrapper {
+        height: 30px;
+        color: white;
+    }
+    
+    .ticker-content {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        white-space: nowrap;
+        opacity: 0;
+        transform: translateX(100%);
+        animation: none;
+        font-size: 0.95rem;
+        line-height: 30px;
+        transition: opacity 0.5s ease;
+    }
+    
+    .ticker-content.active {
+        opacity: 1;
+        animation: tickerScroll 20s linear infinite;
+    }
+    
+    @keyframes tickerScroll {
+        0% {
+            transform: translateX(100%);
+        }
+        100% {
+            transform: translateX(-100%);
+        }
+    }
+    
+    /* Progress Ring Animation */
+    .announcement-progress-wrapper {
+        position: relative;
+        width: 40px;
+        height: 40px;
+    }
+    
+    .announcement-progress-ring {
+        transform: rotate(-90deg);
+    }
+    
+    .announcement-progress-circle {
+        stroke-dasharray: 100;
+        stroke-dashoffset: 100;
+        transition: stroke-dashoffset 0.1s linear;
+    }
+    
+    .announcement-timer {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: white;
+        font-weight: bold;
+        font-size: 0.9rem;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .ticker-content {
+            font-size: 0.85rem;
+            animation: tickerScroll 15s linear infinite;
+        }
+        
+        .announcement-badge {
+            font-size: 0.65rem;
+            padding: 0.3rem 0.6rem !important;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .ticker-content {
+            font-size: 0.8rem;
+            animation: tickerScroll 12s linear infinite;
+        }
+    }
 </style>
 
 <script>
@@ -695,6 +815,105 @@
             },
         });
     });
+
+        // ========== ANNOUNCEMENT TICKER AUTO-ROTATE ==========
+    <?php if (!empty($announcements) && count($announcements) > 1) : ?>
+    (function() {
+        const tickers = document.querySelectorAll('.ticker-content');
+        const section = document.querySelector('.announcement-ticker-section');
+        const badge = document.getElementById('announcementBadge');
+        const timer = document.getElementById('announcementTimer');
+        const progressCircle = document.getElementById('progressCircle');
+        
+        if (tickers.length === 0) return;
+        
+        let currentIndex = 0;
+        let countdown = 5; // Detik per pengumuman
+        let intervalId;
+        let countdownId;
+        
+        // Function to switch announcement
+        function switchAnnouncement() {
+            // Hide current
+            tickers[currentIndex].classList.remove('active');
+            
+            // Next index
+            currentIndex = (currentIndex + 1) % tickers.length;
+            
+            // Show next
+            const nextTicker = tickers[currentIndex];
+            nextTicker.classList.add('active');
+            
+            // Update background color by category
+            const bgClass = nextTicker.dataset.bgClass;
+            section.className = 'announcement-ticker-section py-2 ' + bgClass;
+            
+            // Update badge color
+            if (bgClass === 'bg-danger') {
+                badge.style.background = 'white';
+                badge.style.color = '#dc3545';
+            } else if (bgClass === 'bg-warning') {
+                badge.style.background = 'white';
+                badge.style.color = '#ffc107';
+            } else if (bgClass === 'bg-info') {
+                badge.style.background = 'white';
+                badge.style.color = '#0dcaf0';
+            } else {
+                badge.style.background = 'white';
+                badge.style.color = '#6c757d';
+            }
+            
+            // Reset countdown
+            countdown = 5;
+            if (timer) timer.textContent = countdown;
+            if (progressCircle) progressCircle.style.strokeDashoffset = 100;
+        }
+        
+        // Countdown timer
+        function startCountdown() {
+            countdownId = setInterval(() => {
+                countdown--;
+                if (timer) timer.textContent = countdown;
+                
+                // Update progress ring
+                if (progressCircle) {
+                    const offset = 100 - ((5 - countdown) / 5 * 100);
+                    progressCircle.style.strokeDashoffset = offset;
+                }
+                
+                if (countdown <= 0) {
+                    switchAnnouncement();
+                }
+            }, 1000);
+        }
+        
+        // Start auto-rotate
+        startCountdown();
+        
+        // Pause on hover (optional)
+        section.addEventListener('mouseenter', () => {
+            clearInterval(countdownId);
+        });
+        
+        section.addEventListener('mouseleave', () => {
+            countdown = 5;
+            if (timer) timer.textContent = countdown;
+            startCountdown();
+        });
+    })();
+    <?php endif; ?>
+            // Click to pause/resume
+        section.style.cursor = 'pointer';
+        section.addEventListener('click', () => {
+            if (countdownId) {
+                clearInterval(countdownId);
+                countdownId = null;
+                if (timer) timer.textContent = '⏸';
+            } else {
+                countdown = 5;
+                startCountdown();
+            }
+        });
 </script>
 
 <?= $this->endSection() ?>

@@ -62,6 +62,7 @@
         <h5 class="mb-0"><i class="bi bi-clock-history me-2"></i>Berita Terbaru</h5>
     </div>
     <div class="card-body">
+        <div class="table-responsive table-responsive-wrapper">
         <table class="table table-hover">
             <thead>
                 <tr>
@@ -82,6 +83,7 @@
                 <?php endforeach; ?>
             </tbody>
         </table>
+        </div>
     </div>
 </div>
 

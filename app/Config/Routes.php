@@ -8,7 +8,7 @@ use CodeIgniter\Router\RouteCollection;
 $routes->get('/', 'Home::index');
 
 // Route Admin (Grouping biar rapi)
-$routes->group('admin', function($routes) {
+$routes->group('admin', function ($routes) {
     // Login
     $routes->get('login', 'Admin\Auth::login');
     $routes->post('login/attempt', 'Admin\Auth::attemptLogin');
@@ -41,4 +41,13 @@ $routes->group('admin', function($routes) {
     $routes->get('schools/edit/(:num)', 'Admin\Schools::edit/$1');
     $routes->post('schools/update/(:num)', 'Admin\Schools::update/$1');
     $routes->get('schools/delete/(:num)', 'Admin\Schools::delete/$1');
+
+    // CRUD Announcements
+    $routes->get('announcements', 'Admin\Announcements::index');
+    $routes->get('announcements/create', 'Admin\Announcements::create');
+    $routes->post('announcements/store', 'Admin\Announcements::store');
+    $routes->get('announcements/edit/(:num)', 'Admin\Announcements::edit/$1');
+    $routes->post('announcements/update/(:num)', 'Admin\Announcements::update/$1');
+    $routes->get('announcements/delete/(:num)', 'Admin\Announcements::delete/$1');
+    $routes->post('announcements/toggle-active/(:num)', 'Admin\Announcements::toggleActive/$1');
 });
