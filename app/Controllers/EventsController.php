@@ -3,15 +3,18 @@
 namespace App\Controllers;
 
 use App\Models\EventModel;
+use App\Models\SettingModel; // Tambahkan Model Setting
 use CodeIgniter\Controller;
 
 class EventsController extends Controller
 {
     protected $eventModel;
+    protected $settingModel; // Tambahkan properti ini
 
     public function __construct()
     {
         $this->eventModel = new EventModel();
+        $this->settingModel = new SettingModel(); // Load Model Setting
         helper(['hijri', 'text', 'url']);
     }
 
@@ -20,14 +23,15 @@ class EventsController extends Controller
      */
     public function calendar()
     {
-        $data = [
-            'title' => 'Kalender Agenda',
-            'upcoming_events' => $this->eventModel
-                ->where('event_date >=', date('Y-m-d'))
-                ->orderBy('event_date', 'ASC')
-                ->limit(5)
-                ->findAll()
-        ];
+        // Ambil Settings agar layout tidak error
+        $data['site'] = $this->settingModel->getSiteSettings();
+        
+        $data['title'] = 'Kalender Agenda';
+        $data['upcoming_events'] = $this->eventModel
+            ->where('event_date >=', date('Y-m-d'))
+            ->orderBy('event_date', 'ASC')
+            ->limit(5)
+            ->findAll();
 
         return view('events/calendar', $data);
     }
@@ -41,18 +45,15 @@ class EventsController extends Controller
             $start = $this->request->getGet('start');
             $end = $this->request->getGet('end');
 
-            // Validasi parameter
             if (empty($start) || empty($end)) {
                 return $this->response->setJSON([]);
             }
 
-            $builder = $this->eventModel->builder();
-            $events = $builder
+            $events = $this->eventModel
                 ->where('event_date >=', $start)
                 ->where('event_date <=', $end)
                 ->orderBy('event_date', 'ASC')
-                ->get()
-                ->getResultArray();
+                ->findAll();
 
             $calendarEvents = [];
             foreach ($events as $event) {
@@ -78,7 +79,6 @@ class EventsController extends Controller
 
             return $this->response->setJSON($calendarEvents);
         } catch (\Exception $e) {
-            log_message('error', 'Error in getEvents: ' . $e->getMessage());
             return $this->response->setJSON([]);
         }
     }
@@ -94,10 +94,11 @@ class EventsController extends Controller
             throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
         }
 
-        $data = [
-            'title' => $event['title'],
-            'event' => $event
-        ];
+        // Ambil Settings agar layout tidak error saat buka detail
+        $data['site'] = $this->settingModel->getSiteSettings();
+        
+        $data['title'] = $event['title'];
+        $data['event'] = $event;
 
         return view('events/detail', $data);
     }

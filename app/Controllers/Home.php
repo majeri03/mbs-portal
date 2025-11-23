@@ -31,7 +31,7 @@ class Home extends BaseController
         $this->galleryModel = new GalleryModel();
         $this->teacherModel = new \App\Models\TeacherModel();
         $this->sliderModel = new SliderModel();
-        
+        helper(['youtube']);
     }
 
      public function index()

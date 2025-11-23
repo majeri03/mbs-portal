@@ -57,24 +57,34 @@ class Posts extends BaseController
 
         if ($thumbnail->isValid() && !$thumbnail->hasMoved()) {
             $thumbnailName = $thumbnail->getRandomName();
+            // 1. Pindahkan file original dulu
             $thumbnail->move('uploads/posts', $thumbnailName);
+            
+            // 2. KOMPRESI & RESIZE GAMBAR
+            // Path file yang baru diupload
+            $filePath = 'uploads/posts/' . $thumbnailName;
+            
+            // Panggil Service Image
+            $image = \Config\Services::image();
+            
+            $image->withFile($filePath)
+                  ->resize(1024, 1024, true, 'width') // Resize proporsional max lebar 1024px
+                  ->save($filePath, 80); // Simpan dengan kualitas 80% (Kompresi)
         }
 
-        // Generate Slug dari Judul
         $slug = url_title($this->request->getPost('title'), '-', true);
 
-        // Simpan ke Database
         $this->postModel->save([
             'school_id'    => $this->request->getPost('school_id') ?: null,
             'title'        => $this->request->getPost('title'),
             'slug'         => $slug,
-            'author'       => $this->request->getPost('author') ?: session()->get('full_name'), // AUTO-FILL dari user login
+            'author'       => $this->request->getPost('author') ?: session()->get('full_name'),
             'content'      => $this->request->getPost('content'),
             'thumbnail'    => $thumbnailName ? 'uploads/posts/' . $thumbnailName : null,
             'is_published' => 1,
         ]);
 
-        return redirect()->to('admin/posts')->with('success', 'Berita berhasil ditambahkan!');
+        return redirect()->to('admin/posts')->with('success', 'Berita berhasil ditambahkan & gambar dikompres!');
     }
 
     // Halaman Form Edit Berita
@@ -114,18 +124,26 @@ class Posts extends BaseController
                 unlink($post['thumbnail']);
             }
 
-            $thumbnailName = $thumbnail->getRandomName();
-            $thumbnail->move('uploads/posts', $thumbnailName);
-            $thumbnailName = 'uploads/posts/' . $thumbnailName;
+            $newName = $thumbnail->getRandomName();
+            $thumbnail->move('uploads/posts', $newName);
+            
+            // KOMPRESI GAMBAR BARU
+            $filePath = 'uploads/posts/' . $newName;
+            \Config\Services::image()
+                ->withFile($filePath)
+                ->resize(1024, 1024, true, 'width') // Max lebar 1024px
+                ->save($filePath, 80); // Kualitas 80%
+
+            $thumbnailName = 'uploads/posts/' . $newName;
         }
 
         $slug = url_title($this->request->getPost('title'), '-', true);
 
-            $this->postModel->update($id, [
+        $this->postModel->update($id, [
             'school_id' => $this->request->getPost('school_id') ?: null,
             'title'     => $this->request->getPost('title'),
             'slug'      => $slug,
-            'author'    => $this->request->getPost('author'), // Bisa diedit manual
+            'author'    => $this->request->getPost('author'),
             'content'   => $this->request->getPost('content'),
             'thumbnail' => $thumbnailName,
         ]);

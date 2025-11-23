@@ -51,6 +51,13 @@
             z-index: 1000;
             transition: all 0.3s;
             box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+
+            overflow-y: auto;
+            scrollbar-width: none;
+        }
+
+        .sidebar::-webkit-scrollbar {
+            display: none;
         }
 
         .sidebar-logo {
@@ -454,13 +461,18 @@
             <li><a href="<?= base_url('admin/posts') ?>" class="<?= ($current_segment == 'posts') ? 'active' : '' ?>">
                     <i class="bi bi-newspaper"></i> Kelola Berita
                 </a></li>
+            <li><a href="<?= base_url('admin/pages') ?>" class="<?= ($current_segment == 'pages') ? 'active' : '' ?>">
+                    <i class="bi bi-file-earmark-text"></i> Halaman Statis
+                </a></li>
             <li><a href="<?= base_url('admin/announcements') ?>" class="<?= str_contains(uri_string(), 'admin/announcements') ? 'active' : '' ?>">
-                <i class="bi bi-megaphone-fill"></i> Kelola Pengumuman
-            </a></li>
+                    <i class="bi bi-megaphone-fill"></i> Kelola Pengumuman
+                </a></li>
             <li><a href="<?= base_url('admin/schools') ?>" class="<?= ($current_segment == 'schools') ? 'active' : '' ?>">
                     <i class="bi bi-building"></i> Kelola Sekolah
                 </a></li>
-
+            <li><a href="<?= base_url('admin/teachers') ?>" class="<?= ($current_segment == 'teachers') ? 'active' : '' ?>">
+                    <i class="bi bi-people-fill"></i> Pimpinan Pondok
+                </a></li>
             <li><a href="<?= base_url('admin/events') ?>" class="<?= ($current_segment == 'events') ? 'active' : '' ?>">
                     <i class="bi bi-calendar-event"></i> Kelola Agenda
                 </a></li>

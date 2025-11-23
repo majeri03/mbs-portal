@@ -1,0 +1,140 @@
+<?php
+
+namespace App\Controllers\Admin;
+
+use App\Controllers\BaseController;
+use App\Models\GalleryModel;
+use App\Models\SchoolModel;
+
+class Galleries extends BaseController
+{
+    protected $galleryModel;
+    protected $schoolModel;
+
+    public function __construct()
+    {
+        $this->galleryModel = new GalleryModel();
+        $this->schoolModel = new SchoolModel();
+    }
+
+    public function index()
+    {
+        $data['title'] = 'Kelola Galeri Foto';
+        // Join dengan tabel sekolah untuk menampilkan nama sekolah
+        $data['galleries'] = $this->galleryModel
+            ->select('galleries.*, schools.name as school_name')
+            ->join('schools', 'schools.id = galleries.school_id', 'left')
+            ->orderBy('galleries.created_at', 'DESC')
+            ->findAll();
+
+        return view('admin/galleries/index', $data);
+    }
+
+    public function create()
+    {
+        $data['title'] = 'Upload Foto Baru';
+        $data['schools'] = $this->schoolModel->findAll();
+        return view('admin/galleries/create', $data);
+    }
+
+    public function store()
+    {
+        if (!$this->validate([
+            'title' => 'required|min_length[3]',
+            'image' => 'uploaded[image]|max_size[image,3072]|is_image[image]|mime_in[image,image/jpg,image/jpeg,image/png]',
+            'category' => 'required'
+        ])) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        // Upload Image
+        $file = $this->request->getFile('image');
+        $fileName = $file->getRandomName();
+        $file->move('uploads/galleries', $fileName);
+
+        // KOMPRESI GAMBAR GALERI
+        // Kita set max lebar 1200px agar tetap tajam di layar besar tapi file kecil
+        $filePath = 'uploads/galleries/' . $fileName;
+        \Config\Services::image()
+            ->withFile($filePath)
+            ->resize(1200, 1200, true, 'width')
+            ->save($filePath, 85); // Kualitas 85% (sedikit lebih tinggi dari berita)
+
+        $this->galleryModel->save([
+            'school_id' => $this->request->getPost('school_id') ?: null,
+            'title'     => $this->request->getPost('title'),
+            'category'  => $this->request->getPost('category'),
+            'image_url' => 'uploads/galleries/' . $fileName,
+        ]);
+
+        return redirect()->to('admin/galleries')->with('success', 'Foto berhasil diupload & dioptimalkan!');
+    }
+
+    public function edit($id)
+    {
+        $data['gallery'] = $this->galleryModel->find($id);
+        if (!$data['gallery']) {
+            return redirect()->to('admin/galleries')->with('error', 'Data tidak ditemukan');
+        }
+        
+        $data['title'] = 'Edit Foto';
+        $data['schools'] = $this->schoolModel->findAll();
+        return view('admin/galleries/edit', $data);
+    }
+
+    public function update($id)
+    {
+        $gallery = $this->galleryModel->find($id);
+        if (!$gallery) return redirect()->to('admin/galleries');
+
+        if (!$this->validate([
+            'title' => 'required|min_length[3]',
+            'category' => 'required'
+        ])) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $imageUrl = $gallery['image_url'];
+        $file = $this->request->getFile('image');
+
+        // Cek jika ada gambar baru
+        if ($file && $file->isValid() && !$file->hasMoved()) {
+            if (file_exists($gallery['image_url'])) {
+                unlink($gallery['image_url']);
+            }
+            $fileName = $file->getRandomName();
+            $file->move('uploads/galleries', $fileName);
+            
+            // KOMPRESI GAMBAR BARU
+            $filePath = 'uploads/galleries/' . $fileName;
+            \Config\Services::image()
+                ->withFile($filePath)
+                ->resize(1200, 1200, true, 'width')
+                ->save($filePath, 85);
+
+            $imageUrl = 'uploads/galleries/' . $fileName;
+        }
+
+        $this->galleryModel->update($id, [
+            'school_id' => $this->request->getPost('school_id') ?: null,
+            'title'     => $this->request->getPost('title'),
+            'category'  => $this->request->getPost('category'),
+            'image_url' => $imageUrl,
+        ]);
+
+        return redirect()->to('admin/galleries')->with('success', 'Data galeri berhasil diperbarui!');
+    }
+
+    public function delete($id)
+    {
+        $gallery = $this->galleryModel->find($id);
+        if ($gallery) {
+            if (file_exists($gallery['image_url'])) {
+                unlink($gallery['image_url']);
+            }
+            $this->galleryModel->delete($id);
+            return redirect()->to('admin/galleries')->with('success', 'Foto berhasil dihapus!');
+        }
+        return redirect()->to('admin/galleries')->with('error', 'Gagal menghapus data.');
+    }
+}

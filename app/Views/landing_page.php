@@ -96,11 +96,12 @@
 
                     <!-- Dropdown Filter -->
                     <div class="mb-4">
-                        <select class="form-select form-select-lg rounded-pill fs-6 border-secondary text-secondary">
-                            <option selected>-- Pilih Kategori --</option>
-                            <option value="1">Berita Sekolah</option>
-                            <option value="2">Prestasi Santri</option>
-                            <option value="3">Artikel Islami</option>
+                        <select class="form-select form-select-lg rounded-pill fs-6 border-secondary text-secondary" 
+                                onchange="if(this.value) window.location.href='<?= base_url('news?category=') ?>'+this.value">
+                            <option selected disabled>-- Pilih Kategori / Cari --</option>
+                            <option value="Prestasi">Prestasi</option>
+                            <option value="Kegiatan">Kegiatan</option>
+                            <option value="Pengumuman">Pengumuman</option>
                         </select>
                     </div>
 
@@ -114,7 +115,7 @@
                         </button>
                     </div>
 
-                    <a href="#" class="btn btn-outline-primary rounded-pill px-4 w-100 w-md-auto fw-bold btn-view-all">LIHAT SEMUA</a>
+                    <a href="<?= base_url('news') ?>" class="btn btn-outline-primary rounded-pill px-4 w-100 w-md-auto fw-bold btn-view-all">LIHAT SEMUA</a>
                 </div>
 
                 <!-- KOLOM KANAN: Slider Berita -->
@@ -139,7 +140,7 @@
                                         <div class="d-flex flex-column h-100 px-1">
                                             <!-- Judul -->
                                             <h5 class="fw-bold mb-2">
-                                                <a href="#" class="text-decoration-none text-dark stretched-link hover-purple text-clamp-2">
+                                                <a href="<?= base_url('news/' . $news['slug']) ?>" class="text-decoration-none text-dark stretched-link hover-purple text-clamp-2">
                                                     <?= esc($news['title']) ?>
                                                 </a>
                                             </h5>
@@ -408,7 +409,7 @@
     <div class="container">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h3 class="fw-bold" style="color: var(--mbs-purple);">Agenda Mendatang</h3>
-            <a href="#" class="text-decoration-none fw-bold" style="color: var(--mbs-purple);">Lihat Kalender <i class="bi bi-arrow-right"></i></a>
+            <a href="<?= base_url('events') ?>" class="text-decoration-none fw-bold" style="color: var(--mbs-purple);">Lihat Kalender <i class="bi bi-arrow-right"></i></a>
         </div>
 
         <div class="row g-3">
@@ -464,51 +465,69 @@
         </div>
 
         <div class="text-center mt-5">
-            <a href="#" class="btn btn-outline-secondary rounded-pill px-4">Lihat Galeri Lengkap <i class="bi bi-arrow-right"></i></a>
+            <a href="<?= base_url('gallery') ?>" class="btn btn-outline-secondary rounded-pill px-4">Lihat Galeri Lengkap <i class="bi bi-arrow-right"></i></a>
         </div>
     </div>
 </section>
 
 <!-- SECTION 8: PROFIL SINGKAT & VIDEO (SAMBUTAN DIREKTUR) -->
 <section class="py-5 position-relative text-white" style="background-color: var(--mbs-purple);">
-    <!-- Background Pattern/Decoration -->
     <div class="position-absolute top-0 end-0 p-5 opacity-10 d-none d-md-block">
         <i class="bi bi-quote" style="font-size: 15rem; color: white;"></i>
     </div>
 
     <div class="container py-5">
         <div class="row align-items-center">
-            <!-- Kolom Kiri: Text Sambutan -->
             <div class="col-lg-6 mb-5 mb-lg-0 z-index-2 position-relative">
                 <span class="badge bg-warning text-dark mb-3 px-3 py-2">KENAL LEBIH DEKAT</span>
-                <h2 class="display-5 fw-bold mb-4">Mendidik dengan Hati, <br>Mengabdi untuk Negeri.</h2>
+                
+                <h2 class="display-5 fw-bold mb-4">
+                    <?= esc($site['profile_title'] ?? 'Mendidik dengan Hati, Mengabdi untuk Negeri.') ?>
+                </h2>
+                
                 <p class="lead opacity-75 mb-4">
-                    "MBS berkomitmen mencetak kader ulama yang intelek dan intelektual yang ulama. Kami memadukan kedalaman ilmu agama dengan wawasan sains modern."
+                    "<?= esc($site['profile_description'] ?? 'Selamat datang di MBS Boarding School...') ?>"
                 </p>
 
                 <div class="d-flex align-items-center mt-4">
-                    <!-- Foto Direktur (Placeholder) -->
-                    <img src="https://ui-avatars.com/api/?name=Direktur+MBS&background=random&size=128" class="rounded-circle border border-3 border-white me-3" width="60" alt="Direktur">
+                    <?php 
+                        $directorPhoto = $site['director_photo'] ?? 'https://ui-avatars.com/api/?name=Direktur&background=random&size=128';
+                        // Cek jika foto lokal atau URL luar
+                        if (!filter_var($directorPhoto, FILTER_VALIDATE_URL)) {
+                            $directorPhoto = base_url($directorPhoto);
+                        }
+                    ?>
+                    <img src="<?= $directorPhoto ?>" 
+                         class="rounded-circle border border-3 border-white me-3 object-fit-cover" 
+                         width="60" height="60" 
+                         alt="Direktur">
+                    
                     <div>
-                        <h5 class="fw-bold mb-0">Ustadz Fulan, Lc., M.Ag.</h5>
-                        <small class="opacity-75">Direktur Pesantren MBS</small>
+                        <h5 class="fw-bold mb-0"><?= esc($site['director_name'] ?? 'Nama Direktur') ?></h5>
+                        <small class="opacity-75"><?= esc($site['director_label'] ?? 'Pimpinan Pondok') ?></small>
                     </div>
                 </div>
             </div>
 
-            <!-- Kolom Kanan: Video Embed -->
             <div class="col-lg-6 position-relative z-index-2">
                 <div class="ratio ratio-16x9 rounded-4 shadow-lg border border-5 border-white overflow-hidden" style="transform: rotate(2deg);">
-                    <!-- Ambil link youtube dari database settings jika ada, atau default -->
                     <?php
-                    // Logic sederhana ubah link watch jadi embed
-                    $yt_url = $site['youtube_url'] ?? 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
-                    // (Note: Di real project nanti kita buat helper function untuk parsing ID youtube yang benar)
-                    // Untuk dummy, kita hardcode iframe dulu agar tampil rapi
+                        // Gunakan helper untuk convert link ke embed
+                        $videoUrl = $site['profile_video_url'] ?? '';
+                        $embedUrl = !empty($videoUrl) ? get_youtube_embed($videoUrl) : '';
                     ?>
-                    <iframe src="https://www.youtube.com/embed/EngW7tLk6R8?si=dummy" title="Profil MBS" allowfullscreen></iframe>
+                    
+                    <?php if (!empty($embedUrl)) : ?>
+                        <iframe src="<?= $embedUrl ?>" title="Profil MBS" allowfullscreen></iframe>
+                    <?php else : ?>
+                        <div class="d-flex align-items-center justify-content-center bg-dark h-100">
+                            <div class="text-center">
+                                <i class="bi bi-play-circle fs-1 text-white opacity-50"></i>
+                                <p class="text-white mt-2">Video Profil Belum Diatur</p>
+                            </div>
+                        </div>
+                    <?php endif; ?>
                 </div>
-                <!-- Dekorasi kotak di belakang video -->
                 <div class="position-absolute top-0 start-0 w-100 h-100 bg-warning rounded-4" style="z-index: -1; transform: rotate(-3deg) scale(0.95);"></div>
             </div>
         </div>

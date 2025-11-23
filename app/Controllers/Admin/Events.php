@@ -4,7 +4,6 @@ namespace App\Controllers\Admin;
 
 use App\Controllers\BaseController;
 use App\Models\EventModel;
-use CodeIgniter\HTTP\ResponseInterface;
 
 class Events extends BaseController
 {
@@ -65,8 +64,8 @@ class Events extends BaseController
         $title = $this->request->getPost('title');
         $slug = url_title($title, '-', true) . '-' . time();
 
+        // PENTING: Hanya kirim field yang ada di allowedFields
         $data = [
-            'school_id' => $this->request->getPost('school_id') ?: null,
             'title' => $title,
             'slug' => $slug,
             'event_date' => $this->request->getPost('event_date'),
@@ -76,11 +75,23 @@ class Events extends BaseController
             'description' => $this->request->getPost('description') ?: null
         ];
 
-        if ($this->eventModel->insert($data)) {
-            return redirect()->to('/admin/events')->with('success', 'Agenda berhasil ditambahkan!');
+        // Tambahkan school_id jika ada
+        $schoolId = $this->request->getPost('school_id');
+        if (!empty($schoolId)) {
+            $data['school_id'] = $schoolId;
         }
 
-        return redirect()->back()->withInput()->with('error', 'Gagal menambahkan agenda.');
+        try {
+            if ($this->eventModel->skipValidation(true)->insert($data)){
+                return redirect()->to('/admin/events')->with('success', 'Agenda berhasil ditambahkan!');
+            }
+            
+            // Tampilkan error dari model
+            return redirect()->back()->withInput()->with('errors', $this->eventModel->errors());
+        } catch (\Exception $e) {
+            log_message('error', 'Error inserting event: ' . $e->getMessage());
+            return redirect()->back()->withInput()->with('error', 'Gagal menambahkan agenda: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -137,7 +148,6 @@ class Events extends BaseController
         }
 
         $data = [
-            'school_id' => $this->request->getPost('school_id') ?: null,
             'title' => $title,
             'slug' => $slug,
             'event_date' => $this->request->getPost('event_date'),
@@ -147,11 +157,22 @@ class Events extends BaseController
             'description' => $this->request->getPost('description') ?: null
         ];
 
-        if ($this->eventModel->update($id, $data)) {
-            return redirect()->to('/admin/events')->with('success', 'Agenda berhasil diupdate!');
+        // Tambahkan school_id jika ada
+        $schoolId = $this->request->getPost('school_id');
+        if (!empty($schoolId)) {
+            $data['school_id'] = $schoolId;
         }
 
-        return redirect()->back()->withInput()->with('error', 'Gagal mengupdate agenda.');
+        try {
+            if ($this->eventModel->skipValidation(true)->update($id, $data)) {
+                return redirect()->to('/admin/events')->with('success', 'Agenda berhasil diupdate!');
+            }
+
+            return redirect()->back()->withInput()->with('errors', $this->eventModel->errors());
+        } catch (\Exception $e) {
+            log_message('error', 'Error updating event: ' . $e->getMessage());
+            return redirect()->back()->withInput()->with('error', 'Gagal mengupdate agenda: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -181,7 +202,6 @@ class Events extends BaseController
             $start = $this->request->getGet('start');
             $end = $this->request->getGet('end');
 
-            // Validasi parameter
             if (empty($start) || empty($end)) {
                 return $this->response->setJSON([]);
             }

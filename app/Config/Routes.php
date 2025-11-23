@@ -59,10 +59,47 @@ $routes->group('admin', function ($routes) {
     $routes->post('events/update/(:num)', 'Admin\Events::update/$1');
     $routes->get('events/delete/(:num)', 'Admin\Events::delete/$1');
     $routes->get('events/getEvents', 'Admin\Events::getEvents');
+
+    // CRUD Teachers (Pimpinan Pondok)
+    $routes->get('teachers', 'Admin\Teachers::index');
+    $routes->get('teachers/create', 'Admin\Teachers::create');
+    $routes->post('teachers/store', 'Admin\Teachers::store');
+    $routes->get('teachers/edit/(:num)', 'Admin\Teachers::edit/$1');
+    $routes->post('teachers/update/(:num)', 'Admin\Teachers::update/$1');
+    $routes->get('teachers/delete/(:num)', 'Admin\Teachers::delete/$1');
+
+    // CRUD Galleries
+    $routes->get('galleries', 'Admin\Galleries::index');
+    $routes->get('galleries/create', 'Admin\Galleries::create');
+    $routes->post('galleries/store', 'Admin\Galleries::store');
+    $routes->get('galleries/edit/(:num)', 'Admin\Galleries::edit/$1');
+    $routes->post('galleries/update/(:num)', 'Admin\Galleries::update/$1');
+    $routes->get('galleries/delete/(:num)', 'Admin\Galleries::delete/$1');
+
+    // Settings
+    $routes->get('settings', 'Admin\Settings::index');
+    $routes->post('settings/update', 'Admin\Settings::update');
+
+    // CRUD Pages
+    $routes->get('pages', 'Admin\Pages::index');
+    $routes->get('pages/create', 'Admin\Pages::create');
+    $routes->post('pages/store', 'Admin\Pages::store');
+    $routes->get('pages/edit/(:num)', 'Admin\Pages::edit/$1');
+    $routes->post('pages/update/(:num)', 'Admin\Pages::update/$1');
+    $routes->get('pages/delete/(:num)', 'Admin\Pages::delete/$1');
 });
 
 // Public Routes untuk Kalender
-$routes->get('events', 'Events::calendar');
-$routes->get('events/calendar', 'Events::calendar');
-$routes->get('events/getEvents', 'Events::getEvents');
-$routes->get('events/(:segment)', 'Events::show/$1');
+$routes->get('events', 'EventsController::calendar');
+$routes->get('events/calendar', 'EventsController::calendar');
+$routes->get('events/getEvents', 'EventsController::getEvents');
+$routes->get('events/(:segment)', 'EventsController::show/$1');
+
+// Route Galeri
+$routes->get('gallery', 'GalleryController::index');
+
+$routes->get('page/(:segment)', 'PageController::show/$1');
+
+// Route Berita
+$routes->get('news', 'NewsController::index');
+$routes->get('news/(:segment)', 'NewsController::show/$1');

@@ -6,51 +6,68 @@ use CodeIgniter\Model;
 
 class EventModel extends Model
 {
-    protected $table            = 'events';
-    protected $primaryKey       = 'id';
+    protected $table = 'events';
+    protected $primaryKey = 'id';
     protected $useAutoIncrement = true;
-    protected $returnType       = 'array';
-    protected $useSoftDeletes   = false;
-    protected $protectFields    = true;
-    protected $allowedFields    = [
-        'school_id', 
-        'title', 
-        'slug', 
-        'event_date', 
-        'time_start', 
-        'time_end', 
-        'location', 
+    protected $returnType = 'array';
+    protected $useSoftDeletes = false;
+    protected $protectFields = true;
+    
+    // PASTIKAN nama kolom sesuai dengan tabel database
+    protected $allowedFields = [
+        'school_id',
+        'title',
+        'slug',
+        'event_date',
+        'time_start',
+        'time_end',
+        'location',
         'description'
     ];
 
-    protected bool $allowEmptyInserts = false;
-    protected bool $updateOnlyChanged = true;
-
     // Dates
     protected $useTimestamps = true;
-    protected $dateFormat    = 'datetime';
-    protected $createdField  = 'created_at';
-    protected $updatedField  = false;
-    protected $deletedField  = 'deleted_at';
+    protected $dateFormat = 'datetime';
+    protected $createdField = 'created_at';
+    protected $updatedField = 'updated_at';
+    protected $deletedField = 'deleted_at';
 
     // Validation
     protected $validationRules = [
-        'title'      => 'required|min_length[3]|max_length[255]',
-        'slug'       => 'required|max_length[255]',
+        'title' => 'required|min_length[3]|max_length[255]',
+        'slug' => 'required|is_unique[events.slug,id,{id}]',
         'event_date' => 'required|valid_date'
     ];
 
     protected $validationMessages = [
         'title' => [
             'required' => 'Judul agenda harus diisi',
-            'min_length' => 'Judul agenda minimal 3 karakter',
-            'max_length' => 'Judul agenda maksimal 255 karakter'
+            'min_length' => 'Judul minimal 3 karakter',
+            'max_length' => 'Judul maksimal 255 karakter'
+        ],
+        'slug' => [
+            'required' => 'Slug harus diisi',
+            'is_unique' => 'Slug sudah digunakan'
         ],
         'event_date' => [
-            'required' => 'Tanggal kegiatan harus diisi',
+            'required' => 'Tanggal agenda harus diisi',
             'valid_date' => 'Format tanggal tidak valid'
         ]
     ];
+
+    protected $skipValidation = false;
+    protected $cleanValidationRules = true;
+
+    // Callbacks
+    protected $allowCallbacks = true;
+    protected $beforeInsert = [];
+    protected $afterInsert = [];
+    protected $beforeUpdate = [];
+    protected $afterUpdate = [];
+    protected $beforeFind = [];
+    protected $afterFind = [];
+    protected $beforeDelete = [];
+    protected $afterDelete = [];
 
     /**
      * Get upcoming events
