@@ -32,7 +32,7 @@
             <div class="social-icons">
                 <a href="<?= esc($site['facebook_url']) ?>" class="text-white me-2"><i class="bi bi-facebook"></i></a>
                 <a href="<?= esc($site['instagram_url']) ?>" class="text-white me-2"><i class="bi bi-instagram"></i></a>
-                <a href="<?= esc($site['youtube_url']) ?>" class="text-white"><i class="bi bi-youtube"></i></a>
+                <a href="<?= esc($site['youtube_url']) ?>" class="text-white me-2"><i class="bi bi-youtube"></i></a>
                 <?php if (!empty($site['tiktok_url'])): ?>
                     <a href="<?= esc($site['tiktok_url']) ?>" class="text-white"><i class="bi bi-tiktok"></i></a>
                 <?php endif; ?>

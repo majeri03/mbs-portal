@@ -12,6 +12,7 @@
 
 <div class="card border-0 shadow-sm">
     <div class="card-body">
+        <div class="table-responsive">
         <table class="table table-hover">
             <thead>
                 <tr><th>Judul Halaman</th><th>Link Slug</th><th>Last Update</th><th>Aksi</th></tr>
@@ -30,6 +31,7 @@
                 <?php endforeach; ?>
             </tbody>
         </table>
+        </div>
     </div>
 </div>
 <?= $this->endSection() ?>

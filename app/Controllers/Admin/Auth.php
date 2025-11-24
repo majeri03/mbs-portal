@@ -4,7 +4,7 @@ namespace App\Controllers\Admin;
 
 use App\Controllers\BaseController;
 use App\Models\UserModel;
-
+use Config\Services;
 class Auth extends BaseController
 {
     protected $userModel;
@@ -12,7 +12,7 @@ class Auth extends BaseController
     public function __construct()
     {
         $this->userModel = new UserModel();
-        helper('form'); // Helper untuk form validation
+        helper(['form', 'cookie']);
     }
 
     // Halaman Login
@@ -32,6 +32,7 @@ class Auth extends BaseController
         $rules = [
             'username' => 'required',
             'password' => 'required|min_length[6]',
+            
         ];
 
         if (!$this->validate($rules)) {
@@ -40,7 +41,7 @@ class Auth extends BaseController
 
         $username = $this->request->getPost('username');
         $password = $this->request->getPost('password');
-
+        $remember = $this->request->getPost('remember');
         $result = $this->userModel->verifyLogin($username, $password);
 
         // CEK: Apakah return berupa array error (akun terkunci atau password salah dengan info)
@@ -58,7 +59,16 @@ class Auth extends BaseController
                 'role'       => $result['role'],
                 'logged_in'  => true,
             ]);
-
+            if ($remember) {
+                // Ambil service encrypter (otomatis pakai key dari .env)
+                $encrypter = Services::encrypter();
+                
+                // Enkripsi ID User
+                $encryptedId = bin2hex($encrypter->encrypt($result['id']));
+                
+                // Simpan ke Cookie 'mbs_remember' selama 30 hari
+                set_cookie('mbs_remember', $encryptedId, 30 * 24 * 60 * 60);
+            }
             return redirect()->to('/admin/dashboard')->with('success', 'Selamat datang, ' . esc($result['full_name']) . '!');
         }
 
@@ -69,6 +79,7 @@ class Auth extends BaseController
     // Logout
     public function logout()
     {
+        delete_cookie('mbs_remember');
         session()->destroy();
         return redirect()->to('/admin/login')->with('success', 'Anda telah logout.');
     }

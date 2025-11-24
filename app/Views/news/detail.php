@@ -14,7 +14,7 @@
             </nav>
 
             <span class="badge bg-purple mb-2"><?= esc($post['school_name'] ?? 'Informasi Umum') ?></span>
-            <h1 class="fw-bold mb-3 display-6"><?= esc($post['title']) ?></h1>
+            <h1 class="fw-bold mb-3 display-6 text-break"><?= esc($post['title']) ?></h1>
             
             <div class="d-flex align-items-center text-muted small mb-4 border-bottom pb-3">
                 <span class="me-3"><i class="bi bi-calendar3 me-1"></i> <?= date('d M Y', strtotime($post['created_at'])) ?></span>
@@ -24,7 +24,7 @@
 
             <img src="<?= base_url($post['thumbnail']) ?>" class="w-100 rounded-4 mb-4 shadow-sm" alt="Thumbnail">
 
-            <div class="article-content lh-lg text-dark">
+            <div class="article-content lh-lg text-dark text-break">
                 <?= $post['content'] ?> </div>
             
             <div class="mt-5 pt-4 border-top">
