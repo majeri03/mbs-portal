@@ -57,6 +57,7 @@ class Auth extends BaseController
                 'username'   => $result['username'],
                 'full_name'  => $result['full_name'],
                 'role'       => $result['role'],
+                'school_id'  => $result['school_id'],
                 'logged_in'  => true,
             ]);
             if ($remember) {

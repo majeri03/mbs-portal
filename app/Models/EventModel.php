@@ -121,4 +121,29 @@ class EventModel extends Model
                     ->orderBy('event_date', 'DESC')
                     ->findAll();
     }
+
+    /**
+     * Ambil Agenda Berdasarkan Konteks Sekolah
+     * * @param int|null $schoolId ID Sekolah (1=MTs, 2=MA, dll). NULL = Web Utama.
+     * @param int $limit Jumlah data
+     */
+    public function getEventsByContext($schoolId = null, $limit = 5)
+    {
+        $builder = $this->where('event_date >=', date('Y-m-d'));
+
+        if ($schoolId === null) {
+            // WEB UTAMA: Tampilkan SEMUA agenda (Umum + Sekolah)
+            // Tidak ada filter school_id, jadi semua muncul.
+        } else {
+            // WEB SEKOLAH: Tampilkan agenda Sekolah Tersebut ATAU Agenda Umum (NULL)
+            $builder->groupStart()
+                    ->where('school_id', $schoolId)
+                    ->orWhere('school_id', null)
+                    ->groupEnd();
+        }
+
+        return $builder->orderBy('event_date', 'ASC')
+                       ->limit($limit)
+                       ->findAll();
+    }
 }

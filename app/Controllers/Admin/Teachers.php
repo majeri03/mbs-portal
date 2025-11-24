@@ -2,10 +2,10 @@
 
 namespace App\Controllers\Admin;
 
-use App\Controllers\BaseController;
+use App\Controllers\Admin\BaseAdminController;
 use App\Models\TeacherModel;
 
-class Teachers extends BaseController
+class Teachers extends BaseAdminController
 {
     protected $teacherModel;
 
@@ -18,7 +18,10 @@ class Teachers extends BaseController
     public function index()
     {
         $data['title'] = 'Kelola Pimpinan Pondok';
-        $data['teachers'] = $this->teacherModel->orderBy('order_position', 'ASC')->findAll();
+        $query = $this->filterBySchool($this->teacherModel);
+        $data['teachers'] = $query->orderBy('is_leader', 'DESC') // Leader di atas
+                                  ->orderBy('order_position', 'ASC') // Lalu urutkan posisi
+                                  ->findAll();
         
         return view('admin/teachers/index', $data);
     }
@@ -53,10 +56,11 @@ class Teachers extends BaseController
         }
 
         $this->teacherModel->save([
+            'school_id'      => $this->mySchoolId, 
             'name'           => $this->request->getPost('name'),
             'position'       => $this->request->getPost('position'),
             'photo'          => $photoUrl,
-            'is_leader'      => 1, // Default tampil di depan
+            'is_leader'      => $this->request->getPost('is_leader') ? 1 : 0,
             'order_position' => $this->request->getPost('order_position') ?: 99,
         ]);
 
@@ -65,22 +69,23 @@ class Teachers extends BaseController
 
     // Form Edit
     public function edit($id)
-    {
-        $data['teacher'] = $this->teacherModel->find($id);
+    {   
+        $teacher = $this->filterBySchool($this->teacherModel)->find($id);
+        $data['teacher'] = $teacher;
         if (!$data['teacher']) {
             return redirect()->to('admin/teachers')->with('error', 'Data tidak ditemukan!');
         }
         
-        $data['title'] = 'Edit Pimpinan';
+        $data['title'] = 'Edit Data';
         return view('admin/teachers/edit', $data);
     }
 
     // Proses Update
     public function update($id)
-    {
-        $teacher = $this->teacherModel->find($id);
-        if (!$teacher) {
-            return redirect()->to('admin/teachers')->with('error', 'Data tidak ditemukan!');
+    {   
+        $exists = $this->filterBySchool($this->teacherModel)->find($id);;
+        if (!$exists) {
+            return redirect()->to('admin/teachers')->with('error', 'Akses ditolak!');
         }
 
         // Validasi
@@ -92,7 +97,7 @@ class Teachers extends BaseController
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
 
-        $photoUrl = $teacher['photo'];
+        $photoUrl = $exists['photo'];
         
         // Cek jika ada upload foto baru
         $filePhoto = $this->request->getFile('photo');
@@ -111,6 +116,7 @@ class Teachers extends BaseController
             'name'           => $this->request->getPost('name'),
             'position'       => $this->request->getPost('position'),
             'photo'          => $photoUrl,
+            'is_leader'      => $this->request->getPost('is_leader') ? 1 : 0,
             'order_position' => $this->request->getPost('order_position'),
         ]);
 

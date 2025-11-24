@@ -7,6 +7,33 @@ use CodeIgniter\Router\RouteCollection;
  */
 $routes->get('/', 'Home::index');
 
+// 2. WEB SEKOLAH (Modular)
+// Mengarah ke Module masing-masing
+// GROUP ROUTE KHUSUS MTS
+$routes->group('mts', ['namespace' => 'Modules\Mts\Controllers'], function($routes) {
+    $routes->get('/', 'Home::index');
+    
+    // Halaman Statis (Profil, Sejarah, dll)
+    $routes->get('halaman/(:segment)', 'Page::show/$1');
+    
+    // Berita
+    $routes->get('kabar', 'News::index');
+    $routes->get('kabar/(:segment)', 'News::show/$1');
+    
+    // Agenda
+    // Route Agenda
+    $routes->get('agenda', 'Events::index');          // Daftar Agenda
+    $routes->get('agenda/(:segment)', 'Events::show/$1'); // Detail Agenda
+});
+
+$routes->group('ma', ['namespace' => 'Modules\Ma\Controllers'], function($routes) {
+    $routes->get('/', 'Home::index'); // Diakses via: mbs.sch.id/ma
+});
+
+$routes->group('smk', ['namespace' => 'Modules\Smk\Controllers'], function($routes) {
+    $routes->get('/', 'Home::index'); // Diakses via: mbs.sch.id/smk
+});
+
 // Route Admin (Grouping biar rapi)
 $routes->group('admin', function ($routes) {
     // Login
@@ -87,6 +114,14 @@ $routes->group('admin', function ($routes) {
     $routes->get('pages/edit/(:num)', 'Admin\Pages::edit/$1');
     $routes->post('pages/update/(:num)', 'Admin\Pages::update/$1');
     $routes->get('pages/delete/(:num)', 'Admin\Pages::delete/$1');
+
+    // CRUD Programs Pendidikan
+    $routes->get('programs', 'Admin\Programs::index');
+    $routes->get('programs/create', 'Admin\Programs::create');
+    $routes->post('programs/store', 'Admin\Programs::store');
+    $routes->get('programs/edit/(:num)', 'Admin\Programs::edit/$1');
+    $routes->post('programs/update/(:num)', 'Admin\Programs::update/$1');
+    $routes->get('programs/delete/(:num)', 'Admin\Programs::delete/$1');
 });
 
 // Public Routes untuk Kalender

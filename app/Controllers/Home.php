@@ -39,16 +39,26 @@ class Home extends BaseController
         // 1. Settings (Footer/Header)
         $data['site'] = $this->settingModel->getSiteSettings();
         $data['title'] = "Beranda - " . ($data['site']['site_name'] ?? 'MBS Portal');
-        $data['sliders'] = $this->sliderModel->getActiveSliders();
+        $data['sliders'] = $this->sliderModel->where('school_id', null)->where('is_active', 1)->orderBy('order_position', 'ASC')->findAll();
         // 2. Data Sekolah (Untuk 3 Kartu Utama)
         $data['schools'] = $this->schoolModel->findAll();
         
         // 3. Pengumuman Aktif (Untuk Running Text)
-        $data['announcements'] = $this->announcementModel->getActiveAnnouncements();
+        $data['announcements'] = $this->announcementModel->where('school_id', null)->where('is_active', 1)->findAll();
 
-        $data['latest_news'] = $this->postModel->getLatestNews(3);
-        $data['upcoming_events'] = $this->eventModel->getUpcomingEvents(4);
-        $data['latest_photos'] = $this->galleryModel->getLatestPhotos(8);
+        $data['latest_news'] = $this->postModel->select('posts.*, schools.name as school_name')
+                    ->join('schools', 'schools.id = posts.school_id', 'left')
+                    ->where('posts.school_id', null) // <--- FILTER: HANYA YANG ID SEKOLAHNYA KOSONG
+                    ->where('is_published', 1)
+                    ->orderBy('posts.created_at', 'DESC')
+                    ->findAll(3);
+        $data['upcoming_events'] = $this->eventModel
+                    ->where('school_id', null) // <--- FILTER
+                    ->where('event_date >=', date('Y-m-d'))
+                    ->orderBy('event_date', 'ASC')
+                    ->limit(4)
+                    ->findAll();
+        $data['latest_photos'] = $this->galleryModel->where('school_id', null)->orderBy('created_at', 'DESC')->findAll(8);
         $data['leaders'] = $this->teacherModel->getLeaders();
         return view('landing_page', $data);
     }

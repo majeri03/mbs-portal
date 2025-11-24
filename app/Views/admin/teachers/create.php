@@ -34,7 +34,17 @@
                             <input type="number" name="order_position" class="form-control" value="99">
                         </div>
                     </div>
-
+                    <div class="mb-4 p-3 border rounded bg-light">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="is_leader" value="1" id="isLeaderSwitch">
+                            <label class="form-check-label fw-bold text-purple" for="isLeaderSwitch">
+                                Jadikan Kepala Sekolah / Pimpinan?
+                            </label>
+                        </div>
+                        <small class="text-muted d-block mt-1">
+                            Jika diaktifkan, foto akan tampil besar paling atas (terpisah dari slider guru).
+                        </small>
+                    </div>
                     <button type="submit" class="btn btn-primary w-100"><i class="bi bi-save me-2"></i> Simpan Data</button>
                 </form>
             </div>

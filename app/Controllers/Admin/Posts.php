@@ -2,11 +2,11 @@
 
 namespace App\Controllers\Admin;
 
-use App\Controllers\BaseController;
+use App\Controllers\Admin\BaseAdminController;
 use App\Models\PostModel;
 use App\Models\SchoolModel;
 
-class Posts extends BaseController
+class Posts extends BaseAdminController
 {
     protected $postModel;
     protected $schoolModel;
@@ -21,6 +21,7 @@ class Posts extends BaseController
     public function index()
     {
         $data['title'] = 'Kelola Berita';
+        $query = $this->filterBySchool($this->postModel);
         $data['posts'] = $this->postModel->select('posts.*, schools.name as school_name')
                                          ->join('schools', 'schools.id = posts.school_id', 'left')
                                          ->orderBy('posts.created_at', 'DESC')
@@ -73,9 +74,9 @@ class Posts extends BaseController
         }
 
         $slug = url_title($this->request->getPost('title'), '-', true);
-
+        $schoolId = $this->mySchoolId ? $this->mySchoolId : ($this->request->getPost('school_id') ?: null);
         $this->postModel->save([
-            'school_id'    => $this->request->getPost('school_id') ?: null,
+            'school_id'    => $schoolId,
             'title'        => $this->request->getPost('title'),
             'slug'         => $slug,
             'author'       => $this->request->getPost('author') ?: session()->get('full_name'),
@@ -91,7 +92,7 @@ class Posts extends BaseController
     public function edit($id)
     {
         $data['title'] = 'Edit Berita';
-        $data['post'] = $this->postModel->find($id);
+        $data['post'] = $this->filterBySchool($this->postModel)->find($id);
         $data['schools'] = $this->schoolModel->findAll();
 
         if (!$data['post']) {
@@ -154,7 +155,7 @@ class Posts extends BaseController
     // Hapus Berita
     public function delete($id)
     {
-        $post = $this->postModel->find($id);
+        $post = $this->filterBySchool($this->postModel)->find($id);
 
         if (!$post) {
             return redirect()->to('admin/posts')->with('error', 'Berita tidak ditemukan!');

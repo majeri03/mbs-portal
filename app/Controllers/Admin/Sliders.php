@@ -5,7 +5,7 @@ namespace App\Controllers\Admin;
 use App\Controllers\BaseController;
 use App\Models\SliderModel;
 
-class Sliders extends BaseController
+class Sliders extends BaseAdminController
 {
     protected $sliderModel;
 
@@ -18,7 +18,7 @@ class Sliders extends BaseController
     public function index()
     {
         $data['title'] = 'Kelola Hero Slider';
-        $data['sliders'] = $this->sliderModel->orderBy('order_position', 'ASC')->findAll();
+        $data['sliders'] = $this->filterBySchool($this->sliderModel)->orderBy('order_position', 'ASC')->findAll();
         
         return view('admin/sliders/index', $data);
     }
@@ -33,6 +33,7 @@ class Sliders extends BaseController
     // Proses Simpan
     public function store()
     {
+        
         $rules = [
             'title'      => 'required|min_length[5]',
             'image'      => 'uploaded[image]|max_size[image,3072]|is_image[image]',
@@ -48,6 +49,7 @@ class Sliders extends BaseController
         $image->move('uploads/sliders', $imageName);
 
         $this->sliderModel->save([
+            'school_id'      => $this->mySchoolId,
             'title'          => $this->request->getPost('title'),
             'description'    => $this->request->getPost('description'),
             'image_url'      => 'uploads/sliders/' . $imageName,

@@ -464,15 +464,29 @@
             <li><a href="<?= base_url('admin/pages') ?>" class="<?= ($current_segment == 'pages') ? 'active' : '' ?>">
                     <i class="bi bi-file-earmark-text"></i> Halaman Statis
                 </a></li>
+            <li>
+                <a href="<?= base_url('admin/programs') ?>" class="<?= (service('uri')->getSegment(2) == 'programs') ? 'active' : '' ?>">
+                    <i class="bi bi-trophy-fill"></i> Program Unggulan
+                </a>
+            </li>
             <li><a href="<?= base_url('admin/announcements') ?>" class="<?= str_contains(uri_string(), 'admin/announcements') ? 'active' : '' ?>">
                     <i class="bi bi-megaphone-fill"></i> Kelola Pengumuman
                 </a></li>
             <li><a href="<?= base_url('admin/schools') ?>" class="<?= ($current_segment == 'schools') ? 'active' : '' ?>">
                     <i class="bi bi-building"></i> Kelola Sekolah
                 </a></li>
-            <li><a href="<?= base_url('admin/teachers') ?>" class="<?= ($current_segment == 'teachers') ? 'active' : '' ?>">
-                    <i class="bi bi-people-fill"></i> Pimpinan Pondok
-                </a></li>
+            <li>
+                <a href="<?= base_url('admin/teachers') ?>" class="<?= ($current_segment == 'teachers') ? 'active' : '' ?>">
+                    <i class="bi bi-people-fill"></i>
+
+                    <?php if (session('school_id')): ?>
+                        Guru & Staff
+                    <?php else: ?>
+                        Pimpinan Pondok
+                    <?php endif; ?>
+
+                </a>
+            </li>
             <li><a href="<?= base_url('admin/events') ?>" class="<?= ($current_segment == 'events') ? 'active' : '' ?>">
                     <i class="bi bi-calendar-event"></i> Kelola Agenda
                 </a></li>

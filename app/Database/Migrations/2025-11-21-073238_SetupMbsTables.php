@@ -40,12 +40,14 @@ class SetupMbsTables extends Migration
         $this->forge->addField([
             'id'             => ['type' => 'INT', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
             'title'          => ['type' => 'VARCHAR', 'constraint' => 255],
-            'subtitle'       => ['type' => 'VARCHAR', 'constraint' => 255, 'null' => true],
-            'image'          => ['type' => 'VARCHAR', 'constraint' => 255],
-            'link_url'       => ['type' => 'VARCHAR', 'constraint' => 255, 'default' => '#'],
+            'description'    => ['type' => 'TEXT', 'null' => true], // Kolom Baru
+            'image_url'      => ['type' => 'VARCHAR', 'constraint' => 255], // Ganti 'image' jadi 'image_url'
+            'button_text'    => ['type' => 'VARCHAR', 'constraint' => 50, 'null' => true], // Kolom Baru
+            'button_link'    => ['type' => 'VARCHAR', 'constraint' => 255, 'null' => true], // Ganti 'link_url' jadi 'button_link'
             'is_active'      => ['type' => 'TINYINT', 'constraint' => 1, 'default' => 1],
             'order_position' => ['type' => 'INT', 'constraint' => 11, 'default' => 0],
             'created_at'     => ['type' => 'DATETIME', 'null' => true],
+            'updated_at'     => ['type' => 'DATETIME', 'null' => true],
         ]);
         $this->forge->addKey('id', true);
         $this->forge->createTable('sliders');

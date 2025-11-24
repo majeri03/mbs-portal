@@ -42,7 +42,18 @@
                         <label class="form-label fw-bold">Urutan Tampil</label>
                         <input type="number" name="order_position" class="form-control" value="<?= esc($teacher['order_position']) ?>">
                     </div>
-
+                    <div class="mb-4 p-3 border rounded bg-light">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="is_leader" value="1" id="isLeaderSwitch" 
+                                <?= ($teacher['is_leader'] == 1) ? 'checked' : '' ?>>
+                            <label class="form-check-label fw-bold text-purple" for="isLeaderSwitch">
+                                Jadikan Kepala Sekolah / Pimpinan?
+                            </label>
+                        </div>
+                        <small class="text-muted d-block mt-1">
+                            Jika diaktifkan, foto akan tampil besar paling atas (terpisah dari slider guru).
+                        </small>
+                    </div>
                     <button type="submit" class="btn btn-success w-100"><i class="bi bi-check-circle me-2"></i> Update Data</button>
                 </form>
             </div>
