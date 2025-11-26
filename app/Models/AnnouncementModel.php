@@ -14,6 +14,7 @@ class AnnouncementModel extends Model
     protected $protectFields    = true;
     
     protected $allowedFields    = [
+        'school_id',
         'title',
         'content',
         'category',

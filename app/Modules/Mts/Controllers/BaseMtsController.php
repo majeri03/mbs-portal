@@ -2,7 +2,7 @@
 namespace Modules\Mts\Controllers;
 
 use App\Controllers\BaseController;
-use App\Models\{SchoolModel, PageModel};
+use App\Models\{SchoolModel, PageModel, SettingModel};
 
 class BaseMtsController extends BaseController
 {
@@ -22,7 +22,29 @@ class BaseMtsController extends BaseController
         $this->data['school_pages'] = $pageModel->where('school_id', $this->schoolId)
                                                 ->where('is_active', 1)
                                                 ->findAll();
+        $settingModel = new SettingModel();
+        // 3. Setting Sekolah dengan Konsep FALLBACK (Warisan Pusat)
+        $settingModel = new SettingModel();
         
+        // A. Ambil Settingan PUSAT (Default)
+        $centerSettings = $settingModel->getSettings(null);
+        
+        // B. Ambil Settingan SEKOLAH (MTs)
+        $schoolSettings = $settingModel->getSettings($this->schoolId);
+        
+        // C. GABUNGKAN (Merge)
+        // Mulai dengan data Pusat sebagai dasar
+        $finalSettings = $centerSettings;
+
+        // Timpa dengan data Sekolah JIKA data sekolah ada isinya
+        foreach ($schoolSettings as $key => $value) {
+            if (!empty($value)) {
+                $finalSettings[$key] = $value;
+            }
+        }
+
+        // Masukkan ke data view
+        $this->data['school_site'] = $finalSettings;
         // 3. Set Warna Tema Default
         $this->data['theme_color'] = 'success'; 
     }

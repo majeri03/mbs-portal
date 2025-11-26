@@ -10,109 +10,133 @@
 </div>
 
 <?php if (session()->getFlashdata('errors')) : ?>
-<div class="alert alert-danger">
-    <strong>Error:</strong>
-    <ul class="mb-0">
-        <?php foreach (session()->getFlashdata('errors') as $error) : ?>
-            <li><?= $error ?></li>
-        <?php endforeach; ?>
-    </ul>
-</div>
+    <div class="alert alert-danger">
+        <strong>Error:</strong>
+        <ul class="mb-0">
+            <?php foreach (session()->getFlashdata('errors') as $error) : ?>
+                <li><?= $error ?></li>
+            <?php endforeach; ?>
+        </ul>
+    </div>
 <?php endif; ?>
 
 <div class="card border-0 shadow-sm">
     <div class="card-body p-4">
         <form action="<?= base_url('admin/announcements/store') ?>" method="POST">
             <?= csrf_field() ?>
-            
+
             <div class="row">
                 <!-- Left Column -->
                 <div class="col-md-8">
                     <div class="mb-3">
+                        <label class="form-label fw-bold">Target Sekolah</label>
+                        <?php if (empty($currentSchoolId)) : ?>
+                            <select name="school_id" class="form-select">
+                                <option value="">-- Semua / Umum (Yayasan) --</option>
+                                <?php foreach ($schools as $s) : ?>
+                                    <option value="<?= $s['id'] ?>"><?= esc($s['name']) ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        <?php else : ?>
+                            <?php
+                            $schoolName = 'Sekolah Anda';
+                            foreach ($schools as $s) {
+                                if ($s['id'] == $currentSchoolId) {
+                                    $schoolName = $s['name'];
+                                    break;
+                                }
+                            }
+                            ?>
+                            <input type="text" class="form-control bg-light" value="<?= esc($schoolName) ?>" readonly disabled>
+                            <input type="hidden" name="school_id" value="<?= $currentSchoolId ?>">
+                            <small class="text-success"><i class="bi bi-lock-fill"></i> Pengumuman ini khusus untuk <?= esc($schoolName) ?></small>
+                        <?php endif; ?>
+                    </div>
+                    <div class="mb-3">
                         <label class="form-label fw-bold">
                             Judul Pengumuman <span class="text-danger">*</span>
                         </label>
-                        <input type="text" 
-                               name="title" 
-                               class="form-control form-control-lg" 
-                               value="<?= old('title') ?>" 
-                               placeholder="Contoh: Penerimaan Santri Baru Gelombang 1"
-                               required>
+                        <input type="text"
+                            name="title"
+                            class="form-control form-control-lg"
+                            value="<?= old('title') ?>"
+                            placeholder="Contoh: Penerimaan Santri Baru Gelombang 1"
+                            required>
                         <small class="text-muted">
                             <i class="bi bi-info-circle me-1"></i>
                             Judul akan ditampilkan di ticker berjalan
                         </small>
                     </div>
-                    
+
                     <div class="mb-3">
                         <label class="form-label fw-bold">
                             Isi Pengumuman Lengkap <span class="text-danger">*</span>
                         </label>
-                        <textarea name="content" 
-                                  class="form-control" 
-                                  rows="5" 
-                                  placeholder="Tulis isi pengumuman secara lengkap..."
-                                  required><?= old('content') ?></textarea>
+                        <textarea name="content"
+                            class="form-control"
+                            rows="5"
+                            placeholder="Tulis isi pengumuman secara lengkap..."
+                            required><?= old('content') ?></textarea>
                         <small class="text-muted">Minimal 10 karakter</small>
                     </div>
-                    
+
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-bold">
                                 Tanggal Mulai Tampil <span class="text-danger">*</span>
                             </label>
-                            <input type="date" 
-                                   name="start_date" 
-                                   class="form-control" 
-                                   value="<?= old('start_date', date('Y-m-d')) ?>"
-                                   required>
+                            <input type="date"
+                                name="start_date"
+                                class="form-control"
+                                value="<?= old('start_date', date('Y-m-d')) ?>"
+                                required>
                             <small class="text-muted">Pengumuman mulai tampil dari tanggal ini</small>
                         </div>
-                        
+
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-bold">
                                 Tanggal Selesai <span class="text-danger">*</span>
                             </label>
-                            <input type="date" 
-                                   name="end_date" 
-                                   class="form-control" 
-                                   value="<?= old('end_date') ?>"
-                                   required>
+                            <input type="date"
+                                name="end_date"
+                                class="form-control"
+                                value="<?= old('end_date') ?>"
+                                required>
                             <small class="text-muted">Otomatis hilang setelah tanggal ini</small>
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Right Column -->
                 <div class="col-md-4">
                     <div class="mb-3">
                         <label class="form-label fw-bold">Kategori Pengumuman</label>
                         <select name="category" class="form-select form-select-lg" required>
                             <option value="urgent" <?= old('category') == 'urgent' ? 'selected' : '' ?>>
-                                🔴 Mendesak (Merah)
+                                Mendesak
                             </option>
                             <option value="important" <?= old('category') == 'important' ? 'selected' : '' ?>>
-                                🟡 Penting (Kuning)
+                                Penting
                             </option>
                             <option value="normal" <?= old('category', 'normal') == 'normal' ? 'selected' : '' ?>>
-                                🔵 Biasa (Biru)
+                                Biasa
                             </option>
                         </select>
                         <small class="text-muted">Kategori menentukan warna badge</small>
                     </div>
-                    
+
                     <div class="mb-3">
                         <label class="form-label fw-bold">Icon Bootstrap</label>
                         <div class="input-group">
                             <span class="input-group-text">
                                 <i class="bi <?= old('icon', 'bi-megaphone-fill') ?>" id="iconPreview"></i>
                             </span>
-                            <input type="text" 
-                                   name="icon" 
-                                   class="form-control" 
-                                   value="<?= old('icon', 'bi-megaphone-fill') ?>"
-                                   id="iconInput"
-                                   placeholder="bi-megaphone-fill">
+                            <input type="text"
+                                name="icon"
+                                class="form-control"
+                                value="<?= old('icon', 'bi-megaphone-fill') ?>"
+                                id="iconInput"
+                                placeholder="bi-megaphone-fill">
                         </div>
                         <small class="text-muted d-block mt-1">
                             <a href="https://icons.getbootstrap.com/" target="_blank" class="text-primary">
@@ -120,7 +144,7 @@
                                 Lihat daftar icon
                             </a>
                         </small>
-                        
+
                         <!-- Icon Quick Select -->
                         <div class="mt-2">
                             <small class="text-muted d-block mb-2">Icon populer:</small>
@@ -143,28 +167,28 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="mb-3">
                         <label class="form-label fw-bold">Prioritas Urutan</label>
-                        <input type="number" 
-                               name="priority" 
-                               class="form-control" 
-                               value="<?= old('priority', 0) ?>" 
-                               min="0"
-                               placeholder="0">
+                        <input type="number"
+                            name="priority"
+                            class="form-control"
+                            value="<?= old('priority', 0) ?>"
+                            min="0"
+                            placeholder="0">
                         <small class="text-muted">
                             Angka kecil = prioritas tinggi (tampil duluan)
                         </small>
                     </div>
-                    
+
                     <div class="mb-3">
                         <div class="form-check form-switch">
-                            <input class="form-check-input" 
-                                   type="checkbox" 
-                                   name="is_active" 
-                                   id="isActive"
-                                   value="1"
-                                   <?= old('is_active', '1') == '1' ? 'checked' : '' ?>>
+                            <input class="form-check-input"
+                                type="checkbox"
+                                name="is_active"
+                                id="isActive"
+                                value="1"
+                                <?= old('is_active', '1') == '1' ? 'checked' : '' ?>>
                             <label class="form-check-label fw-bold" for="isActive">
                                 Aktifkan Pengumuman
                             </label>
@@ -173,7 +197,7 @@
                             Jika nonaktif, tidak akan tampil di landing page
                         </small>
                     </div>
-                    
+
                     <div class="d-grid gap-2 mt-4">
                         <button type="submit" class="btn btn-primary btn-lg">
                             <i class="bi bi-save me-2"></i>Simpan Pengumuman
@@ -196,7 +220,7 @@
     document.getElementById('iconInput').addEventListener('input', function() {
         document.getElementById('iconPreview').className = 'bi ' + this.value;
     });
-    
+
     // Icon Quick Select
     document.querySelectorAll('.icon-select-btn').forEach(btn => {
         btn.addEventListener('click', function() {

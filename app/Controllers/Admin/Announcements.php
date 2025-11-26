@@ -2,23 +2,28 @@
 
 namespace App\Controllers\Admin;
 
-use App\Controllers\BaseController;
+use App\Controllers\Admin\BaseAdminController;
 use App\Models\AnnouncementModel;
-
-class Announcements extends BaseController
+use App\Models\SchoolModel;
+class Announcements extends BaseAdminController
 {
     protected $announcementModel;
-
+    protected $schoolModel;
     public function __construct()
     {
         $this->announcementModel = new AnnouncementModel();
+        $this->schoolModel = new SchoolModel();
     }
 
     // List Pengumuman
     public function index()
     {
         $data['title'] = 'Kelola Pengumuman';
-        $data['announcements'] = $this->announcementModel->orderBy('priority', 'ASC')->findAll();
+        $query = $this->filterBySchool($this->announcementModel);
+        $data['announcements'] = $query->select('announcements.*, schools.name as school_name')
+                                       ->join('schools', 'schools.id = announcements.school_id', 'left')
+                                       ->orderBy('priority', 'ASC')
+                                       ->findAll();
         
         return view('admin/announcements/index', $data);
     }
@@ -27,6 +32,8 @@ class Announcements extends BaseController
     public function create()
     {
         $data['title'] = 'Tambah Pengumuman Baru';
+        $data['schools'] = $this->schoolModel->findAll();
+        $data['currentSchoolId'] = $this->mySchoolId;
         return view('admin/announcements/create', $data);
     }
 
@@ -43,8 +50,9 @@ class Announcements extends BaseController
         if (!$this->validate($rules)) {
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
-
+        $schoolId = $this->mySchoolId ? $this->mySchoolId : ($this->request->getPost('school_id') ?: null);
         $this->announcementModel->save([
+            'school_id'  => $schoolId,
             'title'      => $this->request->getPost('title'),
             'content'    => $this->request->getPost('content'),
             'category'   => $this->request->getPost('category'),
@@ -62,12 +70,13 @@ class Announcements extends BaseController
     // Form Edit
     public function edit($id)
     {
-        $data['title'] = 'Edit Pengumuman';
-        $data['announcement'] = $this->announcementModel->find($id);
-
+        $data['announcement'] = $this->filterBySchool($this->announcementModel)->find($id);
         if (!$data['announcement']) {
             return redirect()->to('admin/announcements')->with('error', 'Pengumuman tidak ditemukan!');
         }
+        $data['title'] = 'Edit Pengumuman';
+        $data['schools'] = $this->schoolModel->findAll();
+        $data['currentSchoolId'] = $this->mySchoolId;
 
         return view('admin/announcements/edit', $data);
     }
@@ -81,12 +90,14 @@ class Announcements extends BaseController
             'start_date' => 'required|valid_date',
             'end_date'   => 'required|valid_date',
         ];
-
+        $exists = $this->filterBySchool($this->announcementModel)->find($id);
+        if (!$exists) return redirect()->to('admin/announcements');
         if (!$this->validate($rules)) {
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
-
+        $schoolId = $this->mySchoolId ? $this->mySchoolId : ($this->request->getPost('school_id') ?: null);
         $this->announcementModel->update($id, [
+            'school_id'  => $schoolId,
             'title'      => $this->request->getPost('title'),
             'content'    => $this->request->getPost('content'),
             'category'   => $this->request->getPost('category'),
@@ -103,13 +114,13 @@ class Announcements extends BaseController
     // Hapus
     public function delete($id)
     {
-        $announcement = $this->announcementModel->find($id);
+        $data = $this->filterBySchool($this->announcementModel)->find($id);
+        
 
-        if (!$announcement) {
-            return redirect()->to('admin/announcements')->with('error', 'Pengumuman tidak ditemukan!');
+        if ($data) {
+            $this->announcementModel->delete($id);
+            return redirect()->to('admin/announcements')->with('success', 'Pengumuman dihapus!');
         }
-
-        $this->announcementModel->delete($id);
 
         return redirect()->to('admin/announcements')->with('success', 'Pengumuman berhasil dihapus!');
     }
@@ -117,10 +128,12 @@ class Announcements extends BaseController
     // Toggle Active/Inactive (AJAX)
     public function toggleActive($id)
     {
-        $announcement = $this->announcementModel->find($id);
+        $announcement = $this->filterBySchool($this->announcementModel)->find($id);
         
         if ($announcement) {
+            // Balik statusnya (1 jadi 0, 0 jadi 1)
             $newStatus = $announcement['is_active'] == 1 ? 0 : 1;
+            
             $this->announcementModel->update($id, ['is_active' => $newStatus]);
             
             return $this->response->setJSON([
@@ -129,6 +142,7 @@ class Announcements extends BaseController
             ]);
         }
         
-        return $this->response->setJSON(['success' => false]);
+        // Jika data tidak ditemukan atau milik sekolah lain
+        return $this->response->setJSON(['success' => false, 'message' => 'Akses ditolak']);
     }
 }

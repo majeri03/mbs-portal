@@ -2,10 +2,10 @@
 
 namespace App\Controllers\Admin;
 
-use App\Controllers\BaseController;
+use App\Controllers\Admin\BaseAdminController;
 use App\Models\SettingModel;
 
-class Settings extends BaseController
+class Settings extends BaseAdminController
 {
     protected $settingModel;
 
@@ -19,7 +19,7 @@ class Settings extends BaseController
     {
         $data['title'] = 'Pengaturan Website';
         // Ambil semua setting jadi array ['key' => 'value']
-        $data['settings'] = $this->settingModel->getSiteSettings(); 
+        $data['settings'] = $this->settingModel->getSettings($this->mySchoolId);
         
         return view('admin/settings/index', $data);
     }
@@ -37,7 +37,7 @@ class Settings extends BaseController
         foreach ($textInputs as $key) {
             $val = $this->request->getPost($key);
             // Cek apakah key sudah ada di DB, jika ada update, jika tidak insert
-            $this->saveSetting($key, $val, 'general');
+            $this->saveSetting($key, $val, 'general', $this->mySchoolId);
         }
 
         // 2. Handle Upload Foto Direktur
@@ -49,22 +49,36 @@ class Settings extends BaseController
             $file->move('uploads/settings', $newName);
             
             // Simpan path ke DB
-            $this->saveSetting('director_photo', 'uploads/settings/' . $newName, 'general');
+            $this->saveSetting('director_photo', 'uploads/settings/' . $newName, 'general', $this->mySchoolId);
         }
+        $logoFields = ['site_logo', 'site_logo_2', 'site_logo_3'];
 
+        foreach ($logoFields as $field) {
+            $file = $this->request->getFile($field);
+            if ($file && $file->isValid() && !$file->hasMoved()) {
+                $newName = $file->getRandomName();
+                $file->move('uploads/logos', $newName); // Simpan di folder uploads/logos
+                
+                // Simpan path ke database setting
+                $this->saveSetting($field, 'uploads/logos/' . $newName, 'branding', $this->mySchoolId);
+            }
+        }
         return redirect()->to('admin/settings')->with('success', 'Pengaturan berhasil diperbarui!');
     }
 
     // Helper function private untuk simpan ke tabel settings
-    private function saveSetting($key, $value, $group)
+    private function saveSetting($key, $value, $group, $schoolId)
     {
         // Cek exist
-        $exists = $this->settingModel->where('setting_key', $key)->first();
+        $exists = $this->settingModel->where('setting_key', $key)
+                                     ->where('school_id', $schoolId)
+                                     ->first();
         
         if ($exists) {
             $this->settingModel->update($exists['id'], ['setting_value' => $value]);
         } else {
             $this->settingModel->insert([
+                'school_id'     => $schoolId,
                 'setting_key' => $key,
                 'setting_value' => $value,
                 'setting_group' => $group

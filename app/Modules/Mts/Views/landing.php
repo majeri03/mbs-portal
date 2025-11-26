@@ -388,6 +388,133 @@
     .cursor-pointer {
         cursor: pointer;
     }
+
+    /* CONTAINER UTAMA DI POJOK KANAN BAWAH */
+    .floating-anno-container {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        align-items: end;
+        gap: 15px;
+    }
+
+    /* TOMBOL PEMICU (BULAT) */
+    .anno-trigger {
+        border-radius: 30px;
+        background: linear-gradient(135deg, var(--mbs-purple) 0%, #3D1F5C 100%);
+        color: white;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        position: relative;
+        min-height: 50px;
+    }
+
+    .anno-trigger:hover {
+        transform: scale(1.1) rotate(-10deg);
+    }
+
+    /* PANEL KONTEN (KOTAK CHAT) */
+    .anno-panel {
+        width: 320px;
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+
+        /* Animasi Masuk (Hidden by default) */
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(20px) scale(0.9);
+        /* Geser ke bawah sedikit */
+        transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        transform-origin: bottom right;
+        position: absolute;
+        bottom: 80px;
+        /* Di atas tombol */
+        right: 0;
+    }
+
+    /* KELAS AKTIF (SAAT MUNCUL) */
+    .anno-panel.active {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0) scale(1);
+        /* Swap Up ke posisi normal */
+    }
+
+    /* HEADER PANEL */
+    .anno-header {
+        background: var(--mbs-purple);
+        padding: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    /* BODY PANEL (SCROLLABLE) */
+    .anno-body {
+        max-height: 400px;
+        overflow-y: auto;
+        padding: 15px;
+        background-color: #f8f9fa;
+    }
+
+    /* ITEM PENGUMUMAN */
+    .anno-item {
+        font-size: 0.9rem;
+        transition: transform 0.2s;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
+
+    .anno-item:hover {
+        transform: translateX(-3px);
+    }
+
+    .x-small {
+        font-size: 0.75rem;
+    }
+
+    .bg-purple-light {
+        background-color: rgba(88, 44, 131, 0.1);
+    }
+
+    /* ANIMASI BERDENYUT (PULSE) UNTUK BADGE ANGKA */
+    @keyframes pulse-red {
+        0% {
+            box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7);
+        }
+
+        70% {
+            box-shadow: 0 0 0 10px rgba(220, 53, 69, 0);
+        }
+
+        100% {
+            box-shadow: 0 0 0 0 rgba(220, 53, 69, 0);
+        }
+    }
+
+    .pulse-animation {
+        animation: pulse-red 2s infinite;
+    }
+
+    /* RESPONSIVE MOBILE */
+    @media (max-width: 576px) {
+        .floating-anno-container {
+            bottom: 20px;
+            right: 20px;
+        }
+
+        .anno-panel {
+            width: 280px;
+            /* Lebih kecil di HP */
+        }
+    }
 </style>
 
 <section class="hero-section position-relative overflow-hidden pb-5">
@@ -486,24 +613,6 @@
         </div>
     </div>
 </section>
-<?php if (!empty($announcements)): ?>
-    <div class="bg-white border-bottom py-2">
-        <div class="container d-flex align-items-center">
-            <span class="badge bg-purple me-3 px-3 py-2 rounded-pill">
-                <i class="bi bi-megaphone-fill me-1"></i> PENGUMUMAN
-            </span>
-            <div class="flex-grow-1 overflow-hidden">
-                <marquee class="text-dark fw-medium" scrollamount="6">
-                    <?php foreach ($announcements as $anno): ?>
-                        <span class="me-5">
-                            <i class="bi bi-dot text-purple"></i> <?= esc($anno['title']) ?>: <?= esc($anno['content']) ?>
-                        </span>
-                    <?php endforeach; ?>
-                </marquee>
-            </div>
-        </div>
-    </div>
-<?php endif; ?>
 
 <?php if (!empty($featured_pages)): ?>
     <?php foreach ($featured_pages as $page): ?>
@@ -512,19 +621,32 @@
                 <div class="row justify-content-center">
                     <div class="col-lg-10">
                         <div class="card border-0 shadow-sm rounded-4 p-4 p-lg-5">
+
                             <div class="text-center mb-4">
                                 <h2 class="fw-bold text-purple"><?= esc($page['title']) ?></h2>
                                 <div class="divider mx-auto bg-purple" style="width: 60px; height: 3px;"></div>
                             </div>
-                            <div class="content-body text-secondary lh-lg">
-                                <?= $page['content'] ?>
+
+                            <div class="content-body text-secondary lh-lg text-center">
+                                <?php
+                                // 1. Hapus tag HTML (gambar, bold, tabel, dll) agar bersih
+                                $clean_content = strip_tags($page['content']);
+
+                                // 2. Potong teks jika lebih dari 250 karakter
+                                if (strlen($clean_content) > 250) {
+                                    echo substr($clean_content, 0, 250) . '...';
+                                } else {
+                                    echo $clean_content;
+                                }
+                                ?>
                             </div>
-                            
+
                             <div class="text-center mt-4">
-                                <a href="<?= site_url('mts/halaman/' . $page['slug']) ?>" class="btn btn-outline-purple rounded-pill px-4">
-                                    Baca Selengkapnya
+                                <a href="<?= site_url('mts/halaman/' . $page['slug']) ?>" class="btn btn-outline-purple rounded-pill px-4 hover-lift-sm">
+                                    Baca Selengkapnya <i class="bi bi-arrow-right ms-1"></i>
                                 </a>
                             </div>
+
                         </div>
                     </div>
                 </div>
@@ -882,6 +1004,90 @@
         var myModal = new bootstrap.Modal(document.getElementById('galleryModal'));
         myModal.show();
     }
-</script>
 
+    // Inisialisasi Swiper Pengumuman (Vertical Slide)
+    var announcementSwiper = new Swiper(".announcementSwiper", {
+        direction: "vertical", // Bergerak ke atas (seperti chat scroll)
+        loop: true,
+        autoplay: {
+            delay: 4000, // Ganti setiap 4 detik
+            disableOnInteraction: false,
+        },
+        speed: 800,
+        allowTouchMove: false, // Biar tidak digeser manual (auto saja)
+    });
+
+    function toggleAnno() {
+        var panel = document.getElementById("annoPanel");
+        panel.classList.toggle("active");
+    }
+
+    // Opsional: Auto close jika klik di luar widget
+    document.addEventListener('click', function(event) {
+        var container = document.querySelector('.floating-anno-container');
+        var panel = document.getElementById("annoPanel");
+
+        // Jika klik terjadi di luar container DAN panel sedang terbuka
+        if (!container.contains(event.target) && panel.classList.contains('active')) {
+            panel.classList.remove('active');
+        }
+    });
+</script>
+<?php if (!empty($announcements)): ?>
+    <div class="floating-anno-container">
+
+        <div class="anno-panel shadow-lg" id="annoPanel">
+            <div class="anno-header">
+                <h6 class="mb-0 fw-bold text-white"><i class="bi bi-bell-fill me-2"></i>Info Terkini</h6>
+                <button type="button" class="btn-close btn-close-white btn-sm" onclick="toggleAnno()"></button>
+            </div>
+
+            <div class="anno-body">
+                <?php foreach ($announcements as $index => $anno): ?>
+                    <?php
+                    $borderClass = ($anno['category'] == 'urgent') ? 'border-danger' : 'border-light';
+                    $bgIcon = match ($anno['category']) {
+                        'urgent' => 'bg-danger text-white',
+                        'important' => 'bg-warning text-dark',
+                        default => 'bg-purple-light text-purple'
+                    };
+                    ?>
+                    <div class="anno-item p-3 mb-2 rounded border <?= $borderClass ?> bg-white position-relative">
+                        <div class="d-flex gap-3">
+                            <div class="flex-shrink-0">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center <?= $bgIcon ?>" style="width: 35px; height: 35px;">
+                                    <i class="bi <?= esc($anno['icon']) ?>"></i>
+                                </div>
+                            </div>
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1 fw-bold small text-dark"><?= esc($anno['title']) ?></h6>
+                                <p class="mb-0 text-secondary x-small lh-sm"><?= esc($anno['content']) ?></p>
+                                <span class="text-muted x-small mt-1 d-block text-end fst-italic">
+                                    <?= date('d M', strtotime($anno['start_date'])) ?>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+
+        <button class="anno-trigger shadow-lg ps-3 pe-4 py-2" onclick="toggleAnno()">
+            <i class="bi bi-megaphone-fill fs-4"></i>
+
+            <span class="ms-2 fw-bold text-uppercase ls-1 d-none d-sm-inline-block" style="font-size: 0.8rem; letter-spacing: 1px;">
+                Pengumuman
+            </span>
+            <span class="ms-2 fw-bold text-uppercase d-inline-block d-sm-none" style="font-size: 0.8rem;">
+                Info
+            </span>
+
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-white pulse-animation" style="margin-left: -10px; margin-top: 5px;">
+                <?= count($announcements) ?>
+                <span class="visually-hidden">unread messages</span>
+            </span>
+        </button>
+
+    </div>
+<?php endif; ?>
 <?= $this->endSection() ?>

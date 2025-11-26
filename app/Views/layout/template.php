@@ -43,9 +43,18 @@
     <!-- 2. NAVBAR UTAMA (Sticky) -->
     <nav class="navbar navbar-expand-lg navbar-mbs sticky-top">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="<?= base_url() ?>" style="color: var(--mbs-purple);">
-                <!-- Ganti src dengan logo asli nanti -->
-                <i class="bi bi-building-fill"></i> <?= esc($site['site_name']) ?>
+            <a class="navbar-brand d-flex align-items-center gap-2" href="<?= base_url() ?>">
+                <?php if (!empty($site['site_logo'])): ?>
+                    <img src="<?= base_url($site['site_logo']) ?>" height="50" alt="Logo MBS">
+                <?php else: ?>
+                    <i class="bi bi-building-fill fs-2" style="color: var(--mbs-purple);"></i>
+                <?php endif; ?>
+
+                <div class="d-flex flex-column lh-1">
+                    <span class="fw-bold" style="color: var(--mbs-purple);">
+                        <?= esc($site['site_name'] ?? 'MBS Portal') ?>
+                    </span>
+                </div>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -106,24 +115,43 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-4 mb-4">
-                    <h5 class="fw-bold mb-3" style="color: var(--mbs-purple);">
-                        <i class="bi bi-building-fill me-2"></i><?= esc($site['site_name'] ?? 'MBS Boarding School') ?>
+                    <h5 class="fw-bold mb-3 text-purple">
+                        <?= esc($site['site_name'] ?? 'MBS Boarding School') ?>
                     </h5>
+
                     <p class="text-secondary small mb-4">
                         <?= esc($site['site_desc'] ?? 'Membangun Generasi Qurani Berkemajuan dengan pendidikan terintegrasi.') ?>
                     </p>
+                    <div class="d-flex align-items-center gap-3 mb-4">
+
+                        <?php if (!empty($site['site_logo'])): ?>
+                            <img src="<?= base_url($site['site_logo']) ?>" height="55" class="object-fit-contain" alt="Logo Utama">
+                        <?php else: ?>
+                            <i class="bi bi-building-fill fs-1 text-purple"></i>
+                        <?php endif; ?>
+
+                        <?php if (!empty($site['site_logo_2'])): ?>
+                            <img src="<?= base_url($site['site_logo_2']) ?>" height="55" class="object-fit-contain" alt="Logo 2">
+                        <?php endif; ?>
+
+                        <?php if (!empty($site['site_logo_3'])): ?>
+                            <img src="<?= base_url($site['site_logo_3']) ?>" height="55" class="object-fit-contain" alt="Logo 3">
+                        <?php endif; ?>
+
+                    </div>
+
 
                     <div class="small d-flex flex-column gap-2 mb-4 text-secondary">
                         <div class="d-flex align-items-start">
-                            <i class="bi bi-geo-alt-fill me-2 mt-1" style="color: var(--mbs-purple);"></i>
+                            <i class="bi bi-geo-alt-fill me-2 mt-1 text-purple"></i>
                             <span><?= esc($site['address'] ?? 'Alamat belum diatur') ?></span>
                         </div>
                         <div class="d-flex align-items-center">
-                            <i class="bi bi-telephone-fill me-2" style="color: var(--mbs-purple);"></i>
+                            <i class="bi bi-telephone-fill me-2 text-purple"></i>
                             <span><?= esc($site['phone'] ?? '-') ?></span>
                         </div>
                         <div class="d-flex align-items-center">
-                            <i class="bi bi-envelope-fill me-2" style="color: var(--mbs-purple);"></i>
+                            <i class="bi bi-envelope-fill me-2 text-purple"></i>
                             <span><?= esc($site['email'] ?? '-') ?></span>
                         </div>
                     </div>
@@ -132,11 +160,9 @@
                         <?php if (!empty($site['facebook_url'])): ?>
                             <a href="<?= esc($site['facebook_url']) ?>" class="btn btn-sm btn-outline-purple rounded-circle" target="_blank"><i class="bi bi-facebook"></i></a>
                         <?php endif; ?>
-
                         <?php if (!empty($site['instagram_url'])): ?>
                             <a href="<?= esc($site['instagram_url']) ?>" class="btn btn-sm btn-outline-purple rounded-circle" target="_blank"><i class="bi bi-instagram"></i></a>
                         <?php endif; ?>
-
                         <?php if (!empty($site['youtube_url'])): ?>
                             <a href="<?= esc($site['youtube_url']) ?>" class="btn btn-sm btn-outline-purple rounded-circle" target="_blank"><i class="bi bi-youtube"></i></a>
                         <?php endif; ?>
@@ -225,7 +251,7 @@
         <div class="border-top mt-4 pt-4" style="border-color: #eee !important;">
             <div class="container text-center small text-muted">
                 &copy; <?= date('Y') ?> <strong style="color: var(--mbs-purple);"><?= esc($site['site_name'] ?? 'MBS Boarding School') ?></strong>. All Rights Reserved.
-                <span class="d-none d-md-inline">| Built with by KKP-PLUS TEKNIK UNISMUH MAKASSAR</span>
+                <span class="d-none d-md-inline">| Built with by <span class="text-purple fw-bold">KKP-PLUS ENREKANG TEKNIK UNISMUH MAKASSAR 2025</span></span>
             </div>
         </div>
     </footer>
