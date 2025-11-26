@@ -2,11 +2,11 @@
 
 namespace App\Controllers\Admin;
 
-use App\Controllers\BaseController;
+use App\Controllers\Admin\BaseAdminController;
 use App\Models\GalleryModel;
 use App\Models\SchoolModel;
 
-class Galleries extends BaseController
+class Galleries extends BaseAdminController
 {
     protected $galleryModel;
     protected $schoolModel;
@@ -20,7 +20,7 @@ class Galleries extends BaseController
     public function index()
     {
         $data['title'] = 'Kelola Galeri Foto';
-        // Join dengan tabel sekolah untuk menampilkan nama sekolah
+        $query = $this->filterBySchool($this->galleryModel);
         $data['galleries'] = $this->galleryModel
             ->select('galleries.*, schools.name as school_name')
             ->join('schools', 'schools.id = galleries.school_id', 'left')
@@ -34,6 +34,7 @@ class Galleries extends BaseController
     {
         $data['title'] = 'Upload Foto Baru';
         $data['schools'] = $this->schoolModel->findAll();
+        $data['currentSchoolId'] = $this->mySchoolId;
         return view('admin/galleries/create', $data);
     }
 
@@ -59,9 +60,9 @@ class Galleries extends BaseController
             ->withFile($filePath)
             ->resize(1200, 1200, true, 'width')
             ->save($filePath, 85); // Kualitas 85% (sedikit lebih tinggi dari berita)
-
+        $schoolId = $this->mySchoolId ? $this->mySchoolId : ($this->request->getPost('school_id') ?: null);
         $this->galleryModel->save([
-            'school_id' => $this->request->getPost('school_id') ?: null,
+            'school_id' => $schoolId,
             'title'     => $this->request->getPost('title'),
             'category'  => $this->request->getPost('category'),
             'image_url' => 'uploads/galleries/' . $fileName,
@@ -72,20 +73,21 @@ class Galleries extends BaseController
 
     public function edit($id)
     {
-        $data['gallery'] = $this->galleryModel->find($id);
+        $data['gallery'] = $this->filterBySchool($this->galleryModel)->find($id);
         if (!$data['gallery']) {
             return redirect()->to('admin/galleries')->with('error', 'Data tidak ditemukan');
         }
         
         $data['title'] = 'Edit Foto';
         $data['schools'] = $this->schoolModel->findAll();
+        $data['currentSchoolId'] = $this->mySchoolId;
         return view('admin/galleries/edit', $data);
     }
 
     public function update($id)
     {
-        $gallery = $this->galleryModel->find($id);
-        if (!$gallery) return redirect()->to('admin/galleries');
+        $gallery = $this->filterBySchool($this->galleryModel)->find($id);
+        if (!$gallery) return redirect()->to('admin/galleries')->with('error', 'Akses ditolak!');
 
         if (!$this->validate([
             'title' => 'required|min_length[3]',
@@ -114,9 +116,9 @@ class Galleries extends BaseController
 
             $imageUrl = 'uploads/galleries/' . $fileName;
         }
-
+        $schoolId = $this->mySchoolId ? $this->mySchoolId : ($this->request->getPost('school_id') ?: null);
         $this->galleryModel->update($id, [
-            'school_id' => $this->request->getPost('school_id') ?: null,
+            'school_id' => $schoolId,
             'title'     => $this->request->getPost('title'),
             'category'  => $this->request->getPost('category'),
             'image_url' => $imageUrl,
@@ -127,7 +129,7 @@ class Galleries extends BaseController
 
     public function delete($id)
     {
-        $gallery = $this->galleryModel->find($id);
+        $gallery = $this->filterBySchool($this->galleryModel)->find($id);
         if ($gallery) {
             if (file_exists($gallery['image_url'])) {
                 unlink($gallery['image_url']);

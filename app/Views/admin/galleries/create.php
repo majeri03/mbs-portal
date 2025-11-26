@@ -22,13 +22,36 @@
                     </select>
                 </div>
                 <div class="col-md-6 mb-3">
-                    <label class="form-label fw-bold">Milik Sekolah (Opsional)</label>
-                    <select name="school_id" class="form-select">
-                        <option value="">-- Semua / Umum --</option>
-                        <?php foreach ($schools as $s) : ?>
-                            <option value="<?= $s['id'] ?>"><?= $s['name'] ?></option>
-                        <?php endforeach; ?>
-                    </select>
+                    <label class="form-label fw-bold">Milik Sekolah</label>
+
+                    <?php if (empty($currentSchoolId)) : ?>
+                        <select name="school_id" class="form-select">
+                            <option value="">-- Semua / Umum --</option>
+                            <?php foreach ($schools as $s) : ?>
+                                <option value="<?= $s['id'] ?>"><?= esc($s['name']) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                        <small class="text-muted">Pilih sekolah tujuan atau biarkan kosong untuk Umum.</small>
+
+                    <?php else : ?>
+                        <?php
+                        // Cari nama sekolah berdasarkan ID user yang login
+                        $schoolName = 'Sekolah Anda';
+                        foreach ($schools as $s) {
+                            if ($s['id'] == $currentSchoolId) {
+                                $schoolName = $s['name'];
+                                break;
+                            }
+                        }
+                        ?>
+                        <input type="text" class="form-control bg-light" value="<?= esc($schoolName) ?>" readonly disabled>
+
+                        <input type="hidden" name="school_id" value="<?= $currentSchoolId ?>">
+
+                        <small class="text-success fw-bold">
+                            <i class="bi bi-lock-fill"></i> Terkunci otomatis ke akun sekolah Anda.
+                        </small>
+                    <?php endif; ?>
                 </div>
             </div>
             <div class="mb-4">

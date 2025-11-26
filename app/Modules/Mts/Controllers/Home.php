@@ -34,7 +34,9 @@ class Home extends BaseMtsController
         $this->data['curriculums'] = $curricModel->where('school_id', $this->schoolId)->findAll();
         
         // Halaman Statis (Featured)
-        $this->data['featured_page'] = $pageModel->where('school_id', $this->schoolId)->where('is_featured', 1)->first();
+        $this->data['featured_pages'] = $pageModel->where('school_id', $this->schoolId)
+                                          ->where('is_featured', 1)
+                                          ->findAll();
         $this->data['programs']      = $programModel->where('school_id', $this->schoolId)->orderBy('order_position', 'ASC')->findAll();
         
         // 1. AMBIL KEPALA SEKOLAH (Hanya 1 Orang)

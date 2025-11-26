@@ -24,6 +24,8 @@ $routes->group('mts', ['namespace' => 'Modules\Mts\Controllers'], function($rout
     // Route Agenda
     $routes->get('agenda', 'Events::index');          // Daftar Agenda
     $routes->get('agenda/(:segment)', 'Events::show/$1'); // Detail Agenda
+
+    $routes->get('galeri', 'Gallery::index');
 });
 
 $routes->group('ma', ['namespace' => 'Modules\Ma\Controllers'], function($routes) {

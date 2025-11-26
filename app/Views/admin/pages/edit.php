@@ -20,7 +20,7 @@
             <div class="card-body p-4 bg-white">
                 <form action="<?= base_url('admin/pages/update/' . $page['id']) ?>" method="POST">
                     <?= csrf_field() ?>
-                    
+
                     <div class="mb-4">
                         <label class="form-label fw-bold text-dark">Judul Halaman</label>
                         <input type="text" name="title" class="form-control form-control-lg bg-light" value="<?= esc($page['title']) ?>" required>
@@ -30,7 +30,52 @@
                         <label class="form-label fw-bold text-dark">Isi Konten</label>
                         <textarea id="summernote" name="content" required><?= esc($page['content']) ?></textarea>
                     </div>
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold text-dark">Milik Sekolah</label>
+                            <?php if (empty($currentSchoolId)) : ?>
+                                <select name="school_id" class="form-select">
+                                    <option value="">-- Web Utama / Yayasan --</option>
+                                    <?php foreach ($schools as $s) : ?>
+                                        <option value="<?= $s['id'] ?>" <?= ($page['school_id'] == $s['id']) ? 'selected' : '' ?>>
+                                            <?= esc($s['name']) ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            <?php else : ?>
+                                <?php
+                                $schoolName = 'Sekolah Anda';
+                                foreach ($schools as $s) {
+                                    if ($s['id'] == $currentSchoolId) {
+                                        $schoolName = $s['name'];
+                                        break;
+                                    }
+                                }
+                                ?>
+                                <input type="text" class="form-control bg-light" value="<?= esc($schoolName) ?>" readonly disabled>
+                                <input type="hidden" name="school_id" value="<?= $currentSchoolId ?>">
+                                <small class="text-success fw-bold"><i class="bi bi-check-circle-fill"></i> Milik <?= esc($schoolName) ?></small>
+                            <?php endif; ?>
+                        </div>
 
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold text-dark">Opsi Tampilan</label>
+                            <div class="p-3 border rounded bg-light d-flex align-items-start">
+                                <div class="form-check form-switch me-3">
+                                    <input class="form-check-input" type="checkbox" style="width: 3em; height: 1.5em; cursor: pointer;" name="is_featured" value="1" id="isFeatured" <?= (isset($page) && $page['is_featured'] == 1) ? 'checked' : '' ?>>
+                                </div>
+
+                                <div>
+                                    <label class="form-check-label fw-bold text-purple cursor-pointer mb-1" for="isFeatured" style="font-size: 1rem;">
+                                        Tampilkan di Landing Page?
+                                    </label>
+                                    <small class="d-block text-muted lh-sm">
+                                        Aktifkan ini untuk menjadikan halaman ini sebagai <strong>Konten Utama (Profil/Tentang Kami)</strong> di halaman depan sekolah.
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-5">
                         <button type="submit" class="btn btn-success btn-lg px-5 rounded-pill shadow-sm">
                             <i class="bi bi-check-circle me-2"></i>Update Halaman
@@ -75,7 +120,7 @@
                 }
             }
         });
-        
+
         // Style Fix
         $('.note-editable').css('background-color', '#fff').css('color', '#333');
         $('.note-toolbar').css('background-color', '#f8f9fa');
@@ -89,11 +134,11 @@
     function compressImage(file, callback) {
         const reader = new FileReader();
         reader.readAsDataURL(file);
-        
+
         reader.onload = function(event) {
             const img = new Image();
             img.src = event.target.result;
-            
+
             img.onload = function() {
                 // Tentukan ukuran maksimal (misal: lebar 800px)
                 const maxWidth = 800;
@@ -110,14 +155,14 @@
                 const canvas = document.createElement('canvas');
                 canvas.width = width;
                 canvas.height = height;
-                
+
                 const ctx = canvas.getContext('2d');
                 ctx.drawImage(img, 0, 0, width, height);
 
                 // Konversi ke Base64 dengan Kualitas JPEG 70% (Kompresi)
                 // 'image/jpeg' membuat ukuran jauh lebih kecil daripada 'image/png'
                 const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
-                
+
                 callback(compressedDataUrl);
             }
         }

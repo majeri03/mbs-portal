@@ -15,15 +15,15 @@
             <div class="card-body p-4">
                 <form action="<?= base_url('admin/galleries/update/' . $gallery['id']) ?>" method="POST" enctype="multipart/form-data">
                     <?= csrf_field() ?>
-                    
+
                     <div class="mb-3">
                         <label class="form-label fw-bold">Judul Foto / Caption <span class="text-danger">*</span></label>
-                        <input type="text" 
-                               name="title" 
-                               class="form-control" 
-                               value="<?= old('title', $gallery['title']) ?>" 
-                               placeholder="Contoh: Kegiatan Upacara Bendera"
-                               required>
+                        <input type="text"
+                            name="title"
+                            class="form-control"
+                            value="<?= old('title', $gallery['title']) ?>"
+                            placeholder="Contoh: Kegiatan Upacara Bendera"
+                            required>
                     </div>
 
                     <div class="row">
@@ -38,16 +38,31 @@
                         </div>
 
                         <div class="col-md-6 mb-3">
-                            <label class="form-label fw-bold">Milik Sekolah (Opsional)</label>
-                            <select name="school_id" class="form-select">
-                                <option value="">-- Semua / Umum --</option>
-                                <?php foreach ($schools as $s) : ?>
-                                    <option value="<?= $s['id'] ?>" <?= old('school_id', $gallery['school_id']) == $s['id'] ? 'selected' : '' ?>>
-                                        <?= $s['name'] ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-                            <small class="text-muted">Pilih jika foto ini khusus untuk jenjang tertentu.</small>
+                            <label class="form-label fw-bold">Milik Sekolah</label>
+
+                            <?php if (empty($currentSchoolId)) : ?>
+                                <select name="school_id" class="form-select">
+                                    <option value="">-- Semua / Umum --</option>
+                                    <?php foreach ($schools as $s) : ?>
+                                        <option value="<?= $s['id'] ?>" <?= ($gallery['school_id'] == $s['id']) ? 'selected' : '' ?>>
+                                            <?= esc($s['name']) ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            <?php else : ?>
+                                <?php
+                                $schoolName = 'Sekolah Anda';
+                                foreach ($schools as $s) {
+                                    if ($s['id'] == $currentSchoolId) {
+                                        $schoolName = $s['name'];
+                                        break;
+                                    }
+                                }
+                                ?>
+                                <input type="text" class="form-control bg-light" value="<?= esc($schoolName) ?>" readonly disabled>
+                                <input type="hidden" name="school_id" value="<?= $currentSchoolId ?>">
+                                <small class="text-success"><i class="bi bi-check-circle-fill"></i> Data ini milik <?= esc($schoolName) ?></small>
+                            <?php endif; ?>
                         </div>
                     </div>
 
@@ -64,13 +79,13 @@
 
                     <div class="mb-4">
                         <label class="form-label fw-bold">Ganti Foto (Opsional)</label>
-                        <input type="file" 
-                               name="image" 
-                               class="form-control" 
-                               accept="image/*" 
-                               onchange="previewImage(event)">
+                        <input type="file"
+                            name="image"
+                            class="form-control"
+                            accept="image/*"
+                            onchange="previewImage(event)">
                         <small class="text-muted">Biarkan kosong jika tidak ingin mengganti foto.</small>
-                        
+
                         <div id="newImagePreview" class="mt-3 text-center" style="display: none;">
                             <p class="small fw-bold text-success mb-1">Preview Foto Baru:</p>
                             <img id="preview" src="" class="img-fluid rounded shadow-sm" style="max-height: 200px;">
@@ -100,12 +115,12 @@
 
         if (input.files && input.files[0]) {
             const reader = new FileReader();
-            
+
             reader.onload = function(e) {
                 previewImg.src = e.target.result;
                 previewBox.style.display = 'block';
             }
-            
+
             reader.readAsDataURL(input.files[0]);
         } else {
             previewBox.style.display = 'none';

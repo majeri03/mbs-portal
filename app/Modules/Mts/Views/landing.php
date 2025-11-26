@@ -315,7 +315,8 @@
 
     /* Slider Guru */
     .teacherSwiper {
-        padding-bottom: 50px !important; /* Tambah padding bawah agar bayangan/shadow tidak terpotong */
+        padding-bottom: 50px !important;
+        /* Tambah padding bawah agar bayangan/shadow tidak terpotong */
         padding-top: 20px;
     }
 
@@ -323,8 +324,10 @@
         height: auto !important;
         min-height: 0 !important;
         display: flex;
-        align-items: flex-start; /* KUNCI: Agar tinggi card sesuai konten saja */
-        justify-content: center; /* Agar card ada di tengah slide */
+        align-items: flex-start;
+        /* KUNCI: Agar tinggi card sesuai konten saja */
+        justify-content: center;
+        /* Agar card ada di tengah slide */
     }
 
     .teacherSwiper .swiper-pagination {
@@ -338,7 +341,53 @@
     #guru {
         background-color: #fff;
     }
-  
+
+    /* CSS KHUSUS GALERI */
+    .gallery-card {
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        background-color: #000;
+        /* Fallback color */
+    }
+
+    /* Efek Zoom Gambar saat Hover */
+    .gallery-card img.transition-transform {
+        transition: transform 0.6s ease;
+    }
+
+    .gallery-card:hover img.transition-transform {
+        transform: scale(1.1);
+        opacity: 0.8;
+    }
+
+    /* Overlay Gradient */
+    .gallery-overlay {
+        background: linear-gradient(to top, rgba(88, 44, 131, 0.9) 0%, transparent 100%);
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.4s ease;
+    }
+
+    .gallery-card:hover .gallery-overlay {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    /* Icon Zoom */
+    .zoom-icon {
+        transition: all 0.3s ease;
+    }
+
+    .gallery-card:hover .zoom-icon {
+        opacity: 1 !important;
+    }
+
+    .text-shadow {
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .cursor-pointer {
+        cursor: pointer;
+    }
 </style>
 
 <section class="hero-section position-relative overflow-hidden pb-5">
@@ -456,34 +505,33 @@
     </div>
 <?php endif; ?>
 
-<?php if ($featured_page): ?>
-    <section id="profil" class="py-5 bg-light">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-10">
-                    <div class="card border-0 shadow-sm rounded-4 p-4 p-lg-5">
-                        <div class="text-center mb-4">
-                            <h2 class="fw-bold text-purple"><?= esc($featured_page['title']) ?></h2>
-                            <div class="divider mx-auto bg-purple" style="width: 60px; height: 3px;"></div>
-                        </div>
-                        <div class="content-body text-secondary lh-lg">
-                            <?= $featured_page['content'] ?>
+<?php if (!empty($featured_pages)): ?>
+    <?php foreach ($featured_pages as $page): ?>
+        <section class="py-5 bg-light border-bottom">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-10">
+                        <div class="card border-0 shadow-sm rounded-4 p-4 p-lg-5">
+                            <div class="text-center mb-4">
+                                <h2 class="fw-bold text-purple"><?= esc($page['title']) ?></h2>
+                                <div class="divider mx-auto bg-purple" style="width: 60px; height: 3px;"></div>
+                            </div>
+                            <div class="content-body text-secondary lh-lg">
+                                <?= $page['content'] ?>
+                            </div>
+                            
+                            <div class="text-center mt-4">
+                                <a href="<?= site_url('mts/halaman/' . $page['slug']) ?>" class="btn btn-outline-purple rounded-pill px-4">
+                                    Baca Selengkapnya
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
-<?php else: ?>
-    <section class="py-5 bg-light text-center">
-        <div class="container">
-            <p class="text-muted fst-italic">(Belum ada konten Profil/Tentang Kami yang diset sebagai Featured)</p>
-        </div>
-    </section>
+        </section>
+    <?php endforeach; ?>
 <?php endif; ?>
-
-
-
 
 <section id="berita" class="py-5 bg-light">
     <div class="container">
@@ -656,29 +704,30 @@
             </div>
         <?php endif; ?>
 
-        <?php if(!empty($teachers)): ?>
-            <div class="swiper teacherSwiper pb-5 px-2"> 
+        <?php if (!empty($teachers)): ?>
+            <div class="swiper teacherSwiper pb-5 px-2">
                 <div class="swiper-wrapper">
-                    <?php foreach($teachers as $t): ?>
-                        <div class="swiper-slide"> 
-                            
+                    <?php foreach ($teachers as $t): ?>
+                        <div class="swiper-slide">
+
                             <div class="card border-0 shadow-sm rounded-4 overflow-hidden card-guru mx-auto" style="max-width: 350px;">
-                                
+
                                 <div class="bg-purple" style="height: 70px;"></div>
-                                
-                                <div class="card-body text-center position-relative pt-0 pb-4"> <div class="position-relative d-inline-block" style="margin-top: -40px;">
-                                        <?php 
-                                            $fotoGuru = $t['photo'];
-                                            // Cek URL vs Lokal
-                                            $srcGuru = (filter_var($fotoGuru, FILTER_VALIDATE_URL)) ? $fotoGuru : base_url($fotoGuru);
+
+                                <div class="card-body text-center position-relative pt-0 pb-4">
+                                    <div class="position-relative d-inline-block" style="margin-top: -40px;">
+                                        <?php
+                                        $fotoGuru = $t['photo'];
+                                        // Cek URL vs Lokal
+                                        $srcGuru = (filter_var($fotoGuru, FILTER_VALIDATE_URL)) ? $fotoGuru : base_url($fotoGuru);
                                         ?>
-                                        <img src="<?= $srcGuru ?>" 
-                                             class="rounded-circle border border-3 border-white shadow-sm object-fit-cover" 
-                                             width="80" height="80"
-                                             alt="<?= esc($t['name']) ?>"
-                                             onerror="this.src='https://ui-avatars.com/api/?name=<?= urlencode($t['name']) ?>&background=random&size=128'">
+                                        <img src="<?= $srcGuru ?>"
+                                            class="rounded-circle border border-3 border-white shadow-sm object-fit-cover"
+                                            width="80" height="80"
+                                            alt="<?= esc($t['name']) ?>"
+                                            onerror="this.src='https://ui-avatars.com/api/?name=<?= urlencode($t['name']) ?>&background=random&size=128'">
                                     </div>
-                                    
+
                                     <h6 class="fw-bold text-dark mb-1 mt-2" style="font-size: 0.95rem;"><?= esc($t['name']) ?></h6>
                                     <span class="d-block text-secondary small mb-2" style="font-size: 0.8rem;"><?= esc($t['position']) ?></span>
                                 </div>
@@ -692,44 +741,86 @@
         <?php endif; ?>
 </section>
 
-<section class="py-5 bg-light">
-    <div class="container">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h3 class="section-title mb-0">Galeri Kegiatan</h3>
-        </div>
-        <div class="row g-2">
-            <?php foreach ($galleries as $g): ?>
-                <div class="col-4 col-md-3">
-                    <img src="<?= esc($g['image_url']) ?>" class="img-fluid rounded shadow-sm w-100 object-fit-cover" style="height: 150px;" alt="Galeri">
-                </div>
-            <?php endforeach; ?>
-        </div>
-    </div>
-</section>
+<section id="galeri" class="py-5 bg-white position-relative">
+    <div class="position-absolute top-0 start-0 w-100 h-100 opacity-10"
+        style="background-image: radial-gradient(#582C83 1px, transparent 1px); background-size: 20px 20px;"></div>
 
-<section id="kurikulum" class="py-5 bg-purple text-white text-center">
-    <div class="container">
-        <h3 class="fw-bold mb-3">Area Akademik</h3>
-        <p class="opacity-75 mb-4">Unduh kalender akademik dan panduan kurikulum terbaru.</p>
+    <div class="container position-relative z-1">
+        <div class="d-flex justify-content-between align-items-end mb-5">
+            <div>
+                <h6 class="text-uppercase fw-bold text-secondary ls-2 mb-2">Dokumentasi</h6>
+                <h2 class="fw-bold display-6 text-purple">Galeri Kegiatan</h2>
+                <div class="divider bg-purple mt-3" style="width: 60px; height: 4px; border-radius: 2px;"></div>
+            </div>
+            <a href="<?= site_url('mts/galeri') ?>" class="btn btn-outline-purple rounded-pill px-4 fw-bold d-none d-md-inline-block hover-lift-sm">
+                Lihat Semua <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+        </div>
 
-        <div class="d-flex justify-content-center gap-3 flex-wrap">
-            <?php if (!empty($curriculums)): ?>
-                <?php foreach ($curriculums as $c): ?>
-                    <a href="<?= esc($c['file_url']) ?>" class="btn btn-light text-purple rounded-pill px-4 fw-bold">
-                        <i class="bi bi-file-earmark-pdf me-2"></i> <?= esc($c['title']) ?>
-                    </a>
+        <div class="row g-3">
+            <?php if (!empty($galleries)): ?>
+                <?php foreach ($galleries as $index => $g): ?>
+                    <?php
+                    $colClass = ($index === 0 || $index === 4) ? 'col-md-6' : 'col-md-3 col-6';
+                    $heightClass = ($index === 0 || $index === 4) ? '280px' : '280px';
+                    ?>
+
+                    <div class="<?= $colClass ?>">
+                        <div class="gallery-card position-relative overflow-hidden rounded-4 shadow-sm h-100 cursor-pointer"
+                            onclick="openGalleryModal('<?= base_url($g['image_url']) ?>', '<?= esc($g['title']) ?>', '<?= esc(ucfirst($g['category'])) ?>')">
+
+                            <img src="<?= base_url($g['image_url']) ?>"
+                                class="w-100 h-100 object-fit-cover transition-transform"
+                                style="min-height: <?= $heightClass ?>;"
+                                alt="<?= esc($g['title']) ?>"
+                                loading="lazy">
+
+                            <div class="gallery-overlay position-absolute top-0 start-0 w-100 h-100 d-flex flex-column justify-content-end p-4">
+                                <span class="badge bg-warning text-dark align-self-start mb-2 shadow-sm">
+                                    <?= esc(ucfirst($g['category'])) ?>
+                                </span>
+                                <h6 class="text-white fw-bold mb-0 text-shadow"><?= esc($g['title']) ?></h6>
+                            </div>
+
+                            <div class="zoom-icon position-absolute top-50 start-50 translate-middle opacity-0 transition-opacity">
+                                <div class="bg-white text-purple rounded-circle p-3 shadow-lg">
+                                    <i class="bi bi-zoom-in fs-4"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 <?php endforeach; ?>
             <?php else: ?>
-                <span class="badge bg-white text-dark opacity-50">Belum ada dokumen publik</span>
+                <div class="col-12 text-center py-5 bg-light rounded-4 border border-dashed">
+                    <i class="bi bi-images fs-1 text-muted opacity-50 mb-3"></i>
+                    <p class="text-muted mb-0">Belum ada dokumentasi kegiatan yang diupload.</p>
+                </div>
             <?php endif; ?>
         </div>
     </div>
 </section>
 
+<div class="modal fade" id="galleryModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content bg-transparent border-0">
+            <div class="modal-header border-0 p-0 mb-2">
+                <button type="button" class="btn-close btn-close-white ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-0 text-center position-relative">
+                <img src="" id="modalImageSrc" class="img-fluid rounded-4 shadow-lg" style="max-height: 85vh;">
+                <div class="position-absolute bottom-0 start-0 w-100 p-3" style="background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);">
+                    <h5 class="modal-title text-white fw-bold" id="modalImageTitle"></h5>
+                    <span class="badge bg-purple" id="modalImageCat"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     // Tunggu dokumen selesai dimuat baru jalankan Swiper
     document.addEventListener("DOMContentLoaded", function() {
-        
+
         // Inisialisasi Swiper Guru
         var teacherSwiper = new Swiper(".teacherSwiper", {
             slidesPerView: 1, // Tampilan HP: 1 kartu dulu biar rapi
@@ -760,7 +851,9 @@
         var heroSwiper = new Swiper(".heroSwiper", {
             loop: true,
             effect: "fade",
-            fadeEffect: { crossFade: true },
+            fadeEffect: {
+                crossFade: true
+            },
             autoplay: {
                 delay: 6000,
                 disableOnInteraction: false
@@ -776,6 +869,19 @@
             },
         });
     });
+    // Script untuk Modal Popup Galeri
+    function openGalleryModal(src, title, category) {
+        var modalImg = document.getElementById('modalImageSrc');
+        var modalTitle = document.getElementById('modalImageTitle');
+        var modalCat = document.getElementById('modalImageCat');
+
+        modalImg.src = src;
+        modalTitle.innerText = title;
+        modalCat.innerText = category;
+
+        var myModal = new bootstrap.Modal(document.getElementById('galleryModal'));
+        myModal.show();
+    }
 </script>
 
 <?= $this->endSection() ?>
