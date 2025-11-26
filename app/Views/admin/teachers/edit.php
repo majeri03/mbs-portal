@@ -12,7 +12,21 @@
             <div class="card-body p-4">
                 <form action="<?= base_url('admin/teachers/update/' . $teacher['id']) ?>" method="POST" enctype="multipart/form-data">
                     <?= csrf_field() ?>
-                    
+                    <?php if (!session('school_id')) : ?>
+                        <div class="mb-3 p-3 bg-light border rounded">
+                            <label class="form-label fw-bold text-primary">Tempat Tugas / Sekolah</label>
+                            <select name="school_id" class="form-select">
+                                <option value="" <?= empty($teacher['school_id']) ? 'selected' : '' ?>>
+                                    -- Pimpinan Pusat / Yayasan (Umum) --
+                                </option>
+                                <?php foreach ($schools as $s) : ?>
+                                    <option value="<?= $s['id'] ?>" <?= ($teacher['school_id'] == $s['id']) ? 'selected' : '' ?>>
+                                        <?= esc($s['name']) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    <?php endif; ?>
                     <div class="mb-3">
                         <label class="form-label fw-bold">Nama Lengkap & Gelar</label>
                         <input type="text" name="name" class="form-control" value="<?= esc($teacher['name']) ?>" required>

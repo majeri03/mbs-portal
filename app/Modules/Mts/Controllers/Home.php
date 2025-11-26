@@ -37,18 +37,27 @@ class Home extends BaseMtsController
         $this->data['featured_page'] = $pageModel->where('school_id', $this->schoolId)->where('is_featured', 1)->first();
         $this->data['programs']      = $programModel->where('school_id', $this->schoolId)->orderBy('order_position', 'ASC')->findAll();
         
-        // 1. Ambil Pimpinan/Kepala Sekolah (Cari yang dicentang "is_leader" = 1)
+        // 1. AMBIL KEPALA SEKOLAH (Hanya 1 Orang)
+        // Syarat: Milik MTs (id=1) DAN dicentang sebagai Leader
         $kepalaSekolah = $teacherModel->where('school_id', $this->schoolId)
-                                      ->where('is_leader', 1) 
+                                      ->where('is_leader', 1)
+                                      ->orderBy('order_position', 'ASC') // Ambil urutan terkecil
                                       ->first();
 
-        // 2. Ambil Guru Lainnya (Yang BUKAN leader / is_leader = 0)
-        $guruLainnya = $teacherModel->where('school_id', $this->schoolId)
-                                    ->where('is_leader', 0) 
-                                    ->orderBy('order_position', 'ASC')
-                                    ->findAll();
+        // 2. AMBIL GURU & STAFF LAINNYA
+        // Logika Baru: Ambil semua guru MTs, KECUALI Kepala Sekolah yang sudah tampil di atas.
+        // Jadi jika ada Wakil Direktur yang dicentang Leader, dia akan tetap muncul di slider (bergeser), tidak hilang.
+        
+        $teacherBuilder = $teacherModel->where('school_id', $this->schoolId);
+        
+        if ($kepalaSekolah) {
+            // Jika kepala sekolah ada, jangan ambil dia lagi di slider
+            $teacherBuilder->where('id !=', $kepalaSekolah['id']);
+        }
 
-        // Kirim data yang sudah dipisah ke View
+        $guruLainnya = $teacherBuilder->orderBy('order_position', 'ASC')->findAll();
+
+        // Kirim ke View
         $this->data['kepala_sekolah'] = $kepalaSekolah;
         $this->data['teachers']       = $guruLainnya;
         

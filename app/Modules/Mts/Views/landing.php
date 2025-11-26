@@ -93,7 +93,7 @@
         position: relative;
     }
 
-    .swiper-slide {
+    .heroSwiper .swiper-slide {
         height: 85vh;
         min-height: 600px;
         position: relative;
@@ -299,13 +299,15 @@
             /* Reset posisi absolute */
         }
     }
+
     /* --- CSS GURU & STAFF --- */
-    
+
     /* Kartu Kepala Sekolah */
     .headmaster-card {
         transition: transform 0.3s ease;
         background: linear-gradient(to bottom, #ffffff 0%, #fafafa 100%);
     }
+
     .headmaster-card:hover {
         transform: translateY(-5px);
         box-shadow: 0 1rem 3rem rgba(88, 44, 131, 0.15) !important;
@@ -313,22 +315,30 @@
 
     /* Slider Guru */
     .teacherSwiper {
-        padding-bottom: 30px !important; /* Memberi ruang untuk dots pagination */
+        padding-bottom: 50px !important; /* Tambah padding bawah agar bayangan/shadow tidak terpotong */
+        padding-top: 20px;
     }
-    
+
     .teacherSwiper .swiper-slide {
-        /* Pastikan tinggi kartu konsisten */
-        height: auto; 
+        height: auto !important;
+        min-height: 0 !important;
         display: flex;
+        align-items: flex-start; /* KUNCI: Agar tinggi card sesuai konten saja */
+        justify-content: center; /* Agar card ada di tengah slide */
     }
 
     .teacherSwiper .swiper-pagination {
-        bottom: 0 !important; 
+        bottom: 0 !important;
     }
+
     .teacherSwiper .swiper-pagination-bullet-active {
         background-color: var(--mbs-purple) !important;
     }
-    #guru { background-color: #fff; }
+
+    #guru {
+        background-color: #fff;
+    }
+  
 </style>
 
 <section class="hero-section position-relative overflow-hidden pb-5">
@@ -608,35 +618,37 @@
 
 <section id="guru" class="py-5 bg-white">
     <div class="container">
-        
+
         <div class="text-center mb-5">
             <h3 class="fw-bold text-purple">Dewan Guru & Staff</h3>
             <div class="divider mx-auto bg-purple" style="width: 50px; height: 3px;"></div>
         </div>
 
-        <?php if(!empty($kepala_sekolah)): ?>
+        <?php if (!empty($kepala_sekolah)): ?>
             <div class="row justify-content-center mb-5">
                 <div class="col-md-6 col-lg-4">
                     <div class="card border-0 shadow-sm rounded-4 overflow-hidden card-guru">
                         <div class="bg-purple" style="height: 100px;"></div>
-                        
+
                         <div class="card-body text-center p-0">
                             <div class="position-relative d-inline-block" style="margin-top: -60px;">
-                                <img src="<?= esc($kepala_sekolah['photo']) ?>" 
-                                     class="rounded-circle border border-4 border-white shadow-sm object-fit-cover" 
-                                     width="120" height="120"
-                                     alt="<?= esc($kepala_sekolah['name']) ?>"
-                                     onerror="this.src='https://ui-avatars.com/api/?name=KS&background=random&size=128'">
+                                <?php
+                                $fotoKS = $kepala_sekolah['photo'];
+                                // Cek: Jika string mengandung 'http', berarti link luar. Jika tidak, pakai base_url()
+                                $srcKS = (filter_var($fotoKS, FILTER_VALIDATE_URL)) ? $fotoKS : base_url($fotoKS);
+                                ?>
+                                <img src="<?= $srcKS ?>"
+                                    class="rounded-circle border border-4 border-white shadow-sm object-fit-cover"
+                                    width="120" height="120"
+                                    alt="<?= esc($kepala_sekolah['name']) ?>"
+                                    onerror="this.src='https://ui-avatars.com/api/?name=KS&background=random&size=128'">
                             </div>
-                            
+
                             <div class="p-4 pt-2">
                                 <h5 class="fw-bold text-dark mb-1"><?= esc($kepala_sekolah['name']) ?></h5>
                                 <span class="badge bg-purple bg-opacity-10 text-white rounded-pill mb-3 px-3">
                                     <?= esc($kepala_sekolah['position']) ?>
                                 </span>
-                                <p class="text-muted small fst-italic mb-0">
-                                    "Kepemimpinan adalah keteladanan dalam berpikir dan bertindak."
-                                </p>
                             </div>
                         </div>
                     </div>
@@ -645,42 +657,39 @@
         <?php endif; ?>
 
         <?php if(!empty($teachers)): ?>
-            <div class="swiper teacherSwiper pb-5 px-2">
+            <div class="swiper teacherSwiper pb-5 px-2"> 
                 <div class="swiper-wrapper">
                     <?php foreach($teachers as $t): ?>
-                        <div class="swiper-slide h-auto">
-                            <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100 card-guru">
-                                <div class="bg-purple" style="height: 60px; opacity: 0.8;"></div>
+                        <div class="swiper-slide"> 
+                            
+                            <div class="card border-0 shadow-sm rounded-4 overflow-hidden card-guru mx-auto" style="max-width: 350px;">
                                 
-                                <div class="card-body text-center p-0">
-                                    <div class="position-relative d-inline-block" style="margin-top: -40px;">
-                                        <img src="<?= esc($t['photo']) ?>" 
+                                <div class="bg-purple" style="height: 70px;"></div>
+                                
+                                <div class="card-body text-center position-relative pt-0 pb-4"> <div class="position-relative d-inline-block" style="margin-top: -40px;">
+                                        <?php 
+                                            $fotoGuru = $t['photo'];
+                                            // Cek URL vs Lokal
+                                            $srcGuru = (filter_var($fotoGuru, FILTER_VALIDATE_URL)) ? $fotoGuru : base_url($fotoGuru);
+                                        ?>
+                                        <img src="<?= $srcGuru ?>" 
                                              class="rounded-circle border border-3 border-white shadow-sm object-fit-cover" 
                                              width="80" height="80"
                                              alt="<?= esc($t['name']) ?>"
                                              onerror="this.src='https://ui-avatars.com/api/?name=<?= urlencode($t['name']) ?>&background=random&size=128'">
                                     </div>
                                     
-                                    <div class="p-3 pt-2">
-                                        <h6 class="fw-bold text-dark mb-1 small"><?= esc($t['name']) ?></h6>
-                                        <small class="text-muted d-block"><?= esc($t['position']) ?></small>
-                                    </div>
+                                    <h6 class="fw-bold text-dark mb-1 mt-2" style="font-size: 0.95rem;"><?= esc($t['name']) ?></h6>
+                                    <span class="d-block text-secondary small mb-2" style="font-size: 0.8rem;"><?= esc($t['position']) ?></span>
                                 </div>
                             </div>
+
                         </div>
                     <?php endforeach; ?>
                 </div>
                 <div class="swiper-pagination"></div>
             </div>
-        <?php else: ?>
-            <?php if(empty($kepala_sekolah)): ?>
-                <div class="text-center py-5 text-muted">
-                    <p>Belum ada data pengajar.</p>
-                </div>
-            <?php endif; ?>
         <?php endif; ?>
-
-    </div>
 </section>
 
 <section class="py-5 bg-light">
@@ -718,43 +727,54 @@
 </section>
 
 <script>
-    var swiper = new Swiper(".teacherSwiper", {
-        slidesPerView: 2,
-        spaceBetween: 10,
-        pagination: {
-            el: ".swiper-pagination",
-            clickable: true
-        },
-        breakpoints: {
-            640: {
-                slidesPerView: 3,
-                spaceBetween: 20
+    // Tunggu dokumen selesai dimuat baru jalankan Swiper
+    document.addEventListener("DOMContentLoaded", function() {
+        
+        // Inisialisasi Swiper Guru
+        var teacherSwiper = new Swiper(".teacherSwiper", {
+            slidesPerView: 1, // Tampilan HP: 1 kartu dulu biar rapi
+            spaceBetween: 20,
+            loop: false, // Jangan di-loop kalau datanya sedikit (kurang dari slidesPerView)
+            grabCursor: true, // Biar kursor berubah jadi tangan saat hover
+            pagination: {
+                el: ".teacherSwiper .swiper-pagination", // Spesifik ke class ini
+                clickable: true
             },
-            1024: {
-                slidesPerView: 5,
-                spaceBetween: 30
+            breakpoints: {
+                640: {
+                    slidesPerView: 2, // Tablet kecil: 2 kartu
+                    spaceBetween: 20
+                },
+                768: {
+                    slidesPerView: 3, // Tablet/Laptop: 3 kartu
+                    spaceBetween: 30
+                },
+                1024: {
+                    slidesPerView: 4, // Desktop lebar: 4 kartu
+                    spaceBetween: 40
+                },
             },
-        },
-    });
-    var heroSwiper = new Swiper(".heroSwiper", {
-        loop: true,
-        effect: "fade", // Efek Fade lebih elegan daripada slide biasa
-        fadeEffect: {
-            crossFade: true
-        },
-        autoplay: {
-            delay: 6000,
-            disableOnInteraction: false
-        },
-        pagination: {
-            el: ".swiper-pagination",
-            clickable: true,
-            dynamicBullets: true
-        },
-        navigation: {
-            nextEl: ".swiper-button-next",
-            prevEl: ".swiper-button-prev"
-        },
+        });
+
+        // Inisialisasi Hero Swiper (Slider Atas)
+        var heroSwiper = new Swiper(".heroSwiper", {
+            loop: true,
+            effect: "fade",
+            fadeEffect: { crossFade: true },
+            autoplay: {
+                delay: 6000,
+                disableOnInteraction: false
+            },
+            pagination: {
+                el: ".heroSwiper .swiper-pagination",
+                clickable: true,
+                dynamicBullets: true
+            },
+            navigation: {
+                nextEl: ".swiper-button-next",
+                prevEl: ".swiper-button-prev"
+            },
+        });
     });
 </script>
 
