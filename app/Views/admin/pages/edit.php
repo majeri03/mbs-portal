@@ -22,22 +22,47 @@
                     <?= csrf_field() ?>
                     <div class="mb-4">
                         <label class="form-label fw-bold text-dark">Kelompok Menu (Navbar)</label>
-                        <input type="text" 
-                               name="menu_title" 
-                               class="form-control bg-light" 
-                               placeholder="Contoh: Profil, Kesiswaan, Akademik"
-                               list="menuSuggestions"
-                               value="<?= old('menu_title', $page['menu_title']) ?>" 
-                               required>
-                        <datalist id="menuSuggestions">
-                            <option value="Tentang Kami">
-                            <option value="Profil Sekolah">
-                            <option value="Kesiswaan">
-                            <option value="Akademik">
-                            <option value="Layanan">
-                        </datalist>
-                        <small class="text-muted">Halaman ini akan dikelompokkan di bawah menu dropdown dengan nama tersebut.</small>
+                        
+                        <div class="input-group">
+                            <span class="input-group-text bg-white text-purple"><i class="bi bi-menu-button-wide"></i></span>
+                            
+                            <input type="text" 
+                                   name="menu_title" 
+                                   id="menuTitleInputEdit" 
+                                   class="form-control bg-light" 
+                                   value="<?= old('menu_title', $page['menu_title']) ?>" 
+                                   required
+                                   autocomplete="off">
+                            
+                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Pilih
+                            </button>
+                            
+                            <ul class="dropdown-menu dropdown-menu-end shadow-sm" style="max-height: 200px; overflow-y: auto;">
+                                <li><h6 class="dropdown-header">Pindah ke Menu...</h6></li>
+                                
+                                <?php if (!empty($existingMenus)): ?>
+                                    <?php foreach ($existingMenus as $menu): ?>
+                                        <li>
+                                            <button type="button" class="dropdown-item" onclick="selectMenuEdit('<?= esc($menu['menu_title']) ?>')">
+                                                <?= esc($menu['menu_title']) ?>
+                                            </button>
+                                        </li>
+                                    <?php endforeach; ?>
+                                <?php else: ?>
+                                    <li><button type="button" class="dropdown-item" onclick="selectMenuEdit('Profil Sekolah')">Profil Sekolah</button></li>
+                                    <li><button type="button" class="dropdown-item" onclick="selectMenuEdit('Kesiswaan')">Kesiswaan</button></li>
+                                <?php endif; ?>
+                            </ul>
+                        </div>
+                        <small class="text-muted">Ubah nama ini untuk memindahkan halaman ke menu lain.</small>
                     </div>
+
+                    <script>
+                        function selectMenuEdit(value) {
+                            document.getElementById('menuTitleInputEdit').value = value;
+                        }
+                    </script>
                     <div class="mb-4">
                         <label class="form-label fw-bold text-dark">Judul Halaman</label>
                         <input type="text" name="title" class="form-control form-control-lg bg-light" value="<?= esc($page['title']) ?>" required>

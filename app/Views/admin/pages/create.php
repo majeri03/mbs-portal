@@ -22,37 +22,53 @@
                     <?= csrf_field() ?>
                     <div class="mb-4">
                         <label class="form-label fw-bold text-dark">Kelompok Menu (Navbar)</label>
-
+                        
                         <div class="input-group">
                             <span class="input-group-text bg-white text-purple"><i class="bi bi-menu-button-wide"></i></span>
-
-                            <input type="text"
-                                name="menu_title"
-                                class="form-control bg-light"
-                                placeholder="Pilih dari list atau ketik baru..."
-                                list="menuSuggestions"
-                                value="<?= old('menu_title') ?>"
-                                required
-                                autocomplete="off">
-                        </div>
-
-                        <datalist id="menuSuggestions">
-                            <?php if (!empty($existingMenus)): ?>
-                                <?php foreach ($existingMenus as $menu): ?>
-                                    <option value="<?= esc($menu['menu_title']) ?>">
+                            
+                            <input type="text" 
+                                   name="menu_title" 
+                                   id="menuTitleInput" 
+                                   class="form-control bg-light" 
+                                   placeholder="Ketik nama menu baru atau pilih di kanan..."
+                                   value="<?= old('menu_title') ?>" 
+                                   required
+                                   autocomplete="off">
+                            
+                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Pilih
+                            </button>
+                            
+                            <ul class="dropdown-menu dropdown-menu-end shadow-sm" style="max-height: 200px; overflow-y: auto;">
+                                <li><h6 class="dropdown-header">Menu Tersedia</h6></li>
+                                
+                                <?php if (!empty($existingMenus)): ?>
+                                    <?php foreach ($existingMenus as $menu): ?>
+                                        <li>
+                                            <button type="button" class="dropdown-item" onclick="selectMenu('<?= esc($menu['menu_title']) ?>')">
+                                                <?= esc($menu['menu_title']) ?>
+                                            </button>
+                                        </li>
                                     <?php endforeach; ?>
                                 <?php else: ?>
-                                    <option value="Profil Sekolah">
-                                    <option value="Kesiswaan">
-                                    <option value="Informasi">
-                                    <?php endif; ?>
-                        </datalist>
-
+                                    <li><button type="button" class="dropdown-item" onclick="selectMenu('Profil Sekolah')">Profil Sekolah</button></li>
+                                    <li><button type="button" class="dropdown-item" onclick="selectMenu('Kesiswaan')">Kesiswaan</button></li>
+                                    <li><button type="button" class="dropdown-item" onclick="selectMenu('Informasi')">Informasi</button></li>
+                                <?php endif; ?>
+                            </ul>
+                        </div>
+                        
                         <small class="text-muted">
                             <i class="bi bi-info-circle me-1"></i>
-                            Klik panah di dalam kolom input untuk memilih menu yang sudah ada.
+                            Gunakan tombol <strong>Pilih</strong> untuk melihat menu yang ada, atau ketik langsung untuk membuat menu baru.
                         </small>
                     </div>
+
+                    <script>
+                        function selectMenu(value) {
+                            document.getElementById('menuTitleInput').value = value;
+                        }
+                    </script>
                     <div class="mb-4">
                         <label class="form-label fw-bold text-dark">Judul Halaman <span class="text-danger">*</span></label>
                         <input type="text"

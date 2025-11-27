@@ -69,6 +69,10 @@
                     // Ambil Data Grouped PUSAT (NULL)
                     $pageModel = new \App\Models\PageModel();
                     $groupedPages = $pageModel->getPagesGrouped(null); 
+
+                    $navSchoolModel = new \App\Models\SchoolModel();
+                    $navSchools = $navSchoolModel->orderBy('order_position', 'ASC')->findAll();
+                    
                     ?>
 
                     <?php if (!empty($groupedPages)) : ?>
@@ -109,10 +113,6 @@
                                     </li>
                                 <?php endforeach; ?>
                             </ul>
-                        </li>
-                    <?php else: ?>
-                        <li class="nav-item">
-                            <a class="nav-link fw-medium" href="<?= base_url('#jenjang-sekolah') ?>">Pendidikan</a>
                         </li>
                     <?php endif; ?>
                     <li class="nav-item">
