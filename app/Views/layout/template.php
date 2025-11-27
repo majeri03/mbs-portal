@@ -68,47 +68,58 @@
                     <?php
                     // Ambil Data Grouped PUSAT (NULL)
                     $pageModel = new \App\Models\PageModel();
-                    $groupedPages = $pageModel->getPagesGrouped(null); 
+                    $groupedPages = $pageModel->getPagesGrouped(null);
 
                     $navSchoolModel = new \App\Models\SchoolModel();
                     $navSchools = $navSchoolModel->orderBy('order_position', 'ASC')->findAll();
-                    
+
                     ?>
 
                     <?php if (!empty($groupedPages)) : ?>
-                        <?php foreach ($groupedPages as $menuName => $pages): ?>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link fw-medium dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
-                                    <?= esc($menuName) ?>
-                                    <i class="bi bi-chevron-down ms-1 toggle-icon" style="font-size: 0.75rem; transition: transform 0.3s;"></i>
-                                </a>
-                                <ul class="dropdown-menu shadow-lg border-0 animate slideIn mt-2 p-2" style="border-radius: 12px;">
-                                    <?php foreach ($pages as $p): ?>
-                                        <li>
-                                            <a class="dropdown-item rounded py-2 px-3 fw-medium" href="<?= base_url('page/' . $p['slug']) ?>">
-                                                <?= esc($p['title']) ?>
-                                            </a>
-                                        </li>
-                                    <?php endforeach; ?>
-                                </ul>
-                            </li>
-                        <?php endforeach; ?>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link fw-medium dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Tentang MBS
+                                <i class="bi bi-chevron-down ms-1" style="font-size: 0.75rem;"></i>
+                            </a>
+
+                            <ul class="dropdown-menu shadow-lg">
+                                <?php foreach ($groupedPages as $menuName => $pages): ?>
+                                    <li class="dropend">
+                                        <a class="dropdown-item dropdown-toggle" href="#" role="button">
+                                            <?= esc($menuName) ?>
+                                            <i class="bi bi-chevron-right text-muted" style="font-size: 0.8em;"></i>
+                                        </a>
+
+                                        <ul class="dropdown-menu shadow-lg">
+                                            <?php foreach ($pages as $p): ?>
+                                                <li>
+                                                    <a class="dropdown-item" href="<?= base_url('page/' . $p['slug']) ?>">
+                                                        <i class="bi bi-dash text-muted"></i>
+                                                        <?= esc($p['title']) ?>
+                                                    </a>
+                                                </li>
+                                            <?php endforeach; ?>
+                                        </ul>
+                                    </li>
+                                <?php endforeach; ?>
+                            </ul>
+                        </li>
                     <?php endif; ?>
 
                     <?php if (!empty($navSchools)) : ?>
                         <li class="nav-item dropdown">
-                            <a class="nav-link fw-medium dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <a class="nav-link fw-medium dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 Jenjang
-                                <i class="bi bi-chevron-down ms-1 toggle-icon" style="font-size: 0.75rem; transition: transform 0.3s;"></i>
+                                <i class="bi bi-chevron-down ms-1" style="font-size: 0.75rem;"></i>
                             </a>
 
-                            <ul class="dropdown-menu shadow-lg border-0 animate slideIn mt-2 p-2" style="border-radius: 12px;">
+                            <ul class="dropdown-menu shadow-lg border-top-purple mt-2">
                                 <?php foreach ($navSchools as $ns): ?>
                                     <li>
                                         <a class="dropdown-item rounded py-2 px-3 fw-medium d-flex align-items-center justify-content-between"
                                             href="<?= base_url($ns['slug']) ?>">
                                             <span><?= esc($ns['name']) ?></span>
-                                            <i class="bi bi-chevron-right small text-muted" style="font-size: 0.7rem;"></i>
+                                            <i class="bi bi-arrow-right-short text-muted"></i>
                                         </a>
                                     </li>
                                 <?php endforeach; ?>
@@ -124,22 +135,24 @@
                             <i class="bi bi-chevron-down ms-1 toggle-icon" style="font-size: 0.75rem; transition: transform 0.3s;"></i>
                         </a>
                         <ul class="dropdown-menu shadow-lg border-0 animate slideIn mt-2 p-2" style="border-radius: 12px; min-width: 220px;">
-                            
+
                             <li><span class="dropdown-header text-uppercase x-small fw-bold text-muted">Arsip Yayasan</span></li>
                             <li>
                                 <a class="dropdown-item rounded py-2 px-3 fw-medium text-purple" href="<?= base_url('dokumen') ?>">
                                     <i class="bi bi-folder-fill me-2"></i>Dokumen Pusat
                                 </a>
                             </li>
-                            
-                            <li><hr class="dropdown-divider my-2"></li>
+
+                            <li>
+                                <hr class="dropdown-divider my-2">
+                            </li>
 
                             <li><span class="dropdown-header text-uppercase x-small fw-bold text-muted">Dokumen Unit</span></li>
                             <?php if (!empty($navSchools)) : ?>
                                 <?php foreach ($navSchools as $ns): ?>
                                     <li>
-                                        <a class="dropdown-item rounded py-2 px-3 d-flex align-items-center justify-content-between" 
-                                           href="<?= base_url($ns['slug'] . '/dokumen') ?>">
+                                        <a class="dropdown-item rounded py-2 px-3 d-flex align-items-center justify-content-between"
+                                            href="<?= base_url($ns['slug'] . '/dokumen') ?>">
                                             <span><?= esc($ns['name']) ?></span>
                                             <i class="bi bi-box-arrow-up-right text-muted" style="font-size: 0.7rem;"></i>
                                         </a>
@@ -311,104 +324,209 @@
     </footer>
 
     <style>
-        /* --- 0. KONFIGURASI WARNA (Agar konsisten) --- */
+        /* --- 0. KONFIGURASI WARNA & DASAR --- */
         :root {
-            /* Gunakan variabel ungu yang sama dengan tema kamu */
-            --mbs-purple: #6610f2;
-            /* Default bootstrap purple, akan ikut settingan globalmu jika ada */
-            --mbs-purple-light: #f3f0ff;
-            /* Warna ungu sangat muda untuk hover */
+            --mbs-purple: #582C83;
+            /* Warna Utama */
+            --mbs-purple-light: #F3E5F5;
+            /* Warna Hover (Ungu Muda) */
+            --mbs-text-dark: #333333;
         }
 
-        /* --- 1. PERBAIKAN UTAMA: HAPUS PANAH/GARIS PENGGANGGU --- */
-        /* Ini yang membuat garis/kotak aneh di sebelah 'Tentang Kami' hilang total */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa;
+            color: var(--mbs-text-dark);
+            padding-top: 0;
+            /* Reset padding agar tidak ada gap putih */
+        }
+
+        /* --- 1. PERBAIKAN MOBILE & RESPONSIVE --- */
+        @media (max-width: 991px) {
+            body {
+                padding-top: 0 !important;
+                /* Paksa 0 di mobile */
+            }
+
+            .navbar-collapse {
+                background: white;
+                padding: 15px;
+                border-radius: 15px;
+                margin-top: 10px;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            }
+        }
+
+        /* --- 2. HAPUS PANAH BAWAAN BOOTSTRAP (Agar tidak double) --- */
         .dropdown-toggle::after {
             display: none !important;
             content: none !important;
         }
 
-        /* --- 2. NAVBAR MENU UTAMA (FORMAL & MODERN) --- */
-        .navbar-nav .nav-link {
-            font-weight: 500;
-            /* Ketebalan font sedang (formal) */
+        /* --- 3. NAVBAR LINK STYLE (Garis Bawah Animasi) --- */
+        .nav-link {
             color: #555;
-            /* Warna abu tua (tidak hitam pekat agar elegan) */
-            padding: 10px 15px !important;
-            /* Spasi antar menu */
+            font-weight: 500;
+            padding: 10px 18px !important;
             position: relative;
-            /* Wajib ada untuk garis bawah */
             transition: color 0.3s ease;
+            border-radius: 50px;
+            /* Opsional: memberi bentuk oval saat hover */
         }
 
-        /* Membuat Garis Bawah (Underline) Animasi */
+        /* Garis Bawah */
         .navbar-nav .nav-link::before {
             content: '';
             position: absolute;
             width: 0;
-            /* Awalnya lebar 0 (tidak terlihat) */
             height: 2px;
-            /* Ketebalan garis */
             bottom: 5px;
-            /* Jarak dari bawah teks */
             left: 0;
             background-color: var(--mbs-purple);
             transition: width 0.3s ease-in-out;
-            /* Animasi memanjang */
         }
 
-        /* Efek saat Hover, Aktif, atau Dropdown Terbuka */
+        /* Hover State */
         .navbar-nav .nav-link:hover,
-        .navbar-nav .nav-link.active-custom,
+        .navbar-nav .nav-link.active,
         .navbar-nav .show>.nav-link {
             color: var(--mbs-purple) !important;
+            background-color: rgba(88, 44, 131, 0.05);
+            /* Background tipis */
         }
 
-        /* Munculkan garis memanjang saat hover/aktif */
         .navbar-nav .nav-link:hover::before,
-        .navbar-nav .nav-link.active-custom::before,
         .navbar-nav .show>.nav-link::before {
             width: 100%;
-            /* Garis memanjang penuh */
+            /* Garis memanjang */
         }
 
-        /* --- 3. DROPDOWN MENU (CLEAN STYLE) --- */
+        /* --- 4. DROPDOWN MENU UTAMA --- */
         .dropdown-menu {
             border: none;
             border-top: 3px solid var(--mbs-purple);
-            /* Aksen ungu di atas kotak */
+            /* Aksen Ungu di Atas */
             border-radius: 0 0 8px 8px;
-            /* Lengkungan hanya di bawah */
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-            /* Bayangan sangat halus */
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             margin-top: 0;
-            padding: 10px 0;
+            padding: 5px 0;
+            min-width: 230px;
+            /* Lebar minimum agar teks tidak terpotong */
             background-color: #fff;
         }
 
+        /* --- 5. ITEM DROPDOWN (Isi Menu) --- */
         .dropdown-item {
             font-size: 0.95rem;
             color: #444;
-            padding: 10px 25px;
-            /* Spasi dalam lega */
+            padding: 10px 20px;
             font-weight: 400;
             transition: all 0.2s ease;
+
+            /* Flexbox untuk merapikan Icon dan Teks */
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            /* Default rata kiri */
+            gap: 10px;
+            /* Jarak antara Icon dan Teks (Solusi icon jauh) */
         }
 
-        /* Efek Hover pada Item Dropdown */
         .dropdown-item:hover {
             background-color: var(--mbs-purple-light);
-            /* Background ungu muda */
             color: var(--mbs-purple);
-            padding-left: 30px;
-            /* Efek geser kanan sedikit (modern) */
+            padding-left: 25px;
+            /* Efek geser kanan */
         }
 
-        /* Animasi Muncul Dropdown (Fade In Halus) */
-        .dropdown-menu.show {
-            animation: fadeUp 0.3s ease forwards;
+        /* KHUSUS Tombol Submenu (Informasi > Sejarah) */
+        /* Kita paksa agar panah submenu ada di ujung kanan */
+        .dropend>.dropdown-toggle {
+            justify-content: space-between !important;
         }
 
-        @keyframes fadeUp {
+        /* --- 6. LOGIKA MENU BERCABANG (NESTED) & ANIMASI --- */
+
+        /* Transisi Icon agar muter halus */
+        .bi-chevron-down,
+        .bi-chevron-right {
+            transition: transform 0.3s ease !important;
+        }
+
+        /* A. TAMPILAN DESKTOP (Layar Besar) */
+        @media (min-width: 992px) {
+
+            /* Dropdown Utama muncul saat Hover */
+            .nav-item.dropdown:hover>.dropdown-menu {
+                display: block;
+                animation: fadeInUp 0.3s ease;
+            }
+
+            /* Rotasi Icon Menu Utama saat Hover */
+            .nav-item.dropdown:hover>.nav-link .bi-chevron-down {
+                transform: rotate(180deg);
+            }
+
+            /* Submenu: Posisi Relative */
+            .dropend {
+                position: relative;
+            }
+
+            /* Submenu: Muncul di Kanan saat Hover */
+            .dropend:hover>.dropdown-menu {
+                display: block;
+                position: absolute;
+                top: 0;
+                left: 100%;
+                margin-left: 0.1rem;
+                margin-top: -5px;
+                border-radius: 8px;
+                border-top: none;
+                border-left: 3px solid var(--mbs-purple);
+                animation: fadeInLeft 0.3s ease;
+            }
+
+            /* Submenu: Rotasi Panah Kanan saat Hover */
+            .dropend:hover>.dropdown-item .bi-chevron-right {
+                transform: rotate(90deg);
+            }
+        }
+
+        /* B. TAMPILAN MOBILE (Layar Kecil) */
+        @media (max-width: 991px) {
+
+            /* Submenu muncul di bawah (indentasi) bukan di samping */
+            .dropend .dropdown-menu {
+                position: static;
+                display: none;
+                float: none;
+                width: 100%;
+                margin-top: 0;
+                background-color: #f9f9f9;
+                border: none;
+                border-left: 2px solid #ddd;
+                box-shadow: none;
+                padding-left: 20px;
+            }
+
+            /* Tampilkan jika ada class 'show' (dari JS) */
+            .dropend .dropdown-menu.show {
+                display: block;
+            }
+
+            /* Rotasi Icon saat Menu Utama dibuka (Bootstrap logic) */
+            .nav-link[aria-expanded="true"] .bi-chevron-down {
+                transform: rotate(180deg);
+            }
+
+            /* Rotasi Icon saat Submenu dibuka (Custom JS logic) */
+            .dropdown-item.show .bi-chevron-right {
+                transform: rotate(90deg);
+            }
+        }
+
+        /* --- 7. ANIMASI KEYFRAMES --- */
+        @keyframes fadeInUp {
             from {
                 opacity: 0;
                 transform: translateY(10px);
@@ -420,7 +538,27 @@
             }
         }
 
-        /* --- 4. STYLE TOMBOL & FOOTER (BAWAAN SEBELUMNYA) --- */
+        @keyframes fadeInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* --- 8. UTILITIES LAIN --- */
+        .text-purple {
+            color: var(--mbs-purple) !important;
+        }
+
+        .bg-purple {
+            background-color: var(--mbs-purple) !important;
+        }
+
         .btn-outline-purple {
             color: var(--mbs-purple);
             border-color: var(--mbs-purple);
@@ -430,80 +568,47 @@
             background-color: var(--mbs-purple);
             color: white;
         }
-
-        .hover-purple:hover {
-            color: var(--mbs-purple) !important;
-            padding-left: 5px;
-            transition: all 0.3s ease;
-            font-weight: 500;
-        }
-
-        /* --- CSS KHUSUS DROPDOWN HOVER (DESKTOP ONLY) --- */
-
-        /* Media Query: Hanya berlaku jika lebar layar >= 992px (Laptop/PC) */
-        @media (min-width: 992px) {
-            .nav-item.dropdown:hover .toggle-icon {
-                transform: rotate(180deg);
-            }
-
-            /* Tampilkan dropdown saat hover */
-            .nav-item.dropdown:hover .dropdown-menu {
-                display: block;
-                opacity: 1;
-                visibility: visible;
-                transform: translateY(0);
-                margin-top: 0;
-            }
-
-            .dropdown-menu {
-                display: block;
-                opacity: 0;
-                visibility: hidden;
-                transform: translateY(10px);
-                transition: all 0.3s ease;
-            }
-        }
-
-        /* --- CSS AGAR LINK TIDAK JUMPING (MOBILE) --- */
-        /* Hapus panah bawaan Bootstrap agar lebih bersih */
-        .dropdown-toggle::after {
-            display: none !important;
-            content: none !important;
-        }
-
-        /* Tambahkan indikator panah kecil sendiri (opsional) */
-        .nav-link.dropdown-toggle {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .nav-link.dropdown-toggle::after {
-            content: "\F282";
-            /* Kode icon chevron-down bootstrap */
-            font-family: "bootstrap-icons";
-            border: none;
-            font-size: 0.7rem;
-            vertical-align: middle;
-            display: inline-block !important;
-            /* Paksa tampil */
-            margin-left: 3px;
-            transition: transform 0.3s;
-        }
-
-        /* Putar panah saat hover (Desktop) atau klik (Mobile/Active) */
-        .nav-item.dropdown:hover .nav-link.dropdown-toggle::after,
-        .nav-item.dropdown .nav-link.dropdown-toggle.show::after {
-            transform: rotate(180deg);
-        }
-
-        .nav-link.show .toggle-icon {
-            transform: rotate(180deg);
-        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <!-- Bootstrap 5 JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const submenuToggles = document.querySelectorAll('.dropdown-menu .dropdown-toggle');
+
+            submenuToggles.forEach(function(toggle) {
+                toggle.addEventListener('click', function(e) {
+                    // Hanya jalankan di Mobile (< 992px)
+                    if (window.innerWidth < 992) {
+                        e.preventDefault();
+                        e.stopPropagation(); // Mencegah menu induk tertutup
+
+                        const nextEl = this.nextElementSibling;
+                        if (nextEl && nextEl.classList.contains('dropdown-menu')) {
+                            // Tutup submenu lain yang terbuka (opsional, biar rapi)
+                            const parentMenu = this.closest('.dropdown-menu');
+                            if (parentMenu) {
+                                parentMenu.querySelectorAll('.dropdown-menu.show').forEach(function(openMenu) {
+                                    if (openMenu !== nextEl) {
+                                        openMenu.classList.remove('show');
+                                        // Reset icon submenu lain
+                                        if (openMenu.previousElementSibling) {
+                                            openMenu.previousElementSibling.classList.remove('show');
+                                        }
+                                    }
+                                });
+                            }
+
+                            // Toggle menu ini
+                            nextEl.classList.toggle('show');
+                            // Toggle class di tombol (untuk rotasi icon)
+                            this.classList.toggle('show');
+                        }
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>
