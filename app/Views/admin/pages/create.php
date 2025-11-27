@@ -20,7 +20,39 @@
             <div class="card-body p-4 bg-white">
                 <form action="<?= base_url('admin/pages/store') ?>" method="POST">
                     <?= csrf_field() ?>
+                    <div class="mb-4">
+                        <label class="form-label fw-bold text-dark">Kelompok Menu (Navbar)</label>
 
+                        <div class="input-group">
+                            <span class="input-group-text bg-white text-purple"><i class="bi bi-menu-button-wide"></i></span>
+
+                            <input type="text"
+                                name="menu_title"
+                                class="form-control bg-light"
+                                placeholder="Pilih dari list atau ketik baru..."
+                                list="menuSuggestions"
+                                value="<?= old('menu_title') ?>"
+                                required
+                                autocomplete="off">
+                        </div>
+
+                        <datalist id="menuSuggestions">
+                            <?php if (!empty($existingMenus)): ?>
+                                <?php foreach ($existingMenus as $menu): ?>
+                                    <option value="<?= esc($menu['menu_title']) ?>">
+                                    <?php endforeach; ?>
+                                <?php else: ?>
+                                    <option value="Profil Sekolah">
+                                    <option value="Kesiswaan">
+                                    <option value="Informasi">
+                                    <?php endif; ?>
+                        </datalist>
+
+                        <small class="text-muted">
+                            <i class="bi bi-info-circle me-1"></i>
+                            Klik panah di dalam kolom input untuk memilih menu yang sudah ada.
+                        </small>
+                    </div>
                     <div class="mb-4">
                         <label class="form-label fw-bold text-dark">Judul Halaman <span class="text-danger">*</span></label>
                         <input type="text"

@@ -30,6 +30,7 @@ class Pages extends BaseAdminController
         $data['title'] = 'Tambah Halaman Baru';
         $data['schools'] = $this->schoolModel->findAll();
         $data['currentSchoolId'] = $this->mySchoolId;
+        $data['existingMenus'] = $this->pageModel->getExistingMenus($this->mySchoolId);
         return view('admin/pages/create', $data);
     }
 
@@ -50,6 +51,7 @@ class Pages extends BaseAdminController
 
         $this->pageModel->save([
             'school_id'   => $schoolId,
+            'menu_title'  => $this->request->getPost('menu_title'),
             'title'       => $title,
             'slug'        => $slug,
             'content'     => $this->request->getPost('content'),
@@ -69,6 +71,7 @@ class Pages extends BaseAdminController
         $data['title'] = 'Edit Halaman';
         $data['schools'] = $this->schoolModel->findAll();
         $data['currentSchoolId'] = $this->mySchoolId;
+       $data['existingMenus'] = $this->pageModel->getExistingMenus($data['page']['school_id']);
         return view('admin/pages/edit', $data);
     }
 
@@ -85,6 +88,7 @@ class Pages extends BaseAdminController
         $schoolId = $this->mySchoolId ? $this->mySchoolId : ($this->request->getPost('school_id') ?: null);
         $this->pageModel->update($id, [
             'school_id'   => $schoolId,
+            'menu_title'  => $this->request->getPost('menu_title'),
             'title'   => $this->request->getPost('title'),
             'content' => $this->request->getPost('content'),
             'is_featured' => $this->request->getPost('is_featured') ? 1 : 0

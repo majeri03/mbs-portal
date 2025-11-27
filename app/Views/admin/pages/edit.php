@@ -20,7 +20,24 @@
             <div class="card-body p-4 bg-white">
                 <form action="<?= base_url('admin/pages/update/' . $page['id']) ?>" method="POST">
                     <?= csrf_field() ?>
-
+                    <div class="mb-4">
+                        <label class="form-label fw-bold text-dark">Kelompok Menu (Navbar)</label>
+                        <input type="text" 
+                               name="menu_title" 
+                               class="form-control bg-light" 
+                               placeholder="Contoh: Profil, Kesiswaan, Akademik"
+                               list="menuSuggestions"
+                               value="<?= old('menu_title', $page['menu_title']) ?>" 
+                               required>
+                        <datalist id="menuSuggestions">
+                            <option value="Tentang Kami">
+                            <option value="Profil Sekolah">
+                            <option value="Kesiswaan">
+                            <option value="Akademik">
+                            <option value="Layanan">
+                        </datalist>
+                        <small class="text-muted">Halaman ini akan dikelompokkan di bawah menu dropdown dengan nama tersebut.</small>
+                    </div>
                     <div class="mb-4">
                         <label class="form-label fw-bold text-dark">Judul Halaman</label>
                         <input type="text" name="title" class="form-control form-control-lg bg-light" value="<?= esc($page['title']) ?>" required>

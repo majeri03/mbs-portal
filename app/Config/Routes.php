@@ -26,6 +26,10 @@ $routes->group('mts', ['namespace' => 'Modules\Mts\Controllers'], function($rout
     $routes->get('agenda/(:segment)', 'Events::show/$1'); // Detail Agenda
 
     $routes->get('galeri', 'Gallery::index');
+
+    // Dokumen
+    $routes->get('dokumen', 'Documents::index');
+    $routes->get('dokumen/(:segment)', 'Documents::show/$1');
 });
 
 $routes->group('ma', ['namespace' => 'Modules\Ma\Controllers'], function($routes) {
@@ -124,6 +128,20 @@ $routes->group('admin', function ($routes) {
     $routes->get('programs/edit/(:num)', 'Admin\Programs::edit/$1');
     $routes->post('programs/update/(:num)', 'Admin\Programs::update/$1');
     $routes->get('programs/delete/(:num)', 'Admin\Programs::delete/$1');
+
+    // 1. CRUD Kategori Dokumen
+    $routes->get('document-categories', 'Admin\DocumentCategories::index');
+    $routes->post('document-categories/store', 'Admin\DocumentCategories::store');
+    $routes->post('document-categories/update/(:num)', 'Admin\DocumentCategories::update/$1');
+    $routes->get('document-categories/delete/(:num)', 'Admin\DocumentCategories::delete/$1');
+
+    // 2. CRUD Dokumen Utama
+    $routes->get('documents', 'Admin\Documents::index');
+    $routes->get('documents/create', 'Admin\Documents::create');
+    $routes->post('documents/store', 'Admin\Documents::store');
+    $routes->get('documents/edit/(:num)', 'Admin\Documents::edit/$1');
+    $routes->post('documents/update/(:num)', 'Admin\Documents::update/$1');
+    $routes->get('documents/delete/(:num)', 'Admin\Documents::delete/$1');
 });
 
 // Public Routes untuk Kalender
@@ -140,3 +158,6 @@ $routes->get('page/(:segment)', 'PageController::show/$1');
 // Route Berita
 $routes->get('news', 'NewsController::index');
 $routes->get('news/(:segment)', 'NewsController::show/$1');
+
+// Route Dokumen Portal Utama
+$routes->get('dokumen', 'PortalDocuments::index');

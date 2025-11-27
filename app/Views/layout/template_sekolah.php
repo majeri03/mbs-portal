@@ -237,22 +237,24 @@
                         <a class="nav-link" href="<?= site_url('mts') ?>">Beranda</a>
                     </li>
 
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            Informasi
-                        </a>
-                        <ul class="dropdown-menu border-0 shadow-sm mt-2" style="border-top: 3px solid var(--mbs-purple);">
-                            <?php if (!empty($school_pages)): ?>
-                                <?php foreach ($school_pages as $sp): ?>
-                                    <li>
-                                        <a class="dropdown-item py-2" href="<?= site_url('mts/halaman/' . $sp['slug']) ?>">
-                                            <?= esc($sp['title']) ?>
-                                        </a>
-                                    </li>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
-                        </ul>
-                    </li>
+                    <?php if (!empty($school_pages_grouped)) : ?>
+                        <?php foreach ($school_pages_grouped as $menuName => $pages): ?>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                    <?= esc($menuName) ?>
+                                </a>
+                                <ul class="dropdown-menu border-0 shadow-sm mt-2" style="border-top: 3px solid var(--mbs-purple);">
+                                    <?php foreach ($pages as $p): ?>
+                                        <li>
+                                            <a class="dropdown-item py-2" href="<?= site_url('mts/halaman/' . $p['slug']) ?>">
+                                                <?= esc($p['title']) ?>
+                                            </a>
+                                        </li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            </li>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
 
                     <li class="nav-item">
                         <a class="nav-link" href="<?= site_url('mts/#guru') ?>">Asatidz</a>
@@ -260,6 +262,31 @@
 
                     <li class="nav-item">
                         <a class="nav-link" href="<?= site_url('mts/kabar') ?>">Kabar</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            Dokumen
+                        </a>
+                        <ul class="dropdown-menu border-0 shadow-sm mt-2" style="border-top: 3px solid var(--mbs-purple);">
+                            <li>
+                                <a class="dropdown-item py-2 fw-bold text-purple" href="<?= site_url('mts/dokumen') ?>">
+                                    <i class="bi bi-grid-fill me-2"></i>Lihat Semua
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            
+                            <?php if (!empty($nav_doc_categories)): ?>
+                                <?php foreach ($nav_doc_categories as $cat): ?>
+                                    <li>
+                                        <a class="dropdown-item py-2" href="<?= site_url('mts/dokumen?kategori=' . $cat['slug']) ?>">
+                                            <?= esc($cat['name']) ?>
+                                        </a>
+                                    </li>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <li><span class="dropdown-item text-muted small">Belum ada kategori</span></li>
+                            <?php endif; ?>
+                        </ul>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="<?= site_url('mts/agenda') ?>">Agenda</a>

@@ -19,9 +19,16 @@ class BaseMtsController extends BaseController
 
         // 2. Ambil Daftar Halaman untuk Navbar (Profil -> Visi Misi, Sejarah, dll)
         $pageModel = new PageModel();
-        $this->data['school_pages'] = $pageModel->where('school_id', $this->schoolId)
-                                                ->where('is_active', 1)
-                                                ->findAll();
+        $this->data['school_pages_grouped'] = $pageModel->getPagesGrouped($this->schoolId);
+
+        // 4. Ambil Kategori Dokumen untuk Navbar (NEW)
+        $docCategoryModel = new \App\Models\DocumentCategoryModel();
+        // Ambil kategori milik MTs (ID 1) ATAU kategori Umum (NULL)
+        $this->data['nav_doc_categories'] = $docCategoryModel->groupStart()
+                                                             ->where('school_id', $this->schoolId)
+                                                             ->orWhere('school_id', null)
+                                                             ->groupEnd()
+                                                             ->findAll();
         $settingModel = new SettingModel();
         // 3. Setting Sekolah dengan Konsep FALLBACK (Warisan Pusat)
         $settingModel = new SettingModel();

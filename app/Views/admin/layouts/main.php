@@ -430,6 +430,65 @@
                 border-radius: 10px;
             }
         }
+
+        /* --- CSS TAMBAHAN UNTUK SIDEBAR DROPDOWN --- */
+        .sidebar-submenu {
+            list-style: none;
+            padding-left: 0;
+            background: rgba(0, 0, 0, 0.15);
+            /* Warna lebih gelap untuk submenu */
+            transition: all 0.3s;
+        }
+
+        .sidebar-submenu li a {
+            padding-left: 55px !important;
+            /* Indentasi lebih dalam */
+            font-size: 0.9rem;
+            border-left: none !important;
+        }
+
+        .sidebar-submenu li a:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Icon Panah Berputar saat diklik */
+        .sidebar-menu a[data-bs-toggle="collapse"] .arrow-icon {
+            transition: transform 0.3s;
+        }
+
+        .sidebar-menu a[data-bs-toggle="collapse"][aria-expanded="true"] .arrow-icon {
+            transform: rotate(180deg);
+        }
+
+        /* --- FIX DATALIST ARROW (SOLUSI FINAL) --- */
+    
+    /* 1. Pastikan panah native muncul di Chrome/Edge/Opera */
+    input[list]::-webkit-calendar-picker-indicator {
+        display: block !important;
+        opacity: 1 !important;
+        background: transparent; /* Transparan agar menyatu */
+        bottom: 0;
+        color: transparent;
+        cursor: pointer;
+        height: auto;
+        left: auto;
+        position: absolute;
+        right: 12px; /* Posisi dari kanan */
+        top: 0;
+        width: 24px; /* Lebar area klik */
+        z-index: 99;
+        /* Ganti ikon bawaan browser yang jelek dengan ikon Bootstrap (Opsional) */
+        /* Kalau mau pakai ikon native segitiga hitam, hapus baris background-image di bawah */
+        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="gray" class="bi bi-chevron-down" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>');
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: 12px;
+    }
+
+    /* 2. Firefox biasanya otomatis muncul saat double click, tapi kita beri hint hover */
+    input[list]:hover {
+        background-color: #e9ecef; /* Sedikit gelap saat dihover menandakan bisa diklik */
+    }
     </style>
 </head>
 
@@ -454,54 +513,86 @@
         ?>
 
         <ul class="sidebar-menu">
-            <li><a href="<?= base_url('admin/dashboard') ?>" class="<?= ($current_segment == 'dashboard') ? 'active' : '' ?>">
+            <li>
+                <a href="<?= base_url('admin/dashboard') ?>" class="<?= (service('uri')->getSegment(2) == 'dashboard') ? 'active' : '' ?>">
                     <i class="bi bi-speedometer2"></i> Dashboard
-                </a></li>
-
-            <li><a href="<?= base_url('admin/posts') ?>" class="<?= ($current_segment == 'posts') ? 'active' : '' ?>">
-                    <i class="bi bi-newspaper"></i> Kelola Berita
-                </a></li>
-            <li><a href="<?= base_url('admin/pages') ?>" class="<?= ($current_segment == 'pages') ? 'active' : '' ?>">
-                    <i class="bi bi-file-earmark-text"></i> Halaman Statis
-                </a></li>
-            <li>
-                <a href="<?= base_url('admin/programs') ?>" class="<?= (service('uri')->getSegment(2) == 'programs') ? 'active' : '' ?>">
-                    <i class="bi bi-trophy-fill"></i> Program Unggulan
                 </a>
             </li>
-            <li><a href="<?= base_url('admin/announcements') ?>" class="<?= str_contains(uri_string(), 'admin/announcements') ? 'active' : '' ?>">
-                    <i class="bi bi-megaphone-fill"></i> Kelola Pengumuman
-                </a></li>
-            <li><a href="<?= base_url('admin/schools') ?>" class="<?= ($current_segment == 'schools') ? 'active' : '' ?>">
-                    <i class="bi bi-building"></i> Kelola Sekolah
-                </a></li>
+
+            <?php
+            // Cek apakah URL saat ini mengandung kata 'document' agar menu tetap terbuka
+            $isDocActive = str_contains(uri_string(), 'document');
+            ?>
             <li>
-                <a href="<?= base_url('admin/teachers') ?>" class="<?= ($current_segment == 'teachers') ? 'active' : '' ?>">
-                    <i class="bi bi-people-fill"></i>
+                <a href="#submenuDokumen" data-bs-toggle="collapse" aria-expanded="<?= $isDocActive ? 'true' : 'false' ?>"
+                    class="d-flex justify-content-between align-items-center <?= $isDocActive ? 'active' : '' ?>">
+                    <span><i class="bi bi-folder-fill"></i> E-Dokumen</span>
+                    <i class="bi bi-chevron-down arrow-icon" style="font-size: 0.8rem;"></i>
+                </a>
 
-                    <?php if (session('school_id')): ?>
-                        Guru & Staff
-                    <?php else: ?>
-                        Pimpinan Pondok
-                    <?php endif; ?>
+                <ul class="collapse sidebar-submenu <?= $isDocActive ? 'show' : '' ?>" id="submenuDokumen" data-bs-parent="#sidebar">
+                    <li>
+                        <a href="<?= base_url('admin/documents') ?>" class="<?= (uri_string() == 'admin/documents') ? 'text-warning' : '' ?>">
+                            Data Dokumen
+                        </a>
+                    </li>
+                    <li>
+                        <a href="<?= base_url('admin/document-categories') ?>" class="<?= str_contains(uri_string(), 'categories') ? 'text-warning' : '' ?>">
+                            Kategori Dokumen
+                        </a>
+                    </li>
+                </ul>
+            </li>
 
+            <?php
+            // Cek URL untuk group Konten
+            $uri = uri_string();
+            $isContentActive = (str_contains($uri, 'posts') || str_contains($uri, 'pages') || str_contains($uri, 'sliders') || str_contains($uri, 'galleries') || str_contains($uri, 'announcements'));
+            ?>
+            <li>
+                <a href="#submenuKonten" data-bs-toggle="collapse" aria-expanded="<?= $isContentActive ? 'true' : 'false' ?>"
+                    class="d-flex justify-content-between align-items-center <?= $isContentActive ? 'active' : '' ?>">
+                    <span><i class="bi bi-globe"></i> Konten Web</span>
+                    <i class="bi bi-chevron-down arrow-icon" style="font-size: 0.8rem;"></i>
+                </a>
+
+                <ul class="collapse sidebar-submenu <?= $isContentActive ? 'show' : '' ?>" id="submenuKonten" data-bs-parent="#sidebar">
+                    <li><a href="<?= base_url('admin/posts') ?>">Berita / Artikel</a></li>
+                    <li><a href="<?= base_url('admin/pages') ?>">Halaman Statis</a></li>
+                    <li><a href="<?= base_url('admin/announcements') ?>">Pengumuman</a></li>
+                    <li><a href="<?= base_url('admin/galleries') ?>">Galeri Foto</a></li>
+                    <li><a href="<?= base_url('admin/sliders') ?>">Hero Slider</a></li>
+                </ul>
+            </li>
+
+            <?php
+            $isMasterActive = (str_contains($uri, 'schools') || str_contains($uri, 'teachers') || str_contains($uri, 'programs'));
+            ?>
+            <li>
+                <a href="#submenuMaster" data-bs-toggle="collapse" aria-expanded="<?= $isMasterActive ? 'true' : 'false' ?>"
+                    class="d-flex justify-content-between align-items-center <?= $isMasterActive ? 'active' : '' ?>">
+                    <span><i class="bi bi-database-fill"></i> Data Master</span>
+                    <i class="bi bi-chevron-down arrow-icon" style="font-size: 0.8rem;"></i>
+                </a>
+
+                <ul class="collapse sidebar-submenu <?= $isMasterActive ? 'show' : '' ?>" id="submenuMaster" data-bs-parent="#sidebar">
+                    <li><a href="<?= base_url('admin/schools') ?>">Jenjang Sekolah</a></li>
+                    <li><a href="<?= base_url('admin/programs') ?>">Program Unggulan</a></li>
+                    <li><a href="<?= base_url('admin/teachers') ?>">Pimpinan & Guru</a></li>
+                </ul>
+            </li>
+
+            <li>
+                <a href="<?= base_url('admin/events') ?>" class="<?= str_contains($uri, 'events') ? 'active' : '' ?>">
+                    <i class="bi bi-calendar-event"></i> Agenda Kegiatan
                 </a>
             </li>
-            <li><a href="<?= base_url('admin/events') ?>" class="<?= ($current_segment == 'events') ? 'active' : '' ?>">
-                    <i class="bi bi-calendar-event"></i> Kelola Agenda
-                </a></li>
 
-            <li><a href="<?= base_url('admin/galleries') ?>" class="<?= ($current_segment == 'galleries') ? 'active' : '' ?>">
-                    <i class="bi bi-images"></i> Galeri Foto
-                </a></li>
-
-            <li><a href="<?= base_url('admin/sliders') ?>" class="<?= ($current_segment == 'sliders') ? 'active' : '' ?>">
-                    <i class="bi bi-image"></i> Hero Slider
-                </a></li>
-
-            <li><a href="<?= base_url('admin/settings') ?>" class="<?= ($current_segment == 'settings') ? 'active' : '' ?>">
+            <li>
+                <a href="<?= base_url('admin/settings') ?>" class="<?= str_contains($uri, 'settings') ? 'active' : '' ?>">
                     <i class="bi bi-gear-fill"></i> Pengaturan
-                </a></li>
+                </a>
+            </li>
         </ul>
     </div>
 

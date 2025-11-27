@@ -66,33 +66,87 @@
                     </li>
 
                     <?php
-                    // Ambil data halaman aktif untuk menu
+                    // Ambil Data Grouped PUSAT (NULL)
                     $pageModel = new \App\Models\PageModel();
-                    $menuPages = $pageModel->getActivePages();
+                    $groupedPages = $pageModel->getPagesGrouped(null); 
                     ?>
 
-                    <?php if (!empty($menuPages)) : ?>
+                    <?php if (!empty($groupedPages)) : ?>
+                        <?php foreach ($groupedPages as $menuName => $pages): ?>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link fw-medium dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
+                                    <?= esc($menuName) ?>
+                                    <i class="bi bi-chevron-down ms-1 toggle-icon" style="font-size: 0.75rem; transition: transform 0.3s;"></i>
+                                </a>
+                                <ul class="dropdown-menu shadow-lg border-0 animate slideIn mt-2 p-2" style="border-radius: 12px;">
+                                    <?php foreach ($pages as $p): ?>
+                                        <li>
+                                            <a class="dropdown-item rounded py-2 px-3 fw-medium" href="<?= base_url('page/' . $p['slug']) ?>">
+                                                <?= esc($p['title']) ?>
+                                            </a>
+                                        </li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            </li>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+
+                    <?php if (!empty($navSchools)) : ?>
                         <li class="nav-item dropdown">
-                            <a class="nav-link fw-medium dropdown-toggle <?= strpos(uri_string(), 'page') !== false ? 'active-custom' : '' ?>" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Tentang Kami
+                            <a class="nav-link fw-medium dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Jenjang
+                                <i class="bi bi-chevron-down ms-1 toggle-icon" style="font-size: 0.75rem; transition: transform 0.3s;"></i>
                             </a>
+
                             <ul class="dropdown-menu shadow-lg border-0 animate slideIn mt-2 p-2" style="border-radius: 12px;">
-                                <?php foreach ($menuPages as $mp): ?>
+                                <?php foreach ($navSchools as $ns): ?>
                                     <li>
-                                        <a class="dropdown-item rounded py-2 px-3 fw-medium" href="<?= base_url('page/' . $mp['slug']) ?>">
-                                            <?= esc($mp['title']) ?>
+                                        <a class="dropdown-item rounded py-2 px-3 fw-medium d-flex align-items-center justify-content-between"
+                                            href="<?= base_url($ns['slug']) ?>">
+                                            <span><?= esc($ns['name']) ?></span>
+                                            <i class="bi bi-chevron-right small text-muted" style="font-size: 0.7rem;"></i>
                                         </a>
                                     </li>
                                 <?php endforeach; ?>
                             </ul>
                         </li>
+                    <?php else: ?>
+                        <li class="nav-item">
+                            <a class="nav-link fw-medium" href="<?= base_url('#jenjang-sekolah') ?>">Pendidikan</a>
+                        </li>
                     <?php endif; ?>
-
-                    <li class="nav-item">
-                        <a class="nav-link fw-medium" href="<?= base_url('/#jenjang-sekolah') ?>">Pendidikan</a>
-                    </li>
                     <li class="nav-item">
                         <a class="nav-link fw-medium <?= strpos(uri_string(), 'news') !== false ? 'active-custom' : '' ?>" href="<?= base_url('news') ?>">Berita</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link fw-medium dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Dokumen
+                            <i class="bi bi-chevron-down ms-1 toggle-icon" style="font-size: 0.75rem; transition: transform 0.3s;"></i>
+                        </a>
+                        <ul class="dropdown-menu shadow-lg border-0 animate slideIn mt-2 p-2" style="border-radius: 12px; min-width: 220px;">
+                            
+                            <li><span class="dropdown-header text-uppercase x-small fw-bold text-muted">Arsip Yayasan</span></li>
+                            <li>
+                                <a class="dropdown-item rounded py-2 px-3 fw-medium text-purple" href="<?= base_url('dokumen') ?>">
+                                    <i class="bi bi-folder-fill me-2"></i>Dokumen Pusat
+                                </a>
+                            </li>
+                            
+                            <li><hr class="dropdown-divider my-2"></li>
+
+                            <li><span class="dropdown-header text-uppercase x-small fw-bold text-muted">Dokumen Unit</span></li>
+                            <?php if (!empty($navSchools)) : ?>
+                                <?php foreach ($navSchools as $ns): ?>
+                                    <li>
+                                        <a class="dropdown-item rounded py-2 px-3 d-flex align-items-center justify-content-between" 
+                                           href="<?= base_url($ns['slug'] . '/dokumen') ?>">
+                                            <span><?= esc($ns['name']) ?></span>
+                                            <i class="bi bi-box-arrow-up-right text-muted" style="font-size: 0.7rem;"></i>
+                                        </a>
+                                    </li>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </ul>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link fw-medium <?= strpos(uri_string(), 'gallery') !== false ? 'active-custom' : '' ?>" href="<?= base_url('gallery') ?>">Galeri</a>
@@ -382,6 +436,69 @@
             padding-left: 5px;
             transition: all 0.3s ease;
             font-weight: 500;
+        }
+
+        /* --- CSS KHUSUS DROPDOWN HOVER (DESKTOP ONLY) --- */
+
+        /* Media Query: Hanya berlaku jika lebar layar >= 992px (Laptop/PC) */
+        @media (min-width: 992px) {
+            .nav-item.dropdown:hover .toggle-icon {
+                transform: rotate(180deg);
+            }
+
+            /* Tampilkan dropdown saat hover */
+            .nav-item.dropdown:hover .dropdown-menu {
+                display: block;
+                opacity: 1;
+                visibility: visible;
+                transform: translateY(0);
+                margin-top: 0;
+            }
+
+            .dropdown-menu {
+                display: block;
+                opacity: 0;
+                visibility: hidden;
+                transform: translateY(10px);
+                transition: all 0.3s ease;
+            }
+        }
+
+        /* --- CSS AGAR LINK TIDAK JUMPING (MOBILE) --- */
+        /* Hapus panah bawaan Bootstrap agar lebih bersih */
+        .dropdown-toggle::after {
+            display: none !important;
+            content: none !important;
+        }
+
+        /* Tambahkan indikator panah kecil sendiri (opsional) */
+        .nav-link.dropdown-toggle {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .nav-link.dropdown-toggle::after {
+            content: "\F282";
+            /* Kode icon chevron-down bootstrap */
+            font-family: "bootstrap-icons";
+            border: none;
+            font-size: 0.7rem;
+            vertical-align: middle;
+            display: inline-block !important;
+            /* Paksa tampil */
+            margin-left: 3px;
+            transition: transform 0.3s;
+        }
+
+        /* Putar panah saat hover (Desktop) atau klik (Mobile/Active) */
+        .nav-item.dropdown:hover .nav-link.dropdown-toggle::after,
+        .nav-item.dropdown .nav-link.dropdown-toggle.show::after {
+            transform: rotate(180deg);
+        }
+
+        .nav-link.show .toggle-icon {
+            transform: rotate(180deg);
         }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
