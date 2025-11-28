@@ -158,7 +158,7 @@
             border: none;
             border-top: 3px solid var(--mbs-purple);
             border-radius: 0 0 8px 8px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            box-shadow: none !important;
             padding: 5px 0;
             min-width: 230px;
         }
@@ -298,6 +298,7 @@
         /* 1. Agar transisi halus */
         .bi-chevron-down,
         .bi-chevron-right {
+            display: inline-block !important;
             transition: transform 0.3s ease !important;
         }
 
@@ -326,6 +327,133 @@
         /* Mobile: Saat Class 'show' aktif (kita tambah lewat JS nanti) */
         .dropdown-item.show .bi-chevron-right {
             transform: rotate(90deg);
+        }
+
+        /* CONTAINER UTAMA DI POJOK KANAN BAWAH */
+        .floating-anno-container {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: end;
+            gap: 15px;
+        }
+
+        /* TOMBOL PEMICU (BULAT) */
+        .anno-trigger {
+            border-radius: 30px;
+            background: linear-gradient(135deg, var(--mbs-purple) 0%, #3D1F5C 100%);
+            color: white;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            min-height: 50px;
+        }
+
+        .anno-trigger:hover {
+            transform: scale(1.1) rotate(-10deg);
+        }
+
+        /* PANEL KONTEN (KOTAK CHAT) */
+        .anno-panel {
+            width: 320px;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+
+            /* Animasi Masuk (Hidden by default) */
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px) scale(0.9);
+            /* Geser ke bawah sedikit */
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            transform-origin: bottom right;
+            position: absolute;
+            bottom: 80px;
+            /* Di atas tombol */
+            right: 0;
+        }
+
+        /* KELAS AKTIF (SAAT MUNCUL) */
+        .anno-panel.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+            /* Swap Up ke posisi normal */
+        }
+
+        /* HEADER PANEL */
+        .anno-header {
+            background: var(--mbs-purple);
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* BODY PANEL (SCROLLABLE) */
+        .anno-body {
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 15px;
+            background-color: #f8f9fa;
+        }
+
+        /* ITEM PENGUMUMAN */
+        .anno-item {
+            font-size: 0.9rem;
+            transition: transform 0.2s;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .anno-item:hover {
+            transform: translateX(-3px);
+        }
+
+        .x-small {
+            font-size: 0.75rem;
+        }
+
+        .bg-purple-light {
+            background-color: rgba(88, 44, 131, 0.1);
+        }
+
+        /* ANIMASI BERDENYUT (PULSE) UNTUK BADGE ANGKA */
+        @keyframes pulse-red {
+            0% {
+                box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7);
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(220, 53, 69, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(220, 53, 69, 0);
+            }
+        }
+
+        .pulse-animation {
+            animation: pulse-red 2s infinite;
+        }
+
+        /* RESPONSIVE MOBILE */
+        @media (max-width: 576px) {
+            .floating-anno-container {
+                bottom: 20px;
+                right: 20px;
+            }
+
+            .anno-panel {
+                width: 280px;
+                /* Lebih kecil di HP */
+            }
         }
     </style>
 </head>
@@ -395,10 +523,10 @@
                     <?php if (!empty($school_pages_grouped)) : ?>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Informasi <i class="bi bi-chevron-down ms-1" style="font-size: 0.7em;"></i>
+                                Informasi <i class="bi bi-chevron-down small transition-icon" style="font-size: 0.7rem;"></i>
                             </a>
 
-                            <ul class="dropdown-menu shadow-lg">
+                            <ul class="dropdown-menu">
                                 <?php foreach ($school_pages_grouped as $menuName => $pages): ?>
                                     <li class="dropend">
                                         <a class="dropdown-item dropdown-toggle" href="#" role="button">
@@ -406,7 +534,7 @@
                                             <i class="bi bi-chevron-right text-muted" style="font-size: 0.8em;"></i>
                                         </a>
 
-                                        <ul class="dropdown-menu shadow-lg">
+                                        <ul class="dropdown-menu">
                                             <?php foreach ($pages as $p): ?>
                                                 <li>
                                                     <a class="dropdown-item" href="<?= site_url('mts/halaman/' . $p['slug']) ?>">
@@ -533,6 +661,7 @@
                         <li><a href="<?= site_url('mts/agenda') ?>"><i class="bi bi-chevron-right x-small me-2"></i> Agenda</a></li>
                         <li><a href="<?= site_url('mts/galeri') ?>"><i class="bi bi-chevron-right x-small me-2"></i> Galeri Foto</a></li>
                         <li><a href="<?= base_url() ?>" class="fw-bold text-purple"><i class="bi bi-arrow-left-circle me-2"></i> Portal Yayasan</a></li>
+                        
                     </ul>
                 </div>
 
@@ -550,6 +679,11 @@
                         <li class="d-flex align-items-center">
                             <i class="bi bi-envelope-fill text-purple me-3"></i>
                             <span><?= esc($school_site['email'] ?? 'info@mbs.sch.id') ?></span>
+                        </li>
+                        <li>
+                            <a href="<?= site_url('mts/informasi') ?>">
+                                <i class="bi bi-info-circle-fill text-purple me-3"></i> Informasi
+                            </a>
                         </li>
                     </ul>
                 </div>
@@ -625,7 +759,76 @@
                 });
             });
         });
+
+        function toggleAnno() {
+            var panel = document.getElementById("annoPanel");
+            panel.classList.toggle("active");
+        }
     </script>
+    <?php if (!empty($global_announcements)): ?>
+        <div class="floating-anno-container">
+
+            <div class="anno-panel shadow-lg" id="annoPanel">
+                <div class="anno-header">
+                    <h6 class="mb-0 fw-bold text-white"><i class="bi bi-bell-fill me-2"></i>Info Terkini</h6>
+                    <button type="button" class="btn-close btn-close-white btn-sm" onclick="toggleAnno()"></button>
+                </div>
+
+                <div class="anno-body">
+                    <?php foreach ($global_announcements as $anno): ?>
+                        <?php
+                        $borderClass = ($anno['category'] == 'urgent') ? 'border-danger' : 'border-light';
+                        $bgIcon = match ($anno['category']) {
+                            'urgent' => 'bg-danger text-white',
+                            'important' => 'bg-warning text-dark',
+                            default => 'bg-purple-light text-purple'
+                        };
+                        ?>
+                        <div class="anno-item p-3 mb-2 rounded border <?= $borderClass ?> bg-white position-relative">
+                            <div class="d-flex gap-3">
+                                <div class="flex-shrink-0">
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center <?= $bgIcon ?>" style="width: 35px; height: 35px;">
+                                        <i class="bi <?= esc($anno['icon']) ?>"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1 fw-bold small text-dark text-break"><?= esc($anno['title']) ?></h6>
+                                    <p class="mb-0 text-secondary x-small lh-sm text-break"><?= esc($anno['content']) ?></p>
+                                    <span class="text-muted x-small mt-1 d-block text-end fst-italic">
+                                        <?= date('d M', strtotime($anno['start_date'])) ?>
+                                    </span>
+
+                                    <?php if (!empty($anno['link_url'])): ?>
+                                        <a href="<?= esc($anno['link_url']) ?>" target="_blank" class="btn btn-sm btn-outline-purple w-100 mt-2" style="font-size: 0.75rem;">
+                                            Buka Tautan <i class="bi bi-box-arrow-up-right ms-1"></i>
+                                        </a>
+                                    <?php endif; ?>
+
+                                </div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+
+            <button class="anno-trigger shadow-lg ps-3 pe-4 py-2" onclick="toggleAnno()">
+                <i class="bi bi-megaphone-fill fs-4"></i>
+
+                <span class="ms-2 fw-bold text-uppercase ls-1 d-none d-sm-inline-block" style="font-size: 0.8rem; letter-spacing: 1px;">
+                    Pengumuman
+                </span>
+                <span class="ms-2 fw-bold text-uppercase d-inline-block d-sm-none" style="font-size: 0.8rem;">
+                    Info
+                </span>
+
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-white pulse-animation" style="margin-left: -10px; margin-top: 5px;">
+                    <?= count($global_announcements) ?>
+                    <span class="visually-hidden">unread messages</span>
+                </span>
+            </button>
+
+        </div>
+    <?php endif; ?>
 </body>
 
 </html>

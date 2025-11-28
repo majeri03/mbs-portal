@@ -30,6 +30,8 @@ $routes->group('mts', ['namespace' => 'Modules\Mts\Controllers'], function($rout
     // Dokumen
     $routes->get('dokumen', 'Documents::index');
     $routes->get('dokumen/(:segment)', 'Documents::show/$1');
+    //Informasi
+    $routes->get('informasi', 'Page::index');
 });
 
 $routes->group('ma', ['namespace' => 'Modules\Ma\Controllers'], function($routes) {
@@ -161,3 +163,6 @@ $routes->get('news/(:segment)', 'NewsController::show/$1');
 
 // Route Dokumen Portal Utama
 $routes->get('dokumen', 'PortalDocuments::index');
+
+//Route Tentang MBS
+$routes->get('tentang', 'PageController::index');

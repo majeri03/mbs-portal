@@ -50,9 +50,25 @@ class BaseMtsController extends BaseController
             }
         }
 
+        // --- TAMBAHAN BARU: AMBIL PENGUMUMAN GLOBAL ---
+    $annoModel = new \App\Models\AnnouncementModel();
+    $today = date('Y-m-d');
+    
+    // Logika: Ambil pengumuman milik MTs (ID Sekolah) ATAU Umum (NULL), yang Aktif & Belum Expired
+    $this->data['global_announcements'] = $annoModel->groupStart()
+        ->where('school_id', $this->schoolId)
+        ->groupEnd()
+        ->where('is_active', 1)
+        ->where('start_date <=', $today)
+        ->where('end_date >=', $today)
+        ->orderBy('priority', 'ASC')
+        ->orderBy('created_at', 'DESC')
+        ->findAll();
+
         // Masukkan ke data view
         $this->data['school_site'] = $finalSettings;
         // 3. Set Warna Tema Default
         $this->data['theme_color'] = 'success'; 
+
     }
 }

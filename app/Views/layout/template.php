@@ -82,7 +82,7 @@
                                 <i class="bi bi-chevron-down ms-1" style="font-size: 0.75rem;"></i>
                             </a>
 
-                            <ul class="dropdown-menu shadow-lg">
+                            <ul class="dropdown-menu">
                                 <?php foreach ($groupedPages as $menuName => $pages): ?>
                                     <li class="dropend">
                                         <a class="dropdown-item dropdown-toggle" href="#" role="button">
@@ -90,7 +90,7 @@
                                             <i class="bi bi-chevron-right text-muted" style="font-size: 0.8em;"></i>
                                         </a>
 
-                                        <ul class="dropdown-menu shadow-lg">
+                                        <ul class="dropdown-menu">
                                             <?php foreach ($pages as $p): ?>
                                                 <li>
                                                     <a class="dropdown-item" href="<?= base_url('page/' . $p['slug']) ?>">
@@ -113,7 +113,7 @@
                                 <i class="bi bi-chevron-down ms-1" style="font-size: 0.75rem;"></i>
                             </a>
 
-                            <ul class="dropdown-menu shadow-lg border-top-purple mt-2">
+                            <ul class="dropdown-menu border-top-purple mt-2">
                                 <?php foreach ($navSchools as $ns): ?>
                                     <li>
                                         <a class="dropdown-item rounded py-2 px-3 fw-medium d-flex align-items-center justify-content-between"
@@ -134,7 +134,7 @@
                             Dokumen
                             <i class="bi bi-chevron-down ms-1 toggle-icon" style="font-size: 0.75rem; transition: transform 0.3s;"></i>
                         </a>
-                        <ul class="dropdown-menu shadow-lg border-0 animate slideIn mt-2 p-2" style="border-radius: 12px; min-width: 220px;">
+                        <ul class="dropdown-menu border-0 animate slideIn mt-2 p-2" style="border-radius: 12px; min-width: 220px;">
 
                             <li><span class="dropdown-header text-uppercase x-small fw-bold text-muted">Arsip Yayasan</span></li>
                             <li>
@@ -242,31 +242,12 @@
                 <div class="col-lg-2 col-6 mb-4">
                     <h5 class="fw-bold mb-3" style="color: var(--mbs-purple);">Tentang</h5>
 
-                    <?php
-                    // Cek apakah variabel $menuPages sudah ada (dari navbar). 
-                    // Jika belum, kita panggil lagi modelnya.
-                    if (!isset($menuPages)) {
-                        $pageModel = new \App\Models\PageModel();
-                        try {
-                            $menuPages = $pageModel->getActivePages();
-                        } catch (\Exception $e) {
-                            $menuPages = [];
-                        }
-                    }
-                    ?>
-
                     <ul class="list-unstyled small footer-link">
-                        <?php if (!empty($menuPages)) : ?>
-                            <?php foreach ($menuPages as $mp): ?>
-                                <li class="mb-2">
-                                    <a href="<?= base_url('page/' . $mp['slug']) ?>" class="text-secondary text-decoration-none hover-purple">
-                                        <?= esc($mp['title']) ?>
-                                    </a>
-                                </li>
-                            <?php endforeach; ?>
-                        <?php else : ?>
-                            <li class="mb-2 text-muted fst-italic">Belum ada informasi</li>
-                        <?php endif; ?>
+                        <li class="mb-2">
+                            <a href="<?= base_url('tentang') ?>" class="text-secondary text-decoration-none hover-purple d-flex align-items-center">
+                                <i class="bi bi-info-circle me-2 text-purple"></i> Profil & Informasi
+                            </a>
+                        </li>
                     </ul>
                 </div>
 
@@ -407,7 +388,7 @@
             border-top: 3px solid var(--mbs-purple);
             /* Aksen Ungu di Atas */
             border-radius: 0 0 8px 8px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            box-shadow: none !important;
             margin-top: 0;
             padding: 5px 0;
             min-width: 230px;
@@ -609,6 +590,308 @@
             });
         });
     </script>
+    <?php if (!empty($portal_announcements)): ?>
+
+        <style>
+            body {
+                padding-bottom: 50px;
+            }
+        </style>
+
+        <div class="sticky-ticker-container" id="mbsTicker">
+
+            <div class="ticker-label">
+                <i class="bi bi-broadcast me-2 animate-pulse"></i> INFO PUSAT
+            </div>
+
+            <div class="ticker-content-wrapper">
+                <div class="ticker-content">
+                    <?php foreach ($portal_announcements as $anno): ?>
+                        <?php
+                        // Logika Warna Berdasarkan Kategori
+                        $colorClass = match ($anno['category']) {
+                            'urgent'    => '#ff4d4d', // Merah Terang
+                            'important' => '#ffcc00', // Kuning
+                            'normal'    => '#00d2ff', // Biru Cyan
+                            default     => '#ffffff'
+                        };
+                        ?>
+
+                        <span class="ticker-item">
+
+                            <span class="ticker-strip" style="background-color: <?= $colorClass ?>;"></span>
+
+                            <i class="bi <?= esc($anno['icon']) ?> me-2" style="color: <?= $colorClass ?>;"></i>
+
+                            <strong style="color: <?= $colorClass ?>;"><?= esc($anno['title']) ?>:</strong>
+                            <span class="text-white mx-1"><?= esc($anno['content']) ?></span>
+
+                            <?php if (!empty($anno['link_url'])): ?>
+                                <a href="<?= esc($anno['link_url']) ?>" target="_blank" class="ticker-link" style="border-color: <?= $colorClass ?>; color: <?= $colorClass ?>;">
+                                    <i class="bi bi-link-45deg"></i> Buka
+                                </a>
+                            <?php endif; ?>
+
+                        </span>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+
+            <button class="ticker-close" onclick="document.getElementById('mbsTicker').style.display='none'; document.body.style.paddingBottom='0';">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+
+        <style>
+            /* STICKY FOOTER CONTAINER */
+            .sticky-ticker-container {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                height: 42px;
+                /* Sedikit dikecilkan */
+                background: #2c1e3f;
+                /* Ungu gelap */
+                color: white;
+                z-index: 9999;
+                display: flex;
+                align-items: center;
+                box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.3);
+                font-family: 'Inter', sans-serif;
+                font-size: 0.85rem;
+                /* Font dasar dikecilkan */
+                border-top: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            /* LABEL KIRI (INFO PUSAT) */
+            .ticker-label {
+                background: #582C83;
+                color: white;
+                height: 100%;
+                padding: 0 15px;
+                /* Padding dikurangi */
+                display: flex;
+                align-items: center;
+                font-weight: 700;
+                font-size: 0.8rem;
+                /* Font label kecil */
+                position: relative;
+                z-index: 2;
+                box-shadow: 3px 0 10px rgba(0, 0, 0, 0.2);
+                white-space: nowrap;
+                /* Agar tidak turun baris */
+            }
+
+            /* Icon Broadcast berdenyut */
+            .animate-pulse {
+                animation: pulse 2s infinite;
+            }
+
+            @keyframes pulse {
+                0% {
+                    opacity: 1;
+                }
+
+                50% {
+                    opacity: 0.6;
+                }
+
+                100% {
+                    opacity: 1;
+                }
+            }
+
+            /* WRAPPER ANIMASI */
+            .ticker-content-wrapper {
+                flex-grow: 1;
+                overflow: hidden;
+                white-space: nowrap;
+                height: 100%;
+                display: flex;
+                align-items: center;
+                background: rgba(0, 0, 0, 0.2);
+                mask-image: linear-gradient(to right, transparent, black 10px, black 95%, transparent);
+                /* Efek fade di ujung */
+                -webkit-mask-image: linear-gradient(to right, transparent, black 10px, black 95%, transparent);
+            }
+
+            /* ANIMASI BERJALAN */
+            .ticker-content {
+                display: inline-flex;
+                /* Flex agar item sejajar */
+                align-items: center;
+                padding-left: 100%;
+                animation: ticker-move 40s linear infinite;
+                /* Kecepatan sedang */
+            }
+
+            /* Pause saat disentuh/hover */
+            .sticky-ticker-container:hover .ticker-content {
+                animation-play-state: paused;
+            }
+
+            @keyframes ticker-move {
+                0% {
+                    transform: translate3d(0, 0, 0);
+                }
+
+                100% {
+                    transform: translate3d(-100%, 0, 0);
+                }
+            }
+
+            /* ITEM BERITA */
+            .ticker-item {
+                display: inline-flex;
+                align-items: center;
+                margin-right: 40px;
+                /* Jarak antar berita dikurangi */
+                position: relative;
+                padding-left: 12px;
+                /* Ruang untuk strip */
+                height: 100%;
+                /* Agar strip posisinya pas */
+            }
+
+            /* STRIP GARIS WARNA DI KIRI */
+            .ticker-strip {
+                position: absolute;
+                left: 0;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 3px;
+                /* Garis lebih tipis */
+                height: 60%;
+                /* Tinggi garis disesuaikan */
+                border-radius: 2px;
+            }
+
+            /* ICON BERITA */
+            .ticker-item i.bi:not(.bi-link-45deg) {
+                font-size: 1.1em;
+                /* Ukuran icon sedikit lebih besar dari teks */
+                margin-right: 6px !important;
+                display: flex;
+                align-items: center;
+                /* Memastikan icon di tengah vertikal */
+            }
+
+            /* LINK TOMBOL */
+            .ticker-link {
+                text-decoration: none;
+                margin-left: 8px;
+                font-size: 0.75em;
+                /* Link lebih kecil */
+                border: 1px solid;
+                padding: 1px 5px;
+                border-radius: 4px;
+                opacity: 0.9;
+                transition: all 0.2s;
+                display: inline-flex;
+                align-items: center;
+                background: rgba(0, 0, 0, 0.1);
+            }
+
+            .ticker-link:hover {
+                opacity: 1;
+                color: white !important;
+                border-color: white !important;
+                background: rgba(255, 255, 255, 0.1);
+            }
+
+            /* TOMBOL CLOSE (X) */
+            .ticker-close {
+                background: transparent;
+                border: none;
+                border-left: 1px solid rgba(255, 255, 255, 0.1);
+                color: #aaa;
+                width: 40px;
+                /* Lebih ramping */
+                height: 100%;
+                cursor: pointer;
+                z-index: 2;
+                flex-shrink: 0;
+                /* Agar tidak mengecil */
+            }
+
+            .ticker-close:hover {
+                background: #dc3545;
+                color: white;
+            }
+
+            /* =========================================
+           RESPONSIF KHUSUS HP (Max Width 576px)
+        ========================================= */
+            @media (max-width: 576px) {
+                .sticky-ticker-container {
+                    height: 38px;
+                    /* Bar lebih pendek di HP */
+                    font-size: 0.75rem;
+                    /* Font isi lebih kecil lagi */
+                }
+
+                .ticker-label {
+                    padding: 0 10px;
+                    font-size: 0.7rem;
+                    /* Label lebih kecil */
+                }
+
+                /* Sembunyikan teks "INFO PUSAT", sisakan icon saja agar hemat tempat */
+                .ticker-label span {
+                    display: none;
+                }
+
+                .ticker-label i {
+                    margin-right: 0 !important;
+                    font-size: 1rem;
+                }
+
+                .ticker-item {
+                    margin-right: 30px;
+                    padding-left: 10px;
+                }
+
+                .ticker-strip {
+                    width: 2px;
+                    height: 50%;
+                }
+
+                /* Strip lebih kecil */
+                .ticker-item i.bi:not(.bi-link-45deg) {
+                    font-size: 1em;
+                    margin-right: 4px !important;
+                }
+
+                /* Icon berita disesuaikan */
+
+                /* Judul berita jangan bold di HP biar tidak terlalu penuh */
+                .ticker-item strong {
+                    font-weight: 600;
+                }
+
+                .ticker-link {
+                    font-size: 0.7em;
+                    /* Tombol link mini */
+                    padding: 0 4px;
+                    margin-left: 5px;
+                }
+
+                .ticker-link span {
+                    display: none;
+                }
+
+                /* Hapus teks "Buka", sisakan icon link */
+                .ticker-link i {
+                    margin-right: 0 !important;
+                }
+
+                .ticker-close {
+                    width: 35px;
+                }
+            }
+        </style>
+    <?php endif; ?>
 </body>
 
 </html>

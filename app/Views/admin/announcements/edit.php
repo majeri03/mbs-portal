@@ -87,7 +87,11 @@
                             rows="5"
                             required><?= old('content', $announcement['content']) ?></textarea>
                     </div>
-
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Link / Tautan (Opsional)</label>
+                        <input type="url" name="link_url" class="form-control" placeholder="https://..." value="<?= old('link_url', $announcement['link_url'] ?? '') ?>">
+                        <small class="text-muted">Isi jika pengumuman ini mengarah ke file/halaman tertentu.</small>
+                    </div>
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-bold">

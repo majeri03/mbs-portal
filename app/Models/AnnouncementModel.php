@@ -18,6 +18,7 @@ class AnnouncementModel extends Model
         'title',
         'content',
         'category',
+        'link_url',
         'start_date',
         'end_date',
         'is_active',

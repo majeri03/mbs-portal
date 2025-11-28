@@ -186,58 +186,6 @@
 </section>
 
 <!-- ============================================================== -->
-<!-- SECTION: INFO PENTING / PENGUMUMAN (TAMPILKAN SEMUA) -->
-<!-- ============================================================== -->
-<!-- SECTION: INFO PENTING / PENGUMUMAN -->
-<?php if (!empty($announcements)) : ?>
-    <section class="announcement-section py-2 mt-4" style="background-color: var(--mbs-purple);">
-        <div class="container">
-            <div class="d-flex align-items-center py-2">
-                <!-- Badge Label -->
-                <span class="badge bg-white text-purple fw-bold me-3 px-3 py-2" style="font-size: 0.7rem; letter-spacing: 1px;">
-                    PENGUMUMAN
-                </span>
-
-                <!-- Scrolling Container -->
-                <div class="announcement-scroll-container flex-grow-1 overflow-hidden position-relative">
-                    <div class="announcement-scroll-content">
-                        <?php foreach ($announcements as $index => $announcement) : ?>
-                            <?php
-                            // Tentukan warna strip berdasarkan prioritas
-                            $stripColor = match ($announcement['category']) {
-                                'urgent'    => '#dc3545',  // Merah
-                                'important' => '#ffc107',  // Kuning
-                                'normal'    => '#28a745',  // Hijau
-                                default     => '#6c757d'   // Abu-abu (fallback)
-                            };
-                            ?>
-
-                            <!-- Item Pengumuman -->
-                            <span class="announcement-item">
-                                <!-- Strip Prioritas -->
-                                <span class="priority-strip" style="background-color: <?= $stripColor ?>;"></span>
-
-                                <!-- Icon dari Database -->
-                                <i class="bi <?= esc($announcement['icon']) ?> me-2"></i>
-
-                                <!-- Judul & Konten -->
-                                <strong><?= esc($announcement['title']) ?></strong>
-                                <span class="mx-2">•</span>
-                                <span><?= esc($announcement['content']) ?></span>
-                            </span>
-
-                            <?php if ($index < count($announcements) - 1) : ?>
-                                <span class="mx-4">•</span>
-                            <?php endif; ?>
-                        <?php endforeach; ?>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-<?php endif; ?>
-
-<!-- ============================================================== -->
 <!-- SECTION: JENJANG PENDIDIKAN (DINAMIS DARI DATABASE) -->
 <!-- ============================================================== -->
 <section class="py-5 bg-light" id="jenjang-sekolah">
