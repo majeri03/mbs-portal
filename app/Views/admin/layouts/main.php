@@ -587,7 +587,11 @@
                     <i class="bi bi-calendar-event"></i> Agenda Kegiatan
                 </a>
             </li>
-
+            <li>
+                <a href="<?= base_url('admin/users') ?>" class="<?= str_contains($uri, 'users') ? 'active' : '' ?>">
+                    <i class="bi bi-people-fill"></i> Manajemen User
+                </a>
+            </li>
             <li>
                 <a href="<?= base_url('admin/settings') ?>" class="<?= str_contains($uri, 'settings') ? 'active' : '' ?>">
                     <i class="bi bi-gear-fill"></i> Pengaturan

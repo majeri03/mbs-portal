@@ -1,7 +1,9 @@
 <?= $this->extend('layout/template_sekolah') ?>
 <?= $this->section('content') ?>
 <div class="bg-purple text-white py-5 mb-4 text-center">
-    <div class="container"><h1 class="fw-bold">Kabar & Informasi</h1></div>
+    <div class="container"><h1 class="fw-bold">Kabar & Informasi</h1><p class="lead opacity-75 mb-0">
+            Berita terkini, artikel, dan update kegiatan dari <?= esc($school['name']) ?>
+        </p></div>
 </div>
 <div class="container pb-5">
     <div class="row g-4">

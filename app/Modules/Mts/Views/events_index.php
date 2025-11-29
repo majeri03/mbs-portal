@@ -5,7 +5,7 @@
 <div class="bg-purple text-white py-5 mb-5 text-center">
     <div class="container">
         <h1 class="fw-bold display-5">Agenda Kegiatan</h1>
-        <p class="lead opacity-75 mb-0">Jadwal Aktivitas & Acara MTs MBS</p>
+        <p class="lead opacity-75 mb-0">Jadwal Aktivitas & Acara <?= esc($school['name']) ?></p>
     </div>
 </div>
 

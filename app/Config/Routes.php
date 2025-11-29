@@ -10,16 +10,16 @@ $routes->get('/', 'Home::index');
 // 2. WEB SEKOLAH (Modular)
 // Mengarah ke Module masing-masing
 // GROUP ROUTE KHUSUS MTS
-$routes->group('mts', ['namespace' => 'Modules\Mts\Controllers'], function($routes) {
+$routes->group('mts', ['namespace' => 'Modules\Mts\Controllers'], function ($routes) {
     $routes->get('/', 'Home::index');
-    
+
     // Halaman Statis (Profil, Sejarah, dll)
     $routes->get('halaman/(:segment)', 'Page::show/$1');
-    
+
     // Berita
     $routes->get('kabar', 'News::index');
     $routes->get('kabar/(:segment)', 'News::show/$1');
-    
+
     // Agenda
     // Route Agenda
     $routes->get('agenda', 'Events::index');          // Daftar Agenda
@@ -34,11 +34,11 @@ $routes->group('mts', ['namespace' => 'Modules\Mts\Controllers'], function($rout
     $routes->get('informasi', 'Page::index');
 });
 
-$routes->group('ma', ['namespace' => 'Modules\Ma\Controllers'], function($routes) {
+$routes->group('ma', ['namespace' => 'Modules\Ma\Controllers'], function ($routes) {
     $routes->get('/', 'Home::index'); // Diakses via: mbs.sch.id/ma
 });
 
-$routes->group('smk', ['namespace' => 'Modules\Smk\Controllers'], function($routes) {
+$routes->group('smk', ['namespace' => 'Modules\Smk\Controllers'], function ($routes) {
     $routes->get('/', 'Home::index'); // Diakses via: mbs.sch.id/smk
 });
 
@@ -144,6 +144,14 @@ $routes->group('admin', function ($routes) {
     $routes->get('documents/edit/(:num)', 'Admin\Documents::edit/$1');
     $routes->post('documents/update/(:num)', 'Admin\Documents::update/$1');
     $routes->get('documents/delete/(:num)', 'Admin\Documents::delete/$1');
+
+    // CRUD Users (Manajemen Pengguna)
+    $routes->get('users', 'Admin\Users::index');
+    $routes->get('users/create', 'Admin\Users::create');
+    $routes->post('users/store', 'Admin\Users::store');
+    $routes->get('users/edit/(:num)', 'Admin\Users::edit/$1');
+    $routes->post('users/update/(:num)', 'Admin\Users::update/$1');
+    $routes->get('users/delete/(:num)', 'Admin\Users::delete/$1');
 });
 
 // Public Routes untuk Kalender

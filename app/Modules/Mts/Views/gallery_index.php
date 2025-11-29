@@ -3,8 +3,7 @@
 <?= $this->section('content') ?>
 
 <div class="bg-purple text-white py-5 mb-4 text-center position-relative overflow-hidden">
-    <div class="position-absolute top-0 start-0 w-100 h-100 opacity-10" 
-         style="background-image: radial-gradient(#fff 1px, transparent 1px); background-size: 20px 20px;"></div>
+
          
     <div class="container position-relative z-1">
         <h1 class="fw-bold display-5">Galeri Kegiatan</h1>
