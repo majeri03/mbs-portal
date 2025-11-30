@@ -511,6 +511,7 @@
         // Deteksi halaman aktif berdasarkan URL segment ke-2
         $current_segment = service('uri')->getSegment(2) ?? 'dashboard';
         ?>
+        <?php $userRole = session('role'); ?>
 
         <ul class="sidebar-menu">
             <li>
@@ -519,10 +520,7 @@
                 </a>
             </li>
 
-            <?php
-            // Cek apakah URL saat ini mengandung kata 'document' agar menu tetap terbuka
-            $isDocActive = str_contains(uri_string(), 'document');
-            ?>
+            <?php $isDocActive = str_contains(uri_string(), 'document'); ?>
             <li>
                 <a href="#submenuDokumen" data-bs-toggle="collapse" aria-expanded="<?= $isDocActive ? 'true' : 'false' ?>"
                     class="d-flex justify-content-between align-items-center <?= $isDocActive ? 'active' : '' ?>">
@@ -536,16 +534,18 @@
                             Data Dokumen
                         </a>
                     </li>
-                    <li>
-                        <a href="<?= base_url('admin/document-categories') ?>" class="<?= str_contains(uri_string(), 'categories') ? 'text-warning' : '' ?>">
-                            Kategori Dokumen
-                        </a>
-                    </li>
+                    
+                    <?php if ($userRole !== 'guru') : ?>
+                        <li>
+                            <a href="<?= base_url('admin/document-categories') ?>" class="<?= str_contains(uri_string(), 'categories') ? 'text-warning' : '' ?>">
+                                Kategori Dokumen
+                            </a>
+                        </li>
+                    <?php endif; ?>
                 </ul>
             </li>
 
             <?php
-            // Cek URL untuk group Konten
             $uri = uri_string();
             $isContentActive = (str_contains($uri, 'posts') || str_contains($uri, 'pages') || str_contains($uri, 'sliders') || str_contains($uri, 'galleries') || str_contains($uri, 'announcements'));
             ?>
@@ -558,45 +558,57 @@
 
                 <ul class="collapse sidebar-submenu <?= $isContentActive ? 'show' : '' ?>" id="submenuKonten" data-bs-parent="#sidebar">
                     <li><a href="<?= base_url('admin/posts') ?>">Berita / Artikel</a></li>
-                    <li><a href="<?= base_url('admin/pages') ?>">Halaman Statis</a></li>
-                    <li><a href="<?= base_url('admin/announcements') ?>">Pengumuman</a></li>
+                    
                     <li><a href="<?= base_url('admin/galleries') ?>">Galeri Foto</a></li>
-                    <li><a href="<?= base_url('admin/sliders') ?>">Hero Slider</a></li>
+
+                    <?php if ($userRole !== 'guru') : ?>
+                        <li><a href="<?= base_url('admin/pages') ?>">Halaman Statis</a></li>
+                        <li><a href="<?= base_url('admin/announcements') ?>">Pengumuman</a></li>
+                        <li><a href="<?= base_url('admin/sliders') ?>">Hero Slider</a></li>
+                    <?php endif; ?>
                 </ul>
             </li>
 
-            <?php
-            $isMasterActive = (str_contains($uri, 'schools') || str_contains($uri, 'teachers') || str_contains($uri, 'programs'));
-            ?>
-            <li>
-                <a href="#submenuMaster" data-bs-toggle="collapse" aria-expanded="<?= $isMasterActive ? 'true' : 'false' ?>"
-                    class="d-flex justify-content-between align-items-center <?= $isMasterActive ? 'active' : '' ?>">
-                    <span><i class="bi bi-database-fill"></i> Data Master</span>
-                    <i class="bi bi-chevron-down arrow-icon" style="font-size: 0.8rem;"></i>
-                </a>
+            <?php if ($userRole !== 'guru') : ?>
+                <?php
+                $isMasterActive = (str_contains($uri, 'schools') || str_contains($uri, 'teachers') || str_contains($uri, 'programs'));
+                ?>
+                <li>
+                    <a href="#submenuMaster" data-bs-toggle="collapse" aria-expanded="<?= $isMasterActive ? 'true' : 'false' ?>"
+                        class="d-flex justify-content-between align-items-center <?= $isMasterActive ? 'active' : '' ?>">
+                        <span><i class="bi bi-database-fill"></i> Data Master</span>
+                        <i class="bi bi-chevron-down arrow-icon" style="font-size: 0.8rem;"></i>
+                    </a>
 
-                <ul class="collapse sidebar-submenu <?= $isMasterActive ? 'show' : '' ?>" id="submenuMaster" data-bs-parent="#sidebar">
-                    <li><a href="<?= base_url('admin/schools') ?>">Jenjang Sekolah</a></li>
-                    <li><a href="<?= base_url('admin/programs') ?>">Program Unggulan</a></li>
-                    <li><a href="<?= base_url('admin/teachers') ?>">Pimpinan & Guru</a></li>
-                </ul>
-            </li>
+                    <ul class="collapse sidebar-submenu <?= $isMasterActive ? 'show' : '' ?>" id="submenuMaster" data-bs-parent="#sidebar">
+                        <li><a href="<?= base_url('admin/schools') ?>">Jenjang Sekolah</a></li>
+                        <li><a href="<?= base_url('admin/programs') ?>">Program Unggulan</a></li>
+                        <li><a href="<?= base_url('admin/teachers') ?>">Pimpinan & Guru</a></li>
+                    </ul>
+                </li>
+            <?php endif; ?>
 
             <li>
                 <a href="<?= base_url('admin/events') ?>" class="<?= str_contains($uri, 'events') ? 'active' : '' ?>">
                     <i class="bi bi-calendar-event"></i> Agenda Kegiatan
                 </a>
             </li>
-            <li>
-                <a href="<?= base_url('admin/users') ?>" class="<?= str_contains($uri, 'users') ? 'active' : '' ?>">
-                    <i class="bi bi-people-fill"></i> Manajemen User
-                </a>
-            </li>
-            <li>
-                <a href="<?= base_url('admin/settings') ?>" class="<?= str_contains($uri, 'settings') ? 'active' : '' ?>">
-                    <i class="bi bi-gear-fill"></i> Pengaturan
-                </a>
-            </li>
+
+            <?php if ($userRole !== 'guru') : ?>
+                <li>
+                    <a href="<?= base_url('admin/users') ?>" class="<?= str_contains($uri, 'users') ? 'active' : '' ?>">
+                        <i class="bi bi-people-fill"></i> Manajemen User
+                    </a>
+                </li>
+            <?php endif; ?>
+
+            <?php if ($userRole !== 'guru') : ?>
+                <li>
+                    <a href="<?= base_url('admin/settings') ?>" class="<?= str_contains($uri, 'settings') ? 'active' : '' ?>">
+                        <i class="bi bi-gear-fill"></i> Pengaturan
+                    </a>
+                </li>
+            <?php endif; ?>
         </ul>
     </div>
 
