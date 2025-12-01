@@ -4,14 +4,16 @@ namespace App\Controllers\Admin;
 
 use App\Controllers\BaseController;
 use App\Models\UserModel;
+use App\Models\SettingModel;
 use Config\Services;
 class Auth extends BaseController
 {
     protected $userModel;
-
+    protected $settingModel;
     public function __construct()
     {
         $this->userModel = new UserModel();
+        $this->settingModel = new SettingModel();
         helper(['form', 'cookie']);
     }
 
@@ -83,5 +85,141 @@ class Auth extends BaseController
         delete_cookie('mbs_remember');
         session()->destroy();
         return redirect()->to('/admin/login')->with('success', 'Anda telah logout.');
+    }
+    // 1. Tampilkan Form Input Email
+    public function forgotPassword()
+    {
+        return view('admin/auth/forgot_password');
+    }
+
+    // 2. Proses Kirim Email Token (UPDATE)
+    public function attemptForgot()
+    {
+        $email = $this->request->getPost('email');
+        $user = $this->userModel->where('email', $email)->first();
+
+        if (!$user) {
+            return redirect()->back()->with('success', 'Permintaan reset diproses. Cek email Anda.');
+        }
+
+        // Generate Token
+        $token = bin2hex(random_bytes(32));
+        $expire = date('Y-m-d H:i:s', strtotime('+1 hour'));
+
+        $this->userModel->update($user['id'], [
+            'reset_token' => $token,
+            'reset_expire' => $expire
+        ]);
+
+        // --- MULAI BAGIAN EMAIL KEREN ---
+
+        // 1. Ambil Data Setting (Logo & Nama Web)
+        $settings = $this->settingModel->getSettings(null); // Ambil setting Pusat
+        
+        // Cek logo, kalau kosong pakai placeholder text/image
+        $logoUrl = !empty($settings['site_logo']) ? base_url($settings['site_logo']) : 'https://placehold.co/150x50?text=MBS+Logo';
+        $siteName = $settings['site_name'] ?? 'MBS Portal';
+        
+        // Link Reset
+        $link = base_url("admin/reset-password/$token");
+
+        // 2. Template HTML Email (Inline CSS agar kompatibel dengan Gmail)
+        $message = "
+        <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #f9f9f9; padding: 20px;'>
+            <div style='background-color: #ffffff; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1);'>
+                
+                <div style='background-color: #582C83; padding: 20px; text-align: center;'>
+                    <img src='$logoUrl' alt='$siteName' style='max-height: 60px; object-fit: contain; background: #fff; padding: 5px; border-radius: 5px;'>
+                </div>
+
+                <div style='padding: 30px; color: #333333;'>
+                    <h2 style='color: #582C83; margin-top: 0;'>Atur Ulang Kata Sandi</h2>
+                    <p>Halo, <strong>" . esc($user['full_name']) . "</strong>.</p>
+                    <p>Kami menerima permintaan untuk mereset password akun Admin Panel Anda di <strong>$siteName</strong>.</p>
+                    <p>Silakan klik tombol di bawah ini untuk membuat password baru:</p>
+                    
+                    <div style='text-align: center; margin: 30px 0;'>
+                        <a href='$link' style='background-color: #582C83; color: #ffffff; padding: 12px 25px; text-decoration: none; border-radius: 50px; font-weight: bold; font-size: 16px; display: inline-block;'>
+                            Reset Password Sekarang
+                        </a>
+                    </div>
+
+                    <p style='font-size: 13px; color: #666;'>
+                        Atau salin link ini ke browser Anda:<br>
+                        <a href='$link' style='color: #582C83;'>$link</a>
+                    </p>
+                    
+                    <hr style='border: 0; border-top: 1px solid #eee; margin: 20px 0;'>
+                    
+                    <p style='font-size: 12px; color: #999;'>
+                        Link ini akan kadaluarsa dalam 1 jam.<br>
+                        Jika Anda tidak merasa meminta reset password, abaikan email ini. Akun Anda tetap aman.
+                    </p>
+                </div>
+                
+                <div style='background-color: #f1f1f1; padding: 15px; text-align: center; font-size: 12px; color: #888;'>
+                    &copy; " . date('Y') . " $siteName. All Rights Reserved.
+                </div>
+            </div>
+        </div>
+        ";
+
+        // Kirim
+        $emailService = \Config\Services::email();
+        $emailService->setTo($email);
+        $emailService->setSubject('Reset Password - ' . $siteName);
+        $emailService->setMessage($message);
+
+        if ($emailService->send()) {
+            return redirect()->to('/admin/login')->with('success', 'Email reset password telah dikirim. Cek Inbox/Spam.');
+        } else {
+            return redirect()->back()->with('error', 'Gagal mengirim email. Pastikan konfigurasi SMTP benar.');
+        }
+    }
+
+    // 3. Tampilkan Form Password Baru (Validasi Token)
+    public function resetPassword($token)
+    {
+        // Cek Token Valid & Belum Expired
+        $user = $this->userModel->where('reset_token', $token)
+                                ->where('reset_expire >=', date('Y-m-d H:i:s'))
+                                ->first();
+
+        if (!$user) {
+            return redirect()->to('/admin/login')->with('error', 'Link reset tidak valid atau sudah kadaluarsa.');
+        }
+
+        return view('admin/auth/reset_password', ['token' => $token]);
+    }
+
+    // 4. Proses Simpan Password Baru
+    public function attemptReset()
+    {
+        $token = $this->request->getPost('token');
+        $password = $this->request->getPost('password');
+        $confPassword = $this->request->getPost('pass_confirm');
+
+        if ($password !== $confPassword) {
+            // [PERBAIKAN] Jangan back(), tapi redirect spesifik ke URL token ini
+            return redirect()->to('admin/reset-password/' . $token)
+                             ->with('error', 'Konfirmasi password tidak cocok. Silakan ulangi.');
+        }
+
+        // Cek Token Lagi (Double Check)
+        $user = $this->userModel->where('reset_token', $token)->first();
+
+        if ($user) {
+            $this->userModel->update($user['id'], [
+                'password' => password_hash($password, PASSWORD_DEFAULT),
+                'reset_token' => null, // Hapus token agar tidak bisa dipakai lagi
+                'reset_expire' => null,
+                'locked_until' => null, // Buka kunci akun jika sebelumnya terkunci
+                'login_attempts' => 0
+            ]);
+
+            return redirect()->to('/admin/login')->with('success', 'Password berhasil diubah! Silakan login.');
+        }
+
+        return redirect()->to('/admin/login')->with('error', 'Terjadi kesalahan. Ulangi proses.');
     }
 }

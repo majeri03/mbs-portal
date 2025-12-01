@@ -44,11 +44,15 @@ $routes->group('smk', ['namespace' => 'Modules\Smk\Controllers'], function ($rou
 
 // Route Admin (Grouping biar rapi)
 $routes->group('admin', function ($routes) {
+    // Route Lupa Password (Bisa diakses tanpa login)
+    $routes->get('forgot-password', 'Admin\Auth::forgotPassword');
+    $routes->post('forgot-password', 'Admin\Auth::attemptForgot');
+    $routes->get('reset-password/(:segment)', 'Admin\Auth::resetPassword/$1');
+    $routes->post('reset-password', 'Admin\Auth::attemptReset');
     // Login
     $routes->get('login', 'Admin\Auth::login');
     $routes->post('login/attempt', 'Admin\Auth::attemptLogin');
     $routes->get('logout', 'Admin\Auth::logout');
-
     // Dashboard (nanti kita buat di Tahap 2)
     $routes->get('dashboard', 'Admin\Dashboard::index', ['filter' => 'auth']);
 

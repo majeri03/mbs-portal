@@ -2,10 +2,10 @@
 
 namespace App\Controllers\Admin;
 
-use App\Controllers\BaseController;
+use App\Controllers\Admin\BaseAdminController;
 use App\Models\SchoolModel;
 
-class Schools extends BaseController
+class Schools extends BaseAdminController
 {
     protected $schoolModel;
 
@@ -13,21 +13,37 @@ class Schools extends BaseController
     {
         $this->schoolModel = new SchoolModel();
     }
+    public function initController(\CodeIgniter\HTTP\RequestInterface $request, \CodeIgniter\HTTP\ResponseInterface $response, \Psr\Log\LoggerInterface $logger)
+    {
+        parent::initController($request, $response, $logger);
 
+        // PANGGIL SATPAM
+        $this->restrictToAdmin();
+    }
     // List Sekolah
     public function index()
     {
         $data['title'] = 'Kelola Jenjang Pendidikan';
-        $data['schools'] = $this->schoolModel->orderBy('order_position', 'ASC')->findAll();
-        
+
+        if ($this->mySchoolId) {
+            // [KUNCI 1] Admin Sekolah: Hanya lihat sekolahnya sendiri
+            $data['schools'] = $this->schoolModel->where('id', $this->mySchoolId)->findAll();
+        } else {
+            // Superadmin: Lihat semua
+            $data['schools'] = $this->schoolModel->orderBy('order_position', 'ASC')->findAll();
+        }
+
         return view('admin/schools/index', $data);
     }
 
     // Form Tambah
-        public function create()
+    public function create()
     {
+        if ($this->mySchoolId) {
+            return redirect()->to('admin/schools')->with('error', 'Akses ditolak! Hanya Superadmin yang boleh menambah jenjang.');
+        }
         $data['title'] = 'Tambah Jenjang Sekolah';
-        
+
         // Ambil list akreditasi unik dari data yang sudah ada (untuk auto-suggest)
         $data['existing_accreditations'] = $this->schoolModel
             ->select('accreditation_status')
@@ -36,13 +52,16 @@ class Schools extends BaseController
             ->groupBy('accreditation_status')
             ->orderBy('accreditation_status', 'ASC')
             ->findAll();
-        
+
         return view('admin/schools/create', $data);
     }
 
     // Proses Simpan
-        public function store()
+    public function store()
     {
+        if ($this->mySchoolId) {
+            return redirect()->to('admin/schools')->with('error', 'Akses ditolak!');
+        }
         $rules = [
             'name'        => 'required|min_length[3]',
             'description' => 'required|min_length[10]',
@@ -57,7 +76,7 @@ class Schools extends BaseController
         $image = $this->request->getFile('image');
         $imageName = $image->getRandomName();
         $image->move('uploads/schools', $imageName);
-        
+
         // Handle custom accreditation
         $accreditationStatus = $this->request->getPost('accreditation_status');
         if ($accreditationStatus === 'custom') {
@@ -79,15 +98,18 @@ class Schools extends BaseController
     }
 
     // Form Edit
-            public function edit($id)
+    public function edit($id)
     {
+        if ($this->mySchoolId && $this->mySchoolId != $id) {
+            return redirect()->to('admin/schools')->with('error', 'Anda hanya boleh mengedit profil sekolah Anda sendiri.');
+        }
         $data['title'] = 'Edit Jenjang Sekolah';
         $data['school'] = $this->schoolModel->find($id);
 
         if (!$data['school']) {
             return redirect()->to('admin/schools')->with('error', 'Sekolah tidak ditemukan!');
         }
-        
+
         // Pastikan field tidak null (set default value)
         $data['school']['image_url'] = $data['school']['image_url'] ?? '';
         $data['school']['website_url'] = $data['school']['website_url'] ?? '';
@@ -95,7 +117,7 @@ class Schools extends BaseController
         $data['school']['phone'] = $data['school']['phone'] ?? '';
         $data['school']['order_position'] = $data['school']['order_position'] ?? 1;
         $data['school']['accreditation_status'] = $data['school']['accreditation_status'] ?? 'A';
-        
+
         // Ambil list akreditasi unik
         $data['existing_accreditations'] = $this->schoolModel
             ->select('accreditation_status')
@@ -109,8 +131,12 @@ class Schools extends BaseController
     }
 
     // Proses Update
-            public function update($id)
+    public function update($id)
     {
+        if ($this->mySchoolId && $this->mySchoolId != $id) {
+            return redirect()->to('admin/schools')->with('error', 'Akses ditolak!');
+        }
+
         $rules = [
             'name'        => 'required|min_length[3]',
             'description' => 'required|min_length[10]',
@@ -121,11 +147,11 @@ class Schools extends BaseController
         }
 
         $school = $this->schoolModel->find($id);
-        
+
         if (!$school) {
             return redirect()->to('admin/schools')->with('error', 'Sekolah tidak ditemukan!');
         }
-        
+
         $imageUrl = $school['image_url'] ?? '';
 
         // Jika upload gambar baru
@@ -140,7 +166,7 @@ class Schools extends BaseController
             $image->move('uploads/schools', $imageName);
             $imageUrl = 'uploads/schools/' . $imageName;
         }
-        
+
         // Handle custom accreditation
         $accreditationStatus = $this->request->getPost('accreditation_status');
         if ($accreditationStatus === 'custom') {
@@ -163,6 +189,9 @@ class Schools extends BaseController
     // Hapus
     public function delete($id)
     {
+        if ($this->mySchoolId) {
+            return redirect()->to('admin/schools')->with('error', 'Akses ditolak! Anda tidak boleh menghapus sekolah.');
+        }
         $school = $this->schoolModel->find($id);
 
         if (!$school) {

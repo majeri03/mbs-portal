@@ -14,13 +14,19 @@ class Settings extends BaseAdminController
         $this->settingModel = new SettingModel();
         helper(['form', 'youtube']); // Load helper form & youtube
     }
+    public function initController(\CodeIgniter\HTTP\RequestInterface $request, \CodeIgniter\HTTP\ResponseInterface $response, \Psr\Log\LoggerInterface $logger)
+    {
+        parent::initController($request, $response, $logger);
 
+        // PANGGIL SATPAM
+        $this->restrictToAdmin();
+    }
     public function index()
     {
         $data['title'] = 'Pengaturan Website';
         // Ambil semua setting jadi array ['key' => 'value']
         $data['settings'] = $this->settingModel->getSettings($this->mySchoolId);
-        
+
         return view('admin/settings/index', $data);
     }
 
@@ -28,9 +34,20 @@ class Settings extends BaseAdminController
     {
         // 1. Update Text Settings (Looping input post)
         $textInputs = [
-            'site_name', 'site_desc', 'email', 'phone', 'address', // General
-            'facebook_url', 'instagram_url', 'youtube_url', 'tiktok_url', // Sosmed
-            'profile_title', 'profile_description', 'director_name', 'director_label', 'profile_video_url',
+            'site_name',
+            'site_desc',
+            'email',
+            'phone',
+            'address', // General
+            'facebook_url',
+            'instagram_url',
+            'youtube_url',
+            'tiktok_url', // Sosmed
+            'profile_title',
+            'profile_description',
+            'director_name',
+            'director_label',
+            'profile_video_url',
             'maps_embed_url' // SECTION PROFIL
         ];
 
@@ -44,10 +61,10 @@ class Settings extends BaseAdminController
         $file = $this->request->getFile('director_photo');
         if ($file && $file->isValid() && !$file->hasMoved()) {
             // Hapus foto lama jika ada (opsional, butuh query tambahan)
-            
+
             $newName = $file->getRandomName();
             $file->move('uploads/settings', $newName);
-            
+
             // Simpan path ke DB
             $this->saveSetting('director_photo', 'uploads/settings/' . $newName, 'general', $this->mySchoolId);
         }
@@ -58,7 +75,7 @@ class Settings extends BaseAdminController
             if ($file && $file->isValid() && !$file->hasMoved()) {
                 $newName = $file->getRandomName();
                 $file->move('uploads/logos', $newName); // Simpan di folder uploads/logos
-                
+
                 // Simpan path ke database setting
                 $this->saveSetting($field, 'uploads/logos/' . $newName, 'branding', $this->mySchoolId);
             }
@@ -71,9 +88,9 @@ class Settings extends BaseAdminController
     {
         // Cek exist
         $exists = $this->settingModel->where('setting_key', $key)
-                                     ->where('school_id', $schoolId)
-                                     ->first();
-        
+            ->where('school_id', $schoolId)
+            ->first();
+
         if ($exists) {
             $this->settingModel->update($exists['id'], ['setting_value' => $value]);
         } else {

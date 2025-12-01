@@ -12,16 +12,22 @@ class Programs extends BaseAdminController
     {
         $this->programModel = new ProgramModel();
     }
+    public function initController(\CodeIgniter\HTTP\RequestInterface $request, \CodeIgniter\HTTP\ResponseInterface $response, \Psr\Log\LoggerInterface $logger)
+    {
+        parent::initController($request, $response, $logger);
 
+        // PANGGIL SATPAM
+        $this->restrictToAdmin();
+    }
     public function index()
     {
         $data['title'] = 'Kelola Program Unggulan';
-        
+
         // GUNAKAN filterBySchool DARI BaseAdminController
         // Agar admin MTs cuma liat program MTs
         $data['programs'] = $this->filterBySchool($this->programModel)
-                                 ->orderBy('order_position', 'ASC')
-                                 ->findAll();
+            ->orderBy('order_position', 'ASC')
+            ->findAll();
 
         return view('admin/programs/index', $data);
     }
@@ -66,7 +72,7 @@ class Programs extends BaseAdminController
 
         $data['title'] = 'Edit Program';
         $data['program'] = $program;
-        
+
         return view('admin/programs/edit', $data);
     }
 

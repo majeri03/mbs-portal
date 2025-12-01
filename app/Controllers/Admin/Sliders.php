@@ -13,13 +13,19 @@ class Sliders extends BaseAdminController
     {
         $this->sliderModel = new SliderModel();
     }
+    public function initController(\CodeIgniter\HTTP\RequestInterface $request, \CodeIgniter\HTTP\ResponseInterface $response, \Psr\Log\LoggerInterface $logger)
+    {
+        parent::initController($request, $response, $logger);
 
+        // PANGGIL SATPAM
+        $this->restrictToAdmin();
+    }
     // Halaman List Slider
     public function index()
     {
         $data['title'] = 'Kelola Hero Slider';
         $data['sliders'] = $this->filterBySchool($this->sliderModel)->orderBy('order_position', 'ASC')->findAll();
-        
+
         return view('admin/sliders/index', $data);
     }
 
@@ -33,7 +39,7 @@ class Sliders extends BaseAdminController
     // Proses Simpan
     public function store()
     {
-        
+
         $rules = [
             'title'      => 'required|min_length[5]',
             'image'      => 'uploaded[image]|max_size[image,3072]|is_image[image]',

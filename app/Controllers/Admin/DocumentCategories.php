@@ -15,7 +15,13 @@ class DocumentCategories extends BaseAdminController
         $this->categoryModel = new DocumentCategoryModel();
         $this->schoolModel   = new SchoolModel();
     }
+    public function initController(\CodeIgniter\HTTP\RequestInterface $request, \CodeIgniter\HTTP\ResponseInterface $response, \Psr\Log\LoggerInterface $logger)
+    {
+        parent::initController($request, $response, $logger);
 
+        // PANGGIL SATPAM
+        $this->restrictToAdmin();
+    }
     public function index()
     {
         $data['title'] = 'Kategori Dokumen';

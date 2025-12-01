@@ -25,9 +25,11 @@
         <h4 class="mb-1"><i class="bi bi-building me-2"></i>Kelola Jenjang Pendidikan</h4>
         <small class="text-muted">Manajemen data sekolah MTs, MA, dan SMK</small>
     </div>
+    <?php if (!session('school_id')) : ?>
     <a href="<?= base_url('admin/schools/create') ?>" class="btn btn-primary">
         <i class="bi bi-plus-circle me-2"></i>Tambah Jenjang Baru
     </a>
+    <?php endif; ?>
 </div>
 
 <!-- Schools Grid -->
@@ -126,11 +128,13 @@
                        class="btn btn-sm btn-warning flex-fill">
                         <i class="bi bi-pencil-square"></i> Edit
                     </a>
+                    <?php if (!session('school_id')) : ?>
                     <a href="<?= base_url('admin/schools/delete/' . $school['id']) ?>" 
                        class="btn btn-sm btn-danger flex-fill" 
                        onclick="return confirm('Yakin ingin menghapus jenjang <?= esc($school['name']) ?>?')">
                         <i class="bi bi-trash-fill"></i> Hapus
                     </a>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>

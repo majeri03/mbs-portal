@@ -22,4 +22,14 @@ class BaseAdminController extends BaseController {
         // Jika superadmin, lihat semua
         return $model;
     }
+    protected function restrictToAdmin() {
+        if (session('role') === 'guru') {
+            // Lempar error 404 (Halaman Tidak Ditemukan) agar terlihat seperti fitur itu tidak ada
+            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+            
+            // Atau bisa redirect (pilih salah satu):
+            // header('Location: ' . base_url('admin/dashboard'));
+            // exit;
+        }
+    }
 }

@@ -5,6 +5,7 @@ namespace App\Controllers\Admin;
 use App\Controllers\Admin\BaseAdminController;
 use App\Models\AnnouncementModel;
 use App\Models\SchoolModel;
+
 class Announcements extends BaseAdminController
 {
     protected $announcementModel;
@@ -14,17 +15,23 @@ class Announcements extends BaseAdminController
         $this->announcementModel = new AnnouncementModel();
         $this->schoolModel = new SchoolModel();
     }
+    public function initController(\CodeIgniter\HTTP\RequestInterface $request, \CodeIgniter\HTTP\ResponseInterface $response, \Psr\Log\LoggerInterface $logger)
+    {
+        parent::initController($request, $response, $logger);
 
+        // PANGGIL SATPAM
+        $this->restrictToAdmin();
+    }
     // List Pengumuman
     public function index()
     {
         $data['title'] = 'Kelola Pengumuman';
         $query = $this->filterBySchool($this->announcementModel);
         $data['announcements'] = $query->select('announcements.*, schools.name as school_name')
-                                       ->join('schools', 'schools.id = announcements.school_id', 'left')
-                                       ->orderBy('priority', 'ASC')
-                                       ->findAll();
-        
+            ->join('schools', 'schools.id = announcements.school_id', 'left')
+            ->orderBy('priority', 'ASC')
+            ->findAll();
+
         return view('admin/announcements/index', $data);
     }
 
@@ -117,7 +124,7 @@ class Announcements extends BaseAdminController
     public function delete($id)
     {
         $data = $this->filterBySchool($this->announcementModel)->find($id);
-        
+
 
         if ($data) {
             $this->announcementModel->delete($id);
@@ -126,24 +133,24 @@ class Announcements extends BaseAdminController
 
         return redirect()->to('admin/announcements')->with('success', 'Pengumuman berhasil dihapus!');
     }
-    
+
     // Toggle Active/Inactive (AJAX)
     public function toggleActive($id)
     {
         $announcement = $this->filterBySchool($this->announcementModel)->find($id);
-        
+
         if ($announcement) {
             // Balik statusnya (1 jadi 0, 0 jadi 1)
             $newStatus = $announcement['is_active'] == 1 ? 0 : 1;
-            
+
             $this->announcementModel->update($id, ['is_active' => $newStatus]);
-            
+
             return $this->response->setJSON([
                 'success' => true,
                 'newStatus' => $newStatus
             ]);
         }
-        
+
         // Jika data tidak ditemukan atau milik sekolah lain
         return $this->response->setJSON(['success' => false, 'message' => 'Akses ditolak']);
     }
