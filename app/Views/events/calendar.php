@@ -6,10 +6,10 @@
 
 <style>
     :root {
-        --mbs-purple: #7c3aed;
-        --mbs-purple-dark: #6d28d9;
-        --mbs-purple-light: #a78bfa;
-        --mbs-purple-lighter: #ddd6fe;
+        --mbs-purple: #2f3f58;
+        --mbs-purple-dark: #e8ecf1;
+        --mbs-purple-light: #4a5a73;
+        --mbs-purple-lighter: #e8ecf1;
     }
 
     /* ========== CALENDAR CONTAINER ========== */
@@ -51,7 +51,7 @@
 
     .fc .fc-button-primary:hover {
         transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(124, 58, 237, 0.3);
+        box-shadow: 0 5px 15px rgba(47, 63, 88, 0.3);
     }
 
     .fc .fc-button-primary:not(:disabled).fc-button-active,
@@ -60,7 +60,7 @@
     }
 
     .fc-daygrid-day.fc-day-today {
-        background: rgba(124, 58, 237, 0.1) !important;
+        background: rgba(47, 63, 88, 0.1) !important;
     }
 
     .fc-event {
@@ -107,7 +107,7 @@
     .event-item:hover {
         transform: translateX(5px);
         border-color: var(--mbs-purple-light);
-        box-shadow: 0 5px 20px rgba(124, 58, 237, 0.15);
+        box-shadow: 0 5px 20px rgba(47, 63, 88, 0.15);
     }
 
     .event-date-box {
@@ -117,7 +117,7 @@
         padding: 15px;
         text-align: center;
         min-width: 80px;
-        box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
+        box-shadow: 0 4px 15px rgba(47, 63, 88, 0.3);
     }
 
     .event-date-box .day {

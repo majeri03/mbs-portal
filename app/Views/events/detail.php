@@ -42,7 +42,7 @@
                             <div class="flex-grow-1 pt-2">
                                 <ul class="list-unstyled mb-0 d-grid gap-3">
                                     <li class="d-flex align-items-center text-muted">
-                                        <div class="icon-square bg-purple-light rounded-circle p-2 me-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; background: rgba(88, 44, 131, 0.1);">
+                                        <div class="icon-square bg-purple-light rounded-circle p-2 me-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; background: rgba(47, 63, 88, 0.1);">
                                             <i class="bi bi-clock-fill text-purple"></i>
                                         </div>
                                         <div>
@@ -55,7 +55,7 @@
                                         </div>
                                     </li>
                                     <li class="d-flex align-items-center text-muted">
-                                        <div class="icon-square bg-purple-light rounded-circle p-2 me-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; background: rgba(88, 44, 131, 0.1);">
+                                        <div class="icon-square bg-purple-light rounded-circle p-2 me-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; background: rgba(47, 63, 88, 0.1);">
                                             <i class="bi bi-geo-alt-fill text-purple"></i>
                                         </div>
                                         <div>
@@ -88,6 +88,6 @@
 
 <style>
     .text-purple { color: var(--mbs-purple); }
-    .bg-purple-light { background-color: rgba(88, 44, 131, 0.1); }
+    .bg-purple-light { background-color: rgba(47, 63, 88, 0.1); }
 </style>
 <?= $this->endSection() ?>

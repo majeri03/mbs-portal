@@ -105,7 +105,7 @@
     /* Bullet Icon Circle */
     .icon-bullet {
         width: 35px; height: 35px;
-        background-color: #f3e5f5; /* Ungu pudar */
+        background-color: #e8ecf1; /* Ungu pudar */
         color: var(--mbs-purple);
         border-radius: 50%;
         display: flex; align-items: center; justify-content: center;
@@ -131,7 +131,7 @@
         font-weight: 500;
     }
     .border-purple:focus {
-        box-shadow: 0 0 0 0.25rem rgba(88, 44, 131, 0.25); /* Glow Ungu saat diklik */
+        box-shadow: 0 0 0 0.25rem rgba(47, 63, 88, 0.25); /* Glow Ungu saat diklik */
         border-color: var(--mbs-purple);
     }
 </style>

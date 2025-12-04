@@ -2,7 +2,7 @@
 
 <?= $this->section('content') ?>
 
-<div class="text-white py-5 mb-5" style="background: linear-gradient(135deg, #582C83 0%, #3D1F5C 100%); margin-top: -1px;">
+<div class="text-white py-5 mb-5" style="background: linear-gradient(135deg, #2f3f58 0%, #1a253a 100%); margin-top: -1px;">
     <div class="container text-center">
         <h1 class="fw-bold display-5">Kabar Pesantren</h1>
         <p class="lead opacity-75 mb-0">Berita Terbaru, Prestasi, dan Informasi MBS</p>

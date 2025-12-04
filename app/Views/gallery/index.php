@@ -4,8 +4,8 @@
 
 <style>
     :root {
-        --mbs-purple: #7c3aed;
-        --mbs-purple-dark: #6d28d9;
+        --mbs-purple: #2f3f58;
+        --mbs-purple-dark: #e8ecf1;
     }
 
     /* Hover Effect pada Card */
@@ -18,7 +18,7 @@
 
     .gallery-card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 15px 30px rgba(124, 58, 237, 0.15) !important;
+        box-shadow: 0 15px 30px rgba(47, 63, 88, 0.15) !important;
     }
 
     .gallery-overlay {
@@ -50,7 +50,7 @@
         background-color: var(--mbs-purple);
         color: white;
         border-color: var(--mbs-purple);
-        box-shadow: 0 4px 10px rgba(124, 58, 237, 0.3);
+        box-shadow: 0 4px 10px rgba(47, 63, 88, 0.3);
     }
     
     .btn-filter {

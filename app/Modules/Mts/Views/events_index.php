@@ -74,7 +74,7 @@
 <style>
     /* Custom Styles agar sesuai konsep */
     .hover-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
-    .hover-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(88, 44, 131, 0.1) !important; }
+    .hover-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(47, 63, 88, 0.1) !important; }
     .hover-purple:hover { color: var(--mbs-purple) !important; }
     .text-purple { color: var(--mbs-purple) !important; }
     .bg-purple { background-color: var(--mbs-purple) !important; }

@@ -307,11 +307,46 @@
     <style>
         /* --- 0. KONFIGURASI WARNA & DASAR --- */
         :root {
-            --mbs-purple: #582C83;
+            --mbs-purple: #2f3f58;
             /* Warna Utama */
-            --mbs-purple-light: #F3E5F5;
+            --mbs-purple-light: #e8ecf1;
             /* Warna Hover (Ungu Muda) */
             --mbs-text-dark: #333333;
+        }
+
+        /* Override Warna Button Bootstrap Default */
+        .btn-primary {
+            background-color: var(--mbs-purple) !important;
+            border-color: var(--mbs-purple) !important;
+        }
+
+        .btn-primary:hover,
+        .btn-primary:active,
+        .btn-primary:focus {
+            background-color: var(--mbs-purple-dark) !important;
+            border-color: var(--mbs-purple-dark) !important;
+            color: var(--mbs-purple) !important;
+        }
+
+        .btn-outline-primary {
+            color: var(--mbs-purple) !important;
+            border-color: var(--mbs-purple) !important;
+        }
+
+        .btn-outline-primary:hover {
+            background-color: var(--mbs-purple) !important;
+            color: white !important;
+        }
+
+        /* Fix Pagination agar seragam */
+        .page-item.active .page-link {
+            background-color: var(--mbs-purple) !important;
+            border-color: var(--mbs-purple) !important;
+        }
+
+        .page-link {
+            color: var(--mbs-purple-light) !important;
+            background-color: var(--mbs-purple-dark) !important;
         }
 
         body {
@@ -372,7 +407,7 @@
         .navbar-nav .nav-link.active,
         .navbar-nav .show>.nav-link {
             color: var(--mbs-purple) !important;
-            background-color: rgba(88, 44, 131, 0.05);
+            background-color: rgba(47, 63, 88, 0.05);
             /* Background tipis */
         }
 
@@ -666,7 +701,7 @@
 
             /* LABEL KIRI (INFO PUSAT) */
             .ticker-label {
-                background: #582C83;
+                background: #2f3f58;
                 color: white;
                 height: 100%;
                 padding: 0 15px;

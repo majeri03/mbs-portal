@@ -121,7 +121,7 @@
 
 <style>
     .btn-purple {
-        background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+        background: linear-gradient(135deg, #2f3f58 0%, #1a253a 100%);
         color: white;
         border: none;
         padding: 10px 25px;
@@ -132,19 +132,19 @@
 
     .btn-purple:hover {
         transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(124, 58, 237, 0.3);
+        box-shadow: 0 5px 15px rgba(47, 63, 88, 0.3);
         color: white;
     }
 
     .bg-purple-light {
-        background: linear-gradient(135deg, #7c3aed 0%, #a78bfa 100%);
+        background: linear-gradient(135deg, #2f3f58 0%, #4a5a73 100%);
         color: white;
         padding: 5px 12px;
         border-radius: 6px;
     }
 
     .text-purple {
-        color: #7c3aed;
+        color: #2f3f58;
     }
 
     .card {
@@ -152,7 +152,7 @@
     }
 
     .table thead th {
-        background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+        background: linear-gradient(135deg, #2f3f58 0%, #1a253a 100%);
         color: white;
         font-weight: 600;
         border: none;

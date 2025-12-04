@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
     <style>
-        :root { --mbs-purple: #582C83; --mbs-purple-dark: #3D1F5C; }
+        :root { --mbs-purple: #2f3f58; --mbs-purple-dark: #1a253a; }
         * { box-sizing: border-box; }
         
         html, body {
@@ -64,7 +64,7 @@
         <div class="login-card">
             <div class="login-header">
                 <div class="mb-3">
-                    <span class="bg-purple bg-opacity-10 text-purple p-3 rounded-circle d-inline-block" style="background-color: #f3e5f5; color: #582C83;">
+                    <span class="bg-purple bg-opacity-10 text-purple p-3 rounded-circle d-inline-block" style="background-color: #e8ecf1; color: #2f3f58;">
                         <i class="bi bi-shield-lock-fill fs-1"></i>
                     </span>
                 </div>

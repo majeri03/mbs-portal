@@ -13,8 +13,8 @@
 
     <style>
         :root {
-            --mbs-purple: #582C83;
-            --mbs-purple-light: #7A4E9F;
+            --mbs-purple: #2f3f58;
+            --mbs-purple-light: #e8ecf1;
             --mbs-text-dark: #333333;
         }
 
@@ -49,7 +49,7 @@
         .nav-link:hover,
         .nav-link.active {
             color: var(--mbs-purple) !important;
-            background-color: rgba(88, 44, 131, 0.05);
+            background-color: rgba(47, 63, 88, 0.05);
         }
 
         /* Tombol Kembali ke Pusat */
@@ -126,7 +126,7 @@
             background-color: var(--mbs-purple);
             color: #fff;
             transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(88, 44, 131, 0.2);
+            box-shadow: 0 5px 15px rgba(47, 63, 88, 0.2);
             border-color: var(--mbs-purple);
         }
 
@@ -177,7 +177,7 @@
         }
 
         .dropdown-item:hover {
-            background-color: rgba(88, 44, 131, 0.05);
+            background-color: rgba(47, 63, 88, 0.05);
             color: var(--mbs-purple);
             padding-left: 25px;
         }
@@ -344,7 +344,7 @@
         /* TOMBOL PEMICU (BULAT) */
         .anno-trigger {
             border-radius: 30px;
-            background: linear-gradient(135deg, var(--mbs-purple) 0%, #3D1F5C 100%);
+            background: linear-gradient(135deg, var(--mbs-purple) 0%, #1a253a 100%);
             color: white;
             border: none;
             display: flex;
@@ -421,7 +421,7 @@
         }
 
         .bg-purple-light {
-            background-color: rgba(88, 44, 131, 0.1);
+            background-color: rgba(47, 63, 88, 0.1);
         }
 
         /* ANIMASI BERDENYUT (PULSE) UNTUK BADGE ANGKA */
@@ -460,7 +460,7 @@
 
 <body class="d-flex flex-column min-vh-100">
 
-    <div class="py-2 text-white small" style="background-color: var(--mbs-purple-dark, #3D1F5C);">
+    <div class="py-2 text-white small" style="background-color: var(--mbs-purple-dark, #1a253a);">
         <div class="container d-flex justify-content-between align-items-center">
             <div>
                 <i class="bi bi-envelope-fill me-2"></i> <?= esc($school_site['email'] ?? 'info@mbs.sch.id') ?>

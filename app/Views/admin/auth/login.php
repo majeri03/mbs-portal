@@ -23,9 +23,9 @@
         }
 
         :root {
-            --mbs-purple: #582C83;
-            --mbs-purple-light: #7A4E9F;
-            --mbs-purple-dark: #3D1F5C;
+            --mbs-purple: #2f3f58;
+            --mbs-purple-light: #e8ecf1;
+            --mbs-purple-dark: #1a253a;
         }
 
         * {
@@ -168,7 +168,7 @@
 
         .form-floating>.form-control:focus {
             border-color: var(--mbs-purple);
-            box-shadow: 0 0 0 4px rgba(88, 44, 131, 0.1);
+            box-shadow: 0 0 0 4px rgba(47, 63, 88, 0.1);
         }
 
         .form-floating>label {
@@ -192,7 +192,7 @@
 
         .btn-login:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(88, 44, 131, 0.4);
+            box-shadow: 0 10px 25px rgba(47, 63, 88, 0.4);
         }
 
         .btn-login:active {

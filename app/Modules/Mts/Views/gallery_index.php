@@ -92,7 +92,7 @@
     .text-purple { color: var(--mbs-purple) !important; }
     .bg-purple { background-color: var(--mbs-purple) !important; }
     .btn-purple { background-color: var(--mbs-purple); color: white; border: 1px solid var(--mbs-purple); }
-    .btn-purple:hover { background-color: #3D1F5C; color: white; }
+    .btn-purple:hover { background-color: #1a253a; color: white; }
     
     .btn-outline-purple { color: var(--mbs-purple); border: 1px solid var(--mbs-purple); }
     .btn-outline-purple:hover { background-color: var(--mbs-purple); color: white; }
@@ -101,7 +101,7 @@
     .gallery-card:hover img.transition-transform { transform: scale(1.1); }
     
     .gallery-overlay {
-        background: linear-gradient(to top, rgba(88, 44, 131, 0.8) 0%, transparent 100%);
+        background: linear-gradient(to top, rgba(47, 63, 88, 0.8) 0%, transparent 100%);
         opacity: 0;
         transform: translateY(10px);
         transition: all 0.3s ease;
@@ -117,7 +117,7 @@
     /* Pagination Style Override agar Ungu */
     .pagination .page-link { color: var(--mbs-purple); border: none; margin: 0 2px; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; }
     .pagination .page-item.active .page-link { background-color: var(--mbs-purple); color: white; }
-    .pagination .page-link:hover { background-color: #f3e5f5; }
+    .pagination .page-link:hover { background-color: #e8ecf1; }
 </style>
 
 <script>

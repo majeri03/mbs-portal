@@ -2,7 +2,7 @@
 
 <?= $this->section('content') ?>
 
-<div class="py-5 mb-5" style="background: linear-gradient(135deg, #582C83 0%, #3D1F5C 100%); margin-top: -1px;">
+<div class="py-5 mb-5" style="background: linear-gradient(135deg, #2f3f58 0%, #1a253a 100%); margin-top: -1px;">
     <div class="container text-center">
         <h1 class="fw-bold display-5 text-white mb-3"><?= esc($page['title']) ?></h1>
         
@@ -41,7 +41,7 @@
     
     /* Heading dalam konten */
     .content-body h2, .content-body h3, .content-body h4 { 
-        color: #582C83; /* Warna Ungu MBS */
+        color: #2f3f58; /* Warna Ungu MBS */
         font-weight: bold; 
         margin-top: 2rem; 
         margin-bottom: 1rem;

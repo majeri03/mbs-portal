@@ -56,7 +56,6 @@ class Home extends BaseController
 
         $data['latest_news'] = $this->postModel->select('posts.*, schools.name as school_name')
             ->join('schools', 'schools.id = posts.school_id', 'left')
-            ->where('posts.school_id', null) // <--- FILTER: HANYA YANG ID SEKOLAHNYA KOSONG
             ->where('is_published', 1)
             ->orderBy('posts.created_at', 'DESC')
             ->findAll(3);

@@ -80,24 +80,24 @@
 </script>
 
 <style>
-    .text-purple { color: #582C83 !important; }
-    .bg-purple { background-color: #582C83 !important; }
+    .text-purple { color: #2f3f58 !important; }
+    .bg-purple { background-color: #2f3f58 !important; }
     
     .btn-purple {
-        background-color: #582C83;
+        background-color: #2f3f58;
         color: white;
         border: none;
         transition: all 0.3s;
     }
     .btn-purple:hover {
-        background-color: #3D1F5C;
+        background-color: #1a253a;
         color: white;
         transform: scale(1.02);
     }
     
     /* Style Input Focus */
     .form-control:focus {
-        box-shadow: 0 0 0 3px rgba(88, 44, 131, 0.1);
+        box-shadow: 0 0 0 3px rgba(47, 63, 88, 0.1);
         background-color: white !important;
     }
 </style>

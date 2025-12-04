@@ -156,6 +156,14 @@ $routes->group('admin', function ($routes) {
     $routes->get('users/edit/(:num)', 'Admin\Users::edit/$1');
     $routes->post('users/update/(:num)', 'Admin\Users::update/$1');
     $routes->get('users/delete/(:num)', 'Admin\Users::delete/$1');
+
+    // FITUR PROFIL & GANTI PASSWORD
+    $routes->get('profile', 'Admin\Auth::profile');
+    $routes->post('profile/update', 'Admin\Auth::updateProfile');
+
+    //change paassword
+    $routes->get('change-password', 'Admin\Auth::changePassword'); // Halaman Form
+    $routes->post('change-password', 'Admin\Auth::attemptChangePassword');
 });
 
 // Public Routes untuk Kalender

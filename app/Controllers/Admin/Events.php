@@ -224,8 +224,8 @@ class Events extends BaseController
                     'location' => $event['location'] ?? '',
                     'description' => $event['description'] ?? '',
                     'url' => base_url('admin/events/edit/' . $event['id']),
-                    'backgroundColor' => '#7c3aed',
-                    'borderColor' => '#6d28d9',
+                    'backgroundColor' => '#2f3f58',
+                    'borderColor' => '#1a253a',
                     'textColor' => '#ffffff'
                 ];
             }

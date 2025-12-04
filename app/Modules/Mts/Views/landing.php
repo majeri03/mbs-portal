@@ -29,7 +29,7 @@
 
     .program-card:hover {
         transform: translateY(-10px);
-        box-shadow: 0 1rem 3rem rgba(88, 44, 131, 0.15) !important;
+        box-shadow: 0 1rem 3rem rgba(47, 63, 88, 0.15) !important;
     }
 
     .icon-box-purple {
@@ -46,8 +46,8 @@
 
     /* Warna Khusus MBS (Ungu) */
     :root {
-        --mbs-purple: #582C83;
-        --mbs-purple-light: #f3e5f5;
+        --mbs-purple: #2f3f58;
+        --mbs-purple-light: #e8ecf1;
     }
 
     .text-purple {
@@ -84,7 +84,7 @@
 
     .hover-card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(88, 44, 131, 0.15) !important;
+        box-shadow: 0 10px 20px rgba(47, 63, 88, 0.15) !important;
     }
 
     .hero-section {
@@ -127,7 +127,7 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background: linear-gradient(135deg, rgba(88, 44, 131, 0.85) 0%, rgba(61, 31, 92, 0.7) 100%);
+        background: linear-gradient(135deg, rgba(47, 63, 88, 0.85) 0%, rgba(61, 31, 92, 0.7) 100%);
         z-index: 1;
     }
 
@@ -239,7 +239,7 @@
     }
 
     .border-purple {
-        border-color: #8a4fff !important;
+        border-color: #2f3f58 !important;
     }
 
     /* --- CSS BERITA & AGENDA --- */
@@ -266,7 +266,7 @@
         background-color: var(--mbs-purple-dark);
         color: black;
         transform: translateY(-2px);
-        box-shadow: 0 4px 10px rgba(88, 44, 131, 0.3);
+        box-shadow: 0 4px 10px rgba(47, 63, 88, 0.3);
     }
 
     /* Tombol Outline Ungu */
@@ -310,7 +310,7 @@
 
     .headmaster-card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 1rem 3rem rgba(88, 44, 131, 0.15) !important;
+        box-shadow: 0 1rem 3rem rgba(47, 63, 88, 0.15) !important;
     }
 
     /* Slider Guru */
@@ -361,7 +361,7 @@
 
     /* Overlay Gradient */
     .gallery-overlay {
-        background: linear-gradient(to top, rgba(88, 44, 131, 0.9) 0%, transparent 100%);
+        background: linear-gradient(to top, rgba(47, 63, 88, 0.9) 0%, transparent 100%);
         opacity: 0;
         transform: translateY(20px);
         transition: all 0.4s ease;
@@ -740,7 +740,7 @@
 
 <section id="galeri" class="py-5 bg-white position-relative">
     <div class="position-absolute top-0 start-0 w-100 h-100 opacity-10"
-        style="background-image: radial-gradient(#582C83 1px, transparent 1px); background-size: 20px 20px;"></div>
+        style="background-image: radial-gradient(#2f3f58 1px, transparent 1px); background-size: 20px 20px;"></div>
 
     <div class="container position-relative z-1">
         <div class="d-flex justify-content-between align-items-end mb-5">

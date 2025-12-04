@@ -151,7 +151,7 @@
 <style>
     .text-purple { color: var(--mbs-purple) !important; }
     .btn-purple { background-color: var(--mbs-purple); color: white; border: none; }
-    .btn-purple:hover { background-color: #3D1F5C; color: white; }
+    .btn-purple:hover { background-color: #1a253a; color: white; }
 </style>
 
 <?= $this->endSection() ?>

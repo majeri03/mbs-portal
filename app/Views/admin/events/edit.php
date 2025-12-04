@@ -143,11 +143,11 @@
 
 <style>
     .bg-purple {
-        background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+        background: linear-gradient(135deg, #2f3f58 0%, #1a253a 100%);
     }
 
     .btn-purple {
-        background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+        background: linear-gradient(135deg, #2f3f58 0%, #1a253a 100%);
         color: white;
         border: none;
         padding: 10px 25px;
@@ -158,7 +158,7 @@
 
     .btn-purple:hover {
         transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(124, 58, 237, 0.3);
+        box-shadow: 0 5px 15px rgba(47, 63, 88, 0.3);
         color: white;
     }
 
@@ -169,8 +169,8 @@
 
     .form-control:focus,
     .form-select:focus {
-        border-color: #7c3aed;
-        box-shadow: 0 0 0 0.2rem rgba(124, 58, 237, 0.25);
+        border-color: #2f3f58;
+        box-shadow: 0 0 0 0.2rem rgba(47, 63, 88, 0.25);
     }
 </style>
 

@@ -60,7 +60,7 @@
                 <div class="swiper-slide">
                     <div class="hero-slide position-relative d-flex align-items-center text-white"
                         style="min-height: 85vh; 
-                                background: linear-gradient(to bottom, rgba(88, 44, 131, 0.8), rgba(61, 31, 92, 0.9));">
+                                background: linear-gradient(to bottom, rgba(47, 63, 88, 0.8), rgba(61, 31, 92, 0.9));">
                         <div class="container text-center">
                             <h1 class="display-3 fw-bold mb-4">Selamat Datang di MBS</h1>
                             <p class="lead">Belum ada hero slider. Silakan tambahkan di Admin Panel.</p>
@@ -96,13 +96,14 @@
 
                     <!-- Dropdown Filter -->
                     <div class="mb-4">
-                        <select class="form-select form-select-lg rounded-pill fs-6 border-secondary text-secondary" 
-                                onchange="if(this.value) window.location.href='<?= base_url('news?category=') ?>'+this.value">
-                            <option selected disabled>-- Pilih Kategori / Cari --</option>
-                            <option value="Prestasi">Prestasi</option>
-                            <option value="Kegiatan">Kegiatan</option>
-                            <option value="Pengumuman">Pengumuman</option>
-                        </select>
+                        <form action="<?= base_url('news') ?>" method="get">
+                            <div class="input-group">
+                                <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+                                <input type="text" name="category" class="form-control form-control-lg border-start-0 ps-0"
+                                    placeholder="Cari berita..." aria-label="Cari berita">
+                                <button class="btn btn-primary " type="submit">Cari</button>
+                            </div>
+                        </form>
                     </div>
 
                     <!-- Navigasi Slider Bulat -->
@@ -218,7 +219,7 @@
                                     <!-- Placeholder dengan gradient -->
                                     <div class="w-100 h-100 d-flex align-items-center justify-content-center text-white"
                                         style="background: linear-gradient(135deg, 
-                                            <?= $index == 0 ? '#582C83, #7A4E9F' : ($index == 1 ? '#3b82f6, #60a5fa' : '#10b981, #34d399') ?>);">
+                                            <?= $index == 0 ? '#2f3f58, #e8ecf1' : ($index == 1 ? '#3b82f6, #60a5fa' : '#10b981, #34d399') ?>);">
                                         <div class="text-center">
                                             <i class="bi bi-building" style="font-size: 4rem;"></i>
                                             <h4 class="mt-3 fw-bold"><?= esc($school['name']) ?></h4>
@@ -428,28 +429,28 @@
         <div class="row align-items-center">
             <div class="col-lg-6 mb-5 mb-lg-0 z-index-2 position-relative">
                 <span class="badge bg-warning text-dark mb-3 px-3 py-2">KENAL LEBIH DEKAT</span>
-                
+
                 <h2 class="display-5 fw-bold mb-4">
                     <?= esc($site['profile_title'] ?? 'Mendidik dengan Hati, Mengabdi untuk Negeri.') ?>
                 </h2>
-                
+
                 <p class="lead opacity-75 mb-4">
                     "<?= esc($site['profile_description'] ?? 'Selamat datang di MBS Boarding School...') ?>"
                 </p>
 
                 <div class="d-flex align-items-center mt-4">
-                    <?php 
-                        $directorPhoto = $site['director_photo'] ?? 'https://ui-avatars.com/api/?name=Direktur&background=random&size=128';
-                        // Cek jika foto lokal atau URL luar
-                        if (!filter_var($directorPhoto, FILTER_VALIDATE_URL)) {
-                            $directorPhoto = base_url($directorPhoto);
-                        }
+                    <?php
+                    $directorPhoto = $site['director_photo'] ?? 'https://ui-avatars.com/api/?name=Direktur&background=random&size=128';
+                    // Cek jika foto lokal atau URL luar
+                    if (!filter_var($directorPhoto, FILTER_VALIDATE_URL)) {
+                        $directorPhoto = base_url($directorPhoto);
+                    }
                     ?>
-                    <img src="<?= $directorPhoto ?>" 
-                         class="rounded-circle border border-3 border-white me-3 object-fit-cover" 
-                         width="60" height="60" 
-                         alt="Direktur">
-                    
+                    <img src="<?= $directorPhoto ?>"
+                        class="rounded-circle border border-3 border-white me-3 object-fit-cover"
+                        width="60" height="60"
+                        alt="Direktur">
+
                     <div>
                         <h5 class="fw-bold mb-0"><?= esc($site['director_name'] ?? 'Nama Direktur') ?></h5>
                         <small class="opacity-75"><?= esc($site['director_label'] ?? 'Pimpinan Pondok') ?></small>
@@ -460,11 +461,11 @@
             <div class="col-lg-6 position-relative z-index-2">
                 <div class="ratio ratio-16x9 rounded-4 shadow-lg border border-5 border-white overflow-hidden" style="transform: rotate(2deg);">
                     <?php
-                        // Gunakan helper untuk convert link ke embed
-                        $videoUrl = $site['profile_video_url'] ?? '';
-                        $embedUrl = !empty($videoUrl) ? get_youtube_embed($videoUrl) : '';
+                    // Gunakan helper untuk convert link ke embed
+                    $videoUrl = $site['profile_video_url'] ?? '';
+                    $embedUrl = !empty($videoUrl) ? get_youtube_embed($videoUrl) : '';
                     ?>
-                    
+
                     <?php if (!empty($embedUrl)) : ?>
                         <iframe src="<?= $embedUrl ?>" title="Profil MBS" allowfullscreen></iframe>
                     <?php else : ?>
@@ -662,7 +663,7 @@
 
     .hover-lift-school:hover {
         transform: translateY(-10px);
-        box-shadow: 0 20px 40px rgba(88, 44, 131, 0.2) !important;
+        box-shadow: 0 20px 40px rgba(47, 63, 88, 0.2) !important;
     }
 
     .btn-outline-purple {

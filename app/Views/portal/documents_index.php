@@ -2,7 +2,7 @@
 
 <?= $this->section('content') ?>
 
-<div class="py-5 mb-5" style="background: linear-gradient(135deg, var(--mbs-purple) 0%, #3D1F5C 100%); margin-top: -1px;">
+<div class="py-5 mb-5" style="background: linear-gradient(135deg, var(--mbs-purple) 0%, #1a253a 100%); margin-top: -1px;">
     <div class="container text-center">
         <h1 class="fw-bold display-6 text-white">Arsip Dokumen Yayasan</h1>
         <p class="lead text-white-50 mb-0">Pusat Unduhan & Berkas Resmi MBS Boarding School</p>
@@ -114,7 +114,7 @@
     .text-purple { color: var(--mbs-purple) !important; }
     .bg-purple { background-color: var(--mbs-purple) !important; }
     .btn-purple { background-color: var(--mbs-purple); color: white; }
-    .btn-purple:hover { background-color: #3D1F5C; color: white; }
+    .btn-purple:hover { background-color: #1a253a; color: white; }
     
     .btn-outline-purple { color: var(--mbs-purple); border-color: var(--mbs-purple); }
     .btn-outline-purple:hover { background-color: var(--mbs-purple); color: white; }
@@ -122,7 +122,7 @@
     .hover-purple:hover { color: var(--mbs-purple) !important; }
     
     .active-cat {
-        background-color: rgba(88, 44, 131, 0.1) !important;
+        background-color: rgba(47, 63, 88, 0.1) !important;
         color: var(--mbs-purple) !important;
         font-weight: 600;
     }

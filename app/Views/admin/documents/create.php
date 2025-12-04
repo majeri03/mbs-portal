@@ -53,9 +53,11 @@
                                     <option value="<?= $cat['id'] ?>"><?= esc($cat['name']) ?></option>
                                 <?php endforeach; ?>
                             </select>
+                            <?php if (session('role') !== 'guru') : ?>
                             <div class="form-text mt-1">
                                 Kategori belum ada? <a href="<?= base_url('admin/document-categories') ?>" target="_blank">Buat di sini</a>
                             </div>
+                            <?php endif; ?>
                         </div>
 
                         <div class="col-md-6 mb-4">
@@ -104,7 +106,7 @@
 <style>
     .text-purple { color: var(--mbs-purple) !important; }
     .btn-purple { background-color: var(--mbs-purple); color: white; border: none; }
-    .btn-purple:hover { background-color: #3D1F5C; color: white; }
+    .btn-purple:hover { background-color: #1a253a; color: white; }
     .cursor-pointer { cursor: pointer; }
 </style>
 

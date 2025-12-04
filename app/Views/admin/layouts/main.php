@@ -20,11 +20,62 @@
 
     <style>
         :root {
-            --mbs-purple: #582C83;
-            --mbs-purple-light: #7A4E9F;
-            --mbs-purple-dark: #3D1F5C;
+            --mbs-purple: #2f3f58;
+            --mbs-purple-light: #e8ecf1;
+            --mbs-purple-dark: #1a253a;
             --sidebar-width: 260px;
             --topbar-height: 65px;
+        }
+
+        /* Paksa Ubah Warna Tombol Primary Bootstrap */
+        .btn-primary {
+            background-color: var(--mbs-purple) !important;
+            border-color: var(--mbs-purple) !important;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--mbs-purple-dark) !important;
+            border-color: var(--mbs-purple-dark) !important;
+        }
+
+        .bg-primary {
+            background-color: var(--mbs-purple) !important;
+        }
+
+        .text-primary {
+            color: var(--mbs-purple) !important;
+        }
+
+        /* Fix Pagination agar seragam */
+        .page-item.active .page-link {
+            background-color: var(--mbs-purple) !important;
+            border-color: var(--mbs-purple) !important;
+        }
+
+        .page-link {
+            color: var(--mbs-purple-light) !important;
+            background-color: var(--mbs-purple-dark) !important;
+        }
+
+        /* 1. Mengubah Warna List Group (Menu Settings) yang Aktif */
+        .list-group-item.active {
+            background-color: var(--mbs-purple) !important;
+            border-color: var(--mbs-purple) !important;
+            color: white !important;
+        }
+
+        /* 2. (Opsional) Mengubah Warna Checkbox & Radio Button saat dicentang */
+        .form-check-input:checked {
+            background-color: var(--mbs-purple) !important;
+            border-color: var(--mbs-purple) !important;
+        }
+
+        /* 3. (Opsional) Mengubah Warna Outline Input saat diklik (Fokus) */
+        .form-control:focus,
+        .form-select:focus {
+            border-color: var(--mbs-purple) !important;
+            box-shadow: 0 0 0 0.25rem rgba(47, 63, 88, 0.25) !important;
+            /* Versi transparan dari Navy */
         }
 
         * {
@@ -212,7 +263,7 @@
         }
 
         .stat-card.purple .stat-icon {
-            background: rgba(88, 44, 131, 0.1);
+            background: rgba(47, 63, 88, 0.1);
             color: var(--mbs-purple);
         }
 
@@ -461,34 +512,38 @@
         }
 
         /* --- FIX DATALIST ARROW (SOLUSI FINAL) --- */
-    
-    /* 1. Pastikan panah native muncul di Chrome/Edge/Opera */
-    input[list]::-webkit-calendar-picker-indicator {
-        display: block !important;
-        opacity: 1 !important;
-        background: transparent; /* Transparan agar menyatu */
-        bottom: 0;
-        color: transparent;
-        cursor: pointer;
-        height: auto;
-        left: auto;
-        position: absolute;
-        right: 12px; /* Posisi dari kanan */
-        top: 0;
-        width: 24px; /* Lebar area klik */
-        z-index: 99;
-        /* Ganti ikon bawaan browser yang jelek dengan ikon Bootstrap (Opsional) */
-        /* Kalau mau pakai ikon native segitiga hitam, hapus baris background-image di bawah */
-        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="gray" class="bi bi-chevron-down" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>');
-        background-repeat: no-repeat;
-        background-position: center;
-        background-size: 12px;
-    }
 
-    /* 2. Firefox biasanya otomatis muncul saat double click, tapi kita beri hint hover */
-    input[list]:hover {
-        background-color: #e9ecef; /* Sedikit gelap saat dihover menandakan bisa diklik */
-    }
+        /* 1. Pastikan panah native muncul di Chrome/Edge/Opera */
+        input[list]::-webkit-calendar-picker-indicator {
+            display: block !important;
+            opacity: 1 !important;
+            background: transparent;
+            /* Transparan agar menyatu */
+            bottom: 0;
+            color: transparent;
+            cursor: pointer;
+            height: auto;
+            left: auto;
+            position: absolute;
+            right: 12px;
+            /* Posisi dari kanan */
+            top: 0;
+            width: 24px;
+            /* Lebar area klik */
+            z-index: 99;
+            /* Ganti ikon bawaan browser yang jelek dengan ikon Bootstrap (Opsional) */
+            /* Kalau mau pakai ikon native segitiga hitam, hapus baris background-image di bawah */
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="gray" class="bi bi-chevron-down" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 12px;
+        }
+
+        /* 2. Firefox biasanya otomatis muncul saat double click, tapi kita beri hint hover */
+        input[list]:hover {
+            background-color: #e9ecef;
+            /* Sedikit gelap saat dihover menandakan bisa diklik */
+        }
     </style>
 </head>
 
@@ -534,7 +589,7 @@
                             Data Dokumen
                         </a>
                     </li>
-                    
+
                     <?php if ($userRole !== 'guru') : ?>
                         <li>
                             <a href="<?= base_url('admin/document-categories') ?>" class="<?= str_contains(uri_string(), 'categories') ? 'text-warning' : '' ?>">
@@ -558,7 +613,7 @@
 
                 <ul class="collapse sidebar-submenu <?= $isContentActive ? 'show' : '' ?>" id="submenuKonten" data-bs-parent="#sidebar">
                     <li><a href="<?= base_url('admin/posts') ?>">Berita / Artikel</a></li>
-                    
+
                     <li><a href="<?= base_url('admin/galleries') ?>">Galeri Foto</a></li>
 
                     <?php if ($userRole !== 'guru') : ?>
@@ -631,19 +686,61 @@
                 <i class="bi bi-chevron-down"></i>
             </a>
 
-            <ul class="dropdown-menu dropdown-menu-end">
-                <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i> Profil</a></li>
-                <li><a class="dropdown-item" href="#"><i class="bi bi-key me-2"></i> Ganti Password</a></li>
+            <ul class="dropdown-menu dropdown-menu-end border-0 shadow animate slideIn">
+                <li>
+                    <h6 class="dropdown-header">Halo, <?= esc(substr(session('full_name'), 0, 15)) ?>...</h6>
+                </li>
+
+                <li>
+                    <a class="dropdown-item py-2" href="<?= base_url('admin/profile') ?>">
+                        <i class="bi bi-person-circle me-2 text-primary"></i> Edit Profil
+                    </a>
+                </li>
+
+                <li>
+                    <a class="dropdown-item py-2" href="<?= base_url('admin/change-password') ?>">
+                        <i class="bi bi-shield-lock me-2 text-warning"></i> Ganti Password
+                    </a>
+                </li>
+
                 <li>
                     <hr class="dropdown-divider">
                 </li>
-                <li><a class="dropdown-item text-danger" href="<?= base_url('admin/logout') ?>"><i class="bi bi-box-arrow-right me-2"></i> Logout</a></li>
+
+                <li>
+                    <a class="dropdown-item py-2 text-danger fw-bold" href="<?= base_url('admin/logout') ?>">
+                        <i class="bi bi-box-arrow-right me-2"></i> Keluar
+                    </a>
+                </li>
             </ul>
         </div>
     </div>
 
     <!-- MAIN CONTENT -->
     <div class="main-content">
+        <?php if (session()->getFlashdata('success')) : ?>
+            <div class="alert alert-success alert-dismissible fade show shadow-sm border-0 mb-4" role="alert">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-check-circle-fill fs-4 me-3"></i>
+                    <div>
+                        <strong>Berhasil!</strong> <?= session()->getFlashdata('success') ?>
+                    </div>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <?php endif; ?>
+
+        <?php if (session()->getFlashdata('error')) : ?>
+            <div class="alert alert-danger alert-dismissible fade show shadow-sm border-0 mb-4" role="alert">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-exclamation-triangle-fill fs-4 me-3"></i>
+                    <div>
+                        <strong>Gagal!</strong> <?= session()->getFlashdata('error') ?>
+                    </div>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <?php endif; ?>
         <?= $this->renderSection('content') ?>
     </div>
 

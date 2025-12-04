@@ -92,31 +92,31 @@
 </div>
 
 <style>
-    .text-purple { color: #582C83 !important; }
+    .text-purple { color: #2f3f58 !important; }
     
     .btn-purple {
-        background-color: #582C83;
+        background-color: #2f3f58;
         color: white;
         border: none;
         transition: all 0.3s;
     }
     .btn-purple:hover {
-        background-color: #3D1F5C;
+        background-color: #1a253a;
         color: white;
         transform: translateY(-2px);
     }
 
     .btn-outline-purple {
-        color: #582C83;
-        border-color: #582C83;
+        color: #2f3f58;
+        border-color: #2f3f58;
     }
     .btn-outline-purple:hover {
-        background-color: #582C83;
+        background-color: #2f3f58;
         color: white;
     }
 
     .bg-purple-light {
-        background-color: #f3e5f5;
+        background-color: #e8ecf1;
         width: 40px;
         height: 40px;
         font-size: 1.2rem;

@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     
     <style>
-        :root { --mbs-purple: #582C83; --mbs-purple-dark: #3D1F5C; }
+        :root { --mbs-purple: #2f3f58; --mbs-purple-dark: #1a253a; }
         * { box-sizing: border-box; }
         
         html, body {
