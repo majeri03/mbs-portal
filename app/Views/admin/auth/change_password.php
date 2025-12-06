@@ -11,7 +11,21 @@
                 <i class="bi bi-arrow-left me-2"></i>Kembali
             </a>
         </div>
-
+        <?php if (session()->getFlashdata('errors')) : ?>
+            <div class="alert alert-danger border-0 shadow-sm mb-4">
+                <div class="d-flex align-items-start">
+                    <i class="bi bi-exclamation-circle-fill me-2 mt-1"></i>
+                    <div>
+                        <strong>Periksa input Anda:</strong>
+                        <ul class="mb-0 ps-3">
+                            <?php foreach (session()->getFlashdata('errors') as $err) : ?>
+                                <li><?= esc($err) ?></li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        <?php endif; ?>
         <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
             <div class="card-header text-white p-4" style="background: linear-gradient(135deg, var(--mbs-purple) 0%, var(--mbs-purple-dark) 100%);">
                 <h6 class="mb-0 fw-bold"><i class="bi bi-key-fill me-2"></i>Formulir Keamanan</h6>
@@ -43,7 +57,7 @@
                         <label class="form-label fw-bold text-secondary">Password Baru</label>
                         <div class="input-group">
                             <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-lock-fill"></i></span>
-                            <input type="password" name="new_password" class="form-control border-start-0 bg-light" required minlength="6" placeholder="Minimal 6 karakter">
+                            <input type="password" name="new_password" class="form-control border-start-0 bg-light" required minlength="8" placeholder="Minimal 8 karakter">
                         </div>
                     </div>
 

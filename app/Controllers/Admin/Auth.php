@@ -6,6 +6,7 @@ use App\Controllers\BaseController;
 use App\Models\UserModel;
 use App\Models\SettingModel;
 use Config\Services;
+
 class Auth extends BaseController
 {
     protected $userModel;
@@ -29,12 +30,12 @@ class Auth extends BaseController
     }
 
     // Proses Login
-           public function attemptLogin()
+    public function attemptLogin()
     {
         $rules = [
             'username' => 'required',
             'password' => 'required|min_length[6]',
-            
+
         ];
 
         if (!$this->validate($rules)) {
@@ -53,37 +54,57 @@ class Auth extends BaseController
 
         // CEK: Apakah login berhasil (return berupa array user data)
         if ($result) {
-            // Simpan data user ke session
-            session()->set([
-                'user_id'    => $result['id'],
-                'username'   => $result['username'],
-                'full_name'  => $result['full_name'],
-                'role'       => $result['role'],
-                'school_id'  => $result['school_id'],
-                'logged_in'  => true,
-            ]);
+            // 1. Siapkan Data Session Dasar
+            $sessionData = [
+                'user_id'       => $result['id'],
+                'username'      => $result['username'],
+                'full_name'     => $result['full_name'],
+                'role'          => $result['role'],
+                'school_id'     => $result['school_id'],
+                'logged_in'     => true,
+                'auth_password' => $result['password'], // PENTING: Untuk cek ganti password
+                'auth_token'    => null // Default null
+            ];
+
+            // 2. Logika Remember Me
             if ($remember) {
-                // Ambil service encrypter (otomatis pakai key dari .env)
                 $encrypter = Services::encrypter();
-                
-                // Enkripsi ID User
-                $encryptedId = bin2hex($encrypter->encrypt($result['id']));
-                
-                // Simpan ke Cookie 'mbs_remember' selama 30 hari
-                set_cookie('mbs_remember', $encryptedId, 30 * 24 * 60 * 60);
+
+                // Generate Token
+                $token = bin2hex(random_bytes(32));
+
+                // Simpan ke DB
+                $this->userModel->update($result['id'], [
+                    'remember_token' => $token
+                ]);
+
+                // Masukkan token ke array session data (PERBAIKAN UTAMA DISINI)
+                $sessionData['auth_token'] = $token;
+
+                // Set Cookie
+                $cookieData = $result['id'] . ':' . $token;
+                $encryptedCookie = bin2hex($encrypter->encrypt($cookieData));
+                set_cookie('mbs_remember', $encryptedCookie, 30 * 24 * 60 * 60);
             }
-            return redirect()->to('/admin/dashboard')->with('success', 'Selamat datang, ' . esc($result['full_name']) . '!');
+
+            // 3. Simpan Semua ke Session SEKALIGUS
+            session()->set($sessionData);
+
+            return redirect()->to('/admin/dashboard')->with('success', 'Selamat datang...');
         }
-
-        // Default error (seharusnya tidak sampai sini)
-        return redirect()->back()->withInput()->with('error', 'Username atau Password salah!');
     }
-
     // Logout
     public function logout()
     {
-        delete_cookie('mbs_remember');
+        // 1. Hapus token di database (Agar cookie lama tidak bisa dipakai lagi)
+        if (session()->get('user_id')) {
+            $this->userModel->update(session()->get('user_id'), ['remember_token' => null]);
+        }
+
+        // 2. Hapus Cookie & Session
         session()->destroy();
+
+        delete_cookie('mbs_remember');
         return redirect()->to('/admin/login')->with('success', 'Anda telah logout.');
     }
     // 1. Tampilkan Form Input Email
@@ -115,11 +136,11 @@ class Auth extends BaseController
 
         // 1. Ambil Data Setting (Logo & Nama Web)
         $settings = $this->settingModel->getSettings(null); // Ambil setting Pusat
-        
+
         // Cek logo, kalau kosong pakai placeholder text/image
         $logoUrl = !empty($settings['site_logo']) ? base_url($settings['site_logo']) : 'https://placehold.co/150x50?text=MBS+Logo';
         $siteName = $settings['site_name'] ?? 'MBS Portal';
-        
+
         // Link Reset
         $link = base_url("admin/reset-password/$token");
 
@@ -182,8 +203,8 @@ class Auth extends BaseController
     {
         // Cek Token Valid & Belum Expired
         $user = $this->userModel->where('reset_token', $token)
-                                ->where('reset_expire >=', date('Y-m-d H:i:s'))
-                                ->first();
+            ->where('reset_expire >=', date('Y-m-d H:i:s'))
+            ->first();
 
         if (!$user) {
             return redirect()->to('/admin/login')->with('error', 'Link reset tidak valid atau sudah kadaluarsa.');
@@ -193,34 +214,54 @@ class Auth extends BaseController
     }
 
     // 4. Proses Simpan Password Baru
+    // 4. Proses Simpan Password Baru (RESET)
     public function attemptReset()
     {
         $token = $this->request->getPost('token');
         $password = $this->request->getPost('password');
         $confPassword = $this->request->getPost('pass_confirm');
 
-        if ($password !== $confPassword) {
-            // [PERBAIKAN] Jangan back(), tapi redirect spesifik ke URL token ini
+        // VALIDASI KUAT DISINI
+        if (!$this->validate([
+            'password' => [
+                'label' => 'Password Baru',
+                'rules' => 'required|min_length[8]|regex_match[/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/]',
+                'errors' => [
+                    'min_length' => 'Password terlalu pendek (Min 8 karakter).',
+                    'regex_match' => 'Password LEMAH! Harus ada Huruf Besar & Angka.'
+                ]
+            ],
+            'pass_confirm' => [
+                'label' => 'Konfirmasi Password',
+                'rules' => 'required|matches[password]',
+                'errors' => [
+                    'matches' => 'Konfirmasi password tidak cocok.'
+                ]
+            ]
+        ])) {
+            // Redirect balik ke form reset password (bukan login) dengan error
             return redirect()->to('admin/reset-password/' . $token)
-                             ->with('error', 'Konfirmasi password tidak cocok. Silakan ulangi.');
+                             ->withInput()
+                             ->with('error', $this->validator->getErrors()['password'] ?? 'Validasi gagal.');
         }
 
-        // Cek Token Lagi (Double Check)
+        // Cek Token Valid
         $user = $this->userModel->where('reset_token', $token)->first();
 
         if ($user) {
             $this->userModel->update($user['id'], [
                 'password' => password_hash($password, PASSWORD_DEFAULT),
-                'reset_token' => null, // Hapus token agar tidak bisa dipakai lagi
+                'reset_token' => null,
                 'reset_expire' => null,
-                'locked_until' => null, // Buka kunci akun jika sebelumnya terkunci
-                'login_attempts' => 0
+                'locked_until' => null,
+                'login_attempts' => 0,
+                'remember_token' => null // Hapus remember token juga biar aman
             ]);
 
-            return redirect()->to('/admin/login')->with('success', 'Password berhasil diubah! Silakan login.');
+            return redirect()->to('/admin/login')->with('success', 'Password berhasil diubah! Silakan login dengan password baru yang kuat.');
         }
 
-        return redirect()->to('/admin/login')->with('error', 'Terjadi kesalahan. Ulangi proses.');
+        return redirect()->to('/admin/login')->with('error', 'Token tidak valid. Silakan ulangi proses lupa password.');
     }
 
     // --- FITUR GANTI PASSWORD (LOGGED IN) ---
@@ -233,11 +274,12 @@ class Auth extends BaseController
         $data['title'] = 'Ganti Password';
         // Kirim data user untuk view (jika perlu)
         $data['user'] = $this->userModel->find(session()->get('user_id'));
-        
+
         return view('admin/auth/change_password', $data);
     }
 
     // 2. Proses Ganti Password
+    // 2. Proses Ganti Password (REVISI LOGIKA & KEAMANAN)
     public function attemptChangePassword()
     {
         if (!session()->get('logged_in')) return redirect()->to('admin/login');
@@ -247,11 +289,30 @@ class Auth extends BaseController
         $newPass     = $this->request->getPost('new_password');
         $confirmPass = $this->request->getPost('confirm_password');
 
-        // Validasi Input Dasar
+        // --- 1. VALIDASI INPUT (PERKETAT KEAMANAN) ---
+        // Regex: Minimal 8 char, ada 1 Huruf Besar, ada 1 Angka.
+        $strongPasswordRules = 'required|min_length[8]|regex_match[/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/]';
+        
         if (!$this->validate([
-            'current_password' => 'required',
-            'new_password'     => 'required|min_length[6]',
-            'confirm_password' => 'required|matches[new_password]'
+            'current_password' => [
+                'label' => 'Password Lama',
+                'rules' => 'required'
+            ],
+            'new_password' => [
+                'label' => 'Password Baru',
+                'rules' => $strongPasswordRules,
+                'errors' => [
+                    'min_length' => 'Password minimal 8 karakter agar aman.',
+                    'regex_match' => 'Password LEMAH! Harus mengandung minimal 1 Huruf Besar dan 1 Angka.'
+                ]
+            ],
+            'confirm_password' => [
+                'label' => 'Konfirmasi Password',
+                'rules' => 'required|matches[new_password]',
+                'errors' => [
+                    'matches' => 'Konfirmasi password tidak cocok.'
+                ]
+            ]
         ])) {
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
@@ -259,21 +320,33 @@ class Auth extends BaseController
         // Ambil Data User dari DB
         $user = $this->userModel->find($userId);
 
-        // Cek 1: Apakah Password Lama Benar?
+        // --- 2. CEK LOGIKA (URUTAN HARUS BENAR) ---
+
+        // LOGIKA A: Pastikan Password Lama BENAR dulu
         if (!password_verify($currentPass, $user['password'])) {
-            return redirect()->back()->with('error', 'Password lama yang Anda masukkan salah!');
+            return redirect()->back()->with('error', 'Password lama yang Anda masukkan SALAH. Silakan coba lagi.');
         }
 
-        // Cek 2: Password Baru tidak boleh sama dengan Password Lama (Opsional, good practice)
+        // LOGIKA B: Pastikan Password Baru BEDA dengan yang lama
+        // (Hanya dijalankan kalau Logika A sudah lolos)
         if ($currentPass === $newPass) {
-            return redirect()->back()->with('error', 'Password baru tidak boleh sama dengan password lama.');
+            return redirect()->back()->with('error', 'Password baru tidak boleh sama persis dengan password lama. Gunakan yang baru!');
         }
 
+        // --- 3. EKSEKUSI ---
+        
         // Simpan Password Baru
         $this->userModel->update($userId, [
-            'password' => password_hash($newPass, PASSWORD_DEFAULT)
+            'password'       => password_hash($newPass, PASSWORD_DEFAULT),
+            'remember_token' => null // Reset token agar sesi di HP/Laptop lain mati
         ]);
 
-        return redirect()->back()->with('success', 'Password berhasil diubah!');
+        // Opsional: Hapus cookie remember di browser ini juga
+        delete_cookie('mbs_remember'); 
+
+        // Update Session Password (PENTING: Agar AuthFilter tidak menendang user ini)
+        session()->set('auth_password', password_hash($newPass, PASSWORD_DEFAULT));
+
+        return redirect()->back()->with('success', 'Password berhasil diperbarui! Akun Anda sekarang lebih aman.');
     }
 }

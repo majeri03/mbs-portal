@@ -55,12 +55,19 @@ class Users extends BaseAdminController
 
     public function store()
     {
+        $strongPassword = 'required|min_length[8]|regex_match[/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/]';
         // 1. Validasi Input
         if (!$this->validate([
             'username' => 'required|min_length[4]|is_unique[users.username]',
             'email'    => 'required|valid_email|is_unique[users.email]',
-            'password' => 'required|min_length[6]',
+            'password' => $strongPassword,
             'full_name' => 'required|min_length[3]',
+        ], [
+            'password' => [
+                'min_length' => 'Password terlalu pendek (Min 8 karakter).',
+                'regex_match' => 'Password LEMAH! Wajib ada Huruf Besar dan Angka.'
+
+            ]
         ])) {
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
@@ -147,6 +154,18 @@ class Users extends BaseAdminController
         // Cek Password (Hanya update jika diisi)
         $newPass = $this->request->getPost('password');
         if (!empty($newPass)) {
+            if (!$this->validate([
+                'password' => [
+                    'label' => 'Password Baru',
+                    'rules' => 'min_length[8]|regex_match[/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/]',
+                    'errors' => [
+                        'min_length' => 'Password minimal 8 karakter.',
+                        'regex_match' => 'Password harus mengandung Huruf Besar dan Angka.'
+                    ]
+                ]
+            ])) {
+                return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            }
             $updateData['password'] = password_hash($newPass, PASSWORD_DEFAULT);
         }
 

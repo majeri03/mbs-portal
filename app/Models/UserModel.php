@@ -21,7 +21,8 @@ class UserModel extends Model
         'login_attempts',
         'reset_token',
         'reset_expire',
-        'locked_until'
+        'locked_until',
+        'remember_token'
     ];
 
     // Fungsi untuk cek login

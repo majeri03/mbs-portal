@@ -55,7 +55,7 @@
                     
                     <div class="mb-3">
                         <label class="form-label fw-bold small">Password Baru</label>
-                        <input type="password" name="password" class="form-control" required minlength="6" placeholder="Minimal 6 karakter">
+                        <input type="password" name="password" class="form-control" required minlength="8" placeholder="Minimal  karakter">
                     </div>
                     
                     <div class="mb-4">

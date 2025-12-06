@@ -10,7 +10,21 @@
                 <i class="bi bi-arrow-left me-2"></i>Kembali
             </a>
         </div>
-
+        <?php if (session()->getFlashdata('errors')) : ?>
+            <div class="alert alert-danger border-0 shadow-sm mb-4">
+                <div class="d-flex align-items-start">
+                    <i class="bi bi-exclamation-circle-fill me-2 mt-1"></i>
+                    <div>
+                        <strong>Gagal Menyimpan Data:</strong>
+                        <ul class="mb-0 ps-3 mt-1">
+                            <?php foreach (session()->getFlashdata('errors') as $error) : ?>
+                                <li><?= esc($error) ?></li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        <?php endif; ?>
         <div class="card border-0 shadow-sm">
             <div class="card-body p-4">
                 <form action="<?= base_url('admin/users/update/' . $user['id']) ?>" method="POST">

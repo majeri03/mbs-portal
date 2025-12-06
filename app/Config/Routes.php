@@ -53,8 +53,9 @@ $routes->group('admin', function ($routes) {
     $routes->get('login', 'Admin\Auth::login');
     $routes->post('login/attempt', 'Admin\Auth::attemptLogin');
     $routes->get('logout', 'Admin\Auth::logout');
+    $routes->group('', ['filter' => 'auth'], function($routes) {
     // Dashboard (nanti kita buat di Tahap 2)
-    $routes->get('dashboard', 'Admin\Dashboard::index', ['filter' => 'auth']);
+    $routes->get('dashboard', 'Admin\Dashboard::index');
 
     // Berita CRUD
     $routes->get('posts', 'Admin\Posts::index');
@@ -164,6 +165,7 @@ $routes->group('admin', function ($routes) {
     //change paassword
     $routes->get('change-password', 'Admin\Auth::changePassword'); // Halaman Form
     $routes->post('change-password', 'Admin\Auth::attemptChangePassword');
+    });
 });
 
 // Public Routes untuk Kalender
