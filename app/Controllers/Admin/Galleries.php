@@ -40,11 +40,23 @@ class Galleries extends BaseAdminController
 
     public function store()
     {
-        if (!$this->validate([
-            'title' => 'required|min_length[3]',
-            'image' => 'uploaded[image]|max_size[image,3072]|is_image[image]|mime_in[image,image/jpg,image/jpeg,image/png]',
-            'category' => 'required'
-        ])) {
+        // 1. VALIDASI KETAT (1MB MAX)
+        $rules = [
+            'title'    => 'required|min_length[3]',
+            'category' => 'required',
+            'image'    => [
+                // max_size: 1024 KB = 1 MB
+                'rules' => 'uploaded[image]|max_size[image,1024]|is_image[image]|mime_in[image,image/jpg,image/jpeg,image/png,image/webp]',
+                'errors' => [
+                    'uploaded' => 'Pilih foto galeri terlebih dahulu.',
+                    'max_size' => 'Ukuran foto terlalu besar (Maksimal 1 MB).',
+                    'is_image' => 'File yang diupload bukan gambar valid.',
+                    'mime_in'  => 'Hanya format JPG, PNG, atau WEBP yang diperbolehkan.'
+                ]
+            ]
+        ];
+
+        if (!$this->validate($rules)) {
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
 
@@ -77,7 +89,7 @@ class Galleries extends BaseAdminController
         if (!$data['gallery']) {
             return redirect()->to('admin/galleries')->with('error', 'Data tidak ditemukan');
         }
-        
+
         $data['title'] = 'Edit Foto';
         $data['schools'] = $this->schoolModel->findAll();
         $data['currentSchoolId'] = $this->mySchoolId;
@@ -89,10 +101,21 @@ class Galleries extends BaseAdminController
         $gallery = $this->filterBySchool($this->galleryModel)->find($id);
         if (!$gallery) return redirect()->to('admin/galleries')->with('error', 'Akses ditolak!');
 
-        if (!$this->validate([
-            'title' => 'required|min_length[3]',
-            'category' => 'required'
-        ])) {
+        // 1. VALIDASI UPDATE (Image Optional/Permit Empty)
+        $rules = [
+            'title'    => 'required|min_length[3]',
+            'category' => 'required',
+            'image'    => [
+                'rules' => 'permit_empty|max_size[image,1024]|is_image[image]|mime_in[image,image/jpg,image/jpeg,image/png,image/webp]',
+                'errors' => [
+                    'max_size' => 'Ukuran foto terlalu besar (Maksimal 1 MB).',
+                    'is_image' => 'File yang diupload bukan gambar valid.',
+                    'mime_in'  => 'Hanya format JPG, PNG, atau WEBP yang diperbolehkan.'
+                ]
+            ]
+        ];
+
+        if (!$this->validate($rules)) {
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
 
@@ -106,7 +129,7 @@ class Galleries extends BaseAdminController
             }
             $fileName = $file->getRandomName();
             $file->move('uploads/galleries', $fileName);
-            
+
             // KOMPRESI GAMBAR BARU
             $filePath = 'uploads/galleries/' . $fileName;
             \Config\Services::image()

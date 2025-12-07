@@ -25,7 +25,7 @@
             <img src="<?= base_url($post['thumbnail']) ?>" class="w-100 rounded-4 mb-4 shadow-sm" alt="Thumbnail">
 
             <div class="article-content lh-lg text-dark text-break">
-                <?= $post['content'] ?> </div>
+                <?= clean_content($post['content']) ?>
             
             <div class="mt-5 pt-4 border-top">
                 <h6 class="fw-bold mb-3">Bagikan berita ini:</h6>

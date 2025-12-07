@@ -1,5 +1,7 @@
 <?php
+
 namespace Modules\Mts\Controllers;
+
 use App\Models\EventModel;
 
 class Events extends BaseMtsController
@@ -12,23 +14,39 @@ class Events extends BaseMtsController
     }
 
     // Halaman Index (Daftar Agenda)
+   // Modules/Mts/Controllers/Events.php
+
     public function index()
     {
         $this->data['title'] = "Agenda Kegiatan - " . $this->data['school']['name'];
         
-        // Filter: Agenda MTs (ID=1) ATAU Agenda Umum (ID=NULL)
-        // Tampilkan yang tanggalnya hari ini atau masa depan
-        $this->data['events'] = $this->eventModel->groupStart()
-                                            ->where('school_id', $this->schoolId)
-                                            ->orWhere('school_id', null)
-                                           ->groupEnd()
-                                           ->where('event_date >=', date('Y-m-d'))
-                                           ->orderBy('event_date', 'ASC')
-                                           ->findAll();
+        // 1. Cek Hak Akses
+        $isLoggedIn   = session()->get('logged_in');
+        $userSchoolId = session()->get('school_id');
+        $userRole     = session()->get('role');
+        
+        // User Internal = Superadmin ATAU Guru Sekolah Ini
+        $isInternal = ($isLoggedIn && ($userRole == 'superadmin' || $userSchoolId == $this->schoolId));
 
+        // 2. Mulai Query Builder
+        // Gunakan $builder variabel baru, jangan langsung masukkan ke $this->data dulu
+        $builder = $this->eventModel->groupStart()
+                                    ->where('school_id', $this->schoolId) // HANYA SEKOLAH INI
+                                    ->groupEnd()
+                                    ->where('event_date >=', date('Y-m-d')); // Hanya masa depan
+
+        // 3. Filter Scope (Satpam Privasi)
+        // KITA TARUH DI SINI SEBELUM data diambil (findAll)
+        if (!$isInternal) {
+            $builder->where('scope', 'public');
+        }
+
+        // 4. Eksekusi Pengambilan Data
+        $this->data['events'] = $builder->orderBy('event_date', 'ASC')->findAll();
+        
+        // 5. Tampilkan View (INI WAJIB DI AKHIR)
         return view('Modules\Mts\Views\events_index', $this->data);
     }
-
     // Halaman Detail (Single Agenda)
     public function show($slug)
     {

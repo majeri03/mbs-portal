@@ -73,13 +73,17 @@ class Filters extends BaseFilters
      */
     public array $globals = [
         'before' => [
-            // 'honeypot',
-            // 'csrf',
+            // 'forcehttps', // Pastikan ini juga aktif jika sudah di hosting (SSL)
+            'pagecache',
+            'csrf',
             // 'invalidchars',
         ],
         'after' => [
+            'pagecache',
+            'performance',
+            'toolbar',
             // 'honeypot',
-            // 'secureheaders',
+            'secureheaders',
         ],
     ];
 

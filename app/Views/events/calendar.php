@@ -134,7 +134,9 @@
         opacity: 0.9;
     }
 
-    .event-details { flex: 1; }
+    .event-details {
+        flex: 1;
+    }
 
     .event-title {
         font-weight: 700;
@@ -157,16 +159,45 @@
         gap: 6px;
     }
 
-    .event-meta-item i { color: var(--mbs-purple); }
+    .event-meta-item i {
+        color: var(--mbs-purple);
+    }
 
     /* ========== RESPONSIVE ========== */
     @media (max-width: 768px) {
-        .calendar-card, .upcoming-events-card { padding: 20px; border-radius: 15px; }
-        .event-item { flex-direction: column; gap: 15px; }
-        .event-date-box { width: 100%; display: flex; align-items: center; justify-content: center; gap: 15px; padding: 15px 20px; }
-        .event-date-box .day { font-size: 1.8rem; }
-        .fc .fc-toolbar { flex-direction: column; gap: 10px; }
-        .fc .fc-toolbar-title { font-size: 1.2rem; }
+
+        .calendar-card,
+        .upcoming-events-card {
+            padding: 20px;
+            border-radius: 15px;
+        }
+
+        .event-item {
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .event-date-box {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            padding: 15px 20px;
+        }
+
+        .event-date-box .day {
+            font-size: 1.8rem;
+        }
+
+        .fc .fc-toolbar {
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .fc .fc-toolbar-title {
+            font-size: 1.2rem;
+        }
     }
 </style>
 
@@ -203,13 +234,22 @@
                                     <div class="day"><?= date('d', strtotime($event['event_date'])) ?></div>
                                     <div class="month">
                                         <?php
-                                            // Format Bulan Indonesia
-                                            $bulanIndo = [
-                                                'Jan' => 'Jan', 'Feb' => 'Feb', 'Mar' => 'Mar', 'Apr' => 'Apr', 
-                                                'May' => 'Mei', 'Jun' => 'Jun', 'Jul' => 'Jul', 'Aug' => 'Agu', 
-                                                'Sep' => 'Sep', 'Oct' => 'Okt', 'Nov' => 'Nov', 'Dec' => 'Des'
-                                            ];
-                                            echo $bulanIndo[date('M', strtotime($event['event_date']))];
+                                        // Format Bulan Indonesia
+                                        $bulanIndo = [
+                                            'Jan' => 'Jan',
+                                            'Feb' => 'Feb',
+                                            'Mar' => 'Mar',
+                                            'Apr' => 'Apr',
+                                            'May' => 'Mei',
+                                            'Jun' => 'Jun',
+                                            'Jul' => 'Jul',
+                                            'Aug' => 'Agu',
+                                            'Sep' => 'Sep',
+                                            'Oct' => 'Okt',
+                                            'Nov' => 'Nov',
+                                            'Dec' => 'Des'
+                                        ];
+                                        echo $bulanIndo[date('M', strtotime($event['event_date']))];
                                         ?>
                                     </div>
                                 </div>
@@ -254,7 +294,7 @@
                 </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
-            
+
             <div class="modal-body p-4">
                 <div class="d-flex gap-3 mb-3">
                     <div class="text-center" style="width: 40px;">
@@ -266,7 +306,7 @@
                         <p class="mb-0 text-muted" id="modalEventTime"></p>
                     </div>
                 </div>
-                
+
                 <div class="d-flex gap-3 mb-3" id="modalLocationWrapper">
                     <div class="text-center" style="width: 40px;">
                         <i class="bi bi-geo-alt fs-4" style="color: var(--mbs-purple);"></i>
@@ -287,7 +327,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="modal-footer bg-light border-0">
                 <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Tutup</button>
             </div>
@@ -318,6 +358,14 @@
                     week: 'Minggu'
                 },
                 events: function(info, successCallback, failureCallback) {
+                    let url = '<?= base_url('events/getEvents') ?>?start=' + info.startStr + '&end=' + info.endStr;
+
+                    if (typeof CURRENT_SCHOOL_ID !== 'undefined' && CURRENT_SCHOOL_ID !== null) {
+                        url += '&school_id=' + CURRENT_SCHOOL_ID;
+                    } else {
+                        // Debugging: Cek di Console browser (F12)
+                        console.warn("CURRENT_SCHOOL_ID tidak ditemukan. Menampilkan semua agenda umum.");
+                    }
                     fetch(`<?= base_url('events/getEvents') ?>?start=${info.startStr}&end=${info.endStr}`)
                         .then(response => response.json())
                         .then(data => {
@@ -330,7 +378,7 @@
                 },
                 eventClick: function(info) {
                     info.jsEvent.preventDefault(); // Cegah redirect
-                    showEventModal(info.event);    // Tampilkan modal
+                    showEventModal(info.event); // Tampilkan modal
                 },
                 eventDidMount: function(info) {
                     info.el.style.cursor = 'pointer';
@@ -343,11 +391,16 @@
 
         function showEventModal(event) {
             document.getElementById('modalEventTitle').textContent = event.title;
-            
+
             // Format Tanggal Indonesia
             const eventDate = new Date(event.start);
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            document.getElementById('modalEventDate').textContent = 
+            const options = {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            };
+            document.getElementById('modalEventDate').textContent =
                 eventDate.toLocaleDateString('id-ID', options);
 
             // Format Waktu

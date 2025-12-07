@@ -51,7 +51,7 @@ class Auth extends BaseController
         if (is_array($result) && isset($result['error'])) {
             return redirect()->back()->withInput()->with('error', $result['error']);
         }
-
+        session()->regenerate();
         // CEK: Apakah login berhasil (return berupa array user data)
         if ($result) {
             // 1. Siapkan Data Session Dasar

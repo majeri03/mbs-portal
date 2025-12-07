@@ -24,7 +24,7 @@
         <div class="col-lg-10">
             <div class="card border-0 shadow-sm p-4 p-md-5 rounded-4">
                 <div class="card-body content-body">
-                    <?= $page['content'] ?>
+                    <?= clean_content($page['content']) ?>
                 </div>
             </div>
         </div>

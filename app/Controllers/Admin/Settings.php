@@ -60,24 +60,45 @@ class Settings extends BaseAdminController
         // 2. Handle Upload Foto Direktur
         $file = $this->request->getFile('director_photo');
         if ($file && $file->isValid() && !$file->hasMoved()) {
-            // Hapus foto lama jika ada (opsional, butuh query tambahan)
 
+            // A. Ambil data lama dari database
+            $oldData = $this->settingModel->where('setting_key', 'director_photo')
+                ->where('school_id', $this->mySchoolId)
+                ->first();
+
+            // B. Cek & Hapus file lama jika ada
+            if ($oldData && !empty($oldData['setting_value']) && file_exists($oldData['setting_value'])) {
+                unlink($oldData['setting_value']);
+            }
+
+            // C. Upload file baru
             $newName = $file->getRandomName();
             $file->move('uploads/settings', $newName);
 
-            // Simpan path ke DB
+            // D. Simpan path baru
             $this->saveSetting('director_photo', 'uploads/settings/' . $newName, 'general', $this->mySchoolId);
         }
         $logoFields = ['site_logo', 'site_logo_2', 'site_logo_3'];
 
         foreach ($logoFields as $field) {
-            $file = $this->request->getFile($field);
-            if ($file && $file->isValid() && !$file->hasMoved()) {
-                $newName = $file->getRandomName();
-                $file->move('uploads/logos', $newName); // Simpan di folder uploads/logos
+            $fileLogo = $this->request->getFile($field);
+            if ($fileLogo && $fileLogo->isValid() && !$fileLogo->hasMoved()) {
 
-                // Simpan path ke database setting
-                $this->saveSetting($field, 'uploads/logos/' . $newName, 'branding', $this->mySchoolId);
+                // A. Ambil data lama
+                $oldLogo = $this->settingModel->where('setting_key', $field)
+                    ->where('school_id', $this->mySchoolId)
+                    ->first();
+
+                // B. Hapus file lama
+                if ($oldLogo && !empty($oldLogo['setting_value']) && file_exists($oldLogo['setting_value'])) {
+                    unlink($oldLogo['setting_value']);
+                }
+
+                // C. Upload baru
+                $newLogoName = $fileLogo->getRandomName();
+                $fileLogo->move('uploads/logos', $newLogoName);
+
+                $this->saveSetting($field, 'uploads/logos/' . $newLogoName, 'branding', $this->mySchoolId);
             }
         }
         return redirect()->to('admin/settings')->with('success', 'Pengaturan berhasil diperbarui!');

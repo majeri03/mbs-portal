@@ -1,0 +1,9 @@
+# MATIKAN EKSEKUSI SCRIPT
+# Mencegah file PHP, Perl, Python, dll dijalankan di folder ini
+<FilesMatch "\.(php|phtml|php3|php4|php5|pl|py|jsp|asp|html|htm|shtml|sh|cgi)$">
+    Require all denied
+</FilesMatch>
+
+# MATIKAN INDEXING
+# Mencegah orang melihat daftar isi folder uploads
+Options -Indexes

@@ -6,7 +6,7 @@
             <h1 class="fw-bold text-purple mb-4 text-center"><?= esc($page['title']) ?></h1>
             <div class="card border-0 shadow-sm p-4">
                 <div class="content-body lh-lg text-secondary">
-                    <?= $page['content'] ?>
+                    <?= clean_content($page['content']) ?>
                 </div>
             </div>
         </div>

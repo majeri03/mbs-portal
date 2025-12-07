@@ -40,13 +40,13 @@
                         <label for="title" class="form-label fw-bold">
                             Judul Agenda <span class="text-danger">*</span>
                         </label>
-                        <input type="text" 
-                               class="form-control form-control-lg" 
-                               id="title" 
-                               name="title" 
-                               placeholder="Contoh: Ujian Tengah Semester MA"
-                               value="<?= old('title') ?>" 
-                               required>
+                        <input type="text"
+                            class="form-control form-control-lg"
+                            id="title"
+                            name="title"
+                            placeholder="Contoh: Ujian Tengah Semester MA"
+                            value="<?= old('title') ?>"
+                            required>
                         <small class="text-muted">Masukkan judul agenda yang jelas dan deskriptif</small>
                     </div>
 
@@ -56,24 +56,52 @@
                             <label for="event_date" class="form-label fw-bold">
                                 Tanggal Kegiatan <span class="text-danger">*</span>
                             </label>
-                            <input type="date" 
-                                   class="form-control" 
-                                   id="event_date" 
-                                   name="event_date" 
-                                   value="<?= old('event_date') ?>" 
-                                   required>
+                            <input type="date"
+                                class="form-control"
+                                id="event_date"
+                                name="event_date"
+                                value="<?= old('event_date') ?>"
+                                required>
                         </div>
-
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Sifat Agenda</label>
+                            <div class="d-flex gap-3">
+                                <div class="form-check border rounded p-3 flex-fill">
+                                    <input class="form-check-input" type="radio" name="scope" id="scopePublic" value="public" checked>
+                                    <label class="form-check-label w-100" for="scopePublic">
+                                        <i class="bi bi-globe text-success me-2"></i>
+                                        <strong>Publik</strong> <br>
+                                        <small class="text-muted">Tampil di website untuk umum.</small>
+                                    </label>
+                                </div>
+                                <div class="form-check border rounded p-3 flex-fill bg-light">
+                                    <input class="form-check-input" type="radio" name="scope" id="scopeInternal" value="internal">
+                                    <label class="form-check-label w-100" for="scopeInternal">
+                                        <i class="bi bi-lock-fill text-danger me-2"></i>
+                                        <strong>Internal / Privat</strong> <br>
+                                        <small class="text-muted">Hanya terlihat oleh Guru & Admin.</small>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
                         <!-- School ID (Optional) -->
                         <div class="col-md-6 mb-4">
-                            <label for="school_id" class="form-label fw-bold">
-                                Sekolah (Opsional)
-                            </label>
-                            <select class="form-select" id="school_id" name="school_id">
-                                <option value="">Semua Sekolah</option>
-                                <!-- Tambahkan options sekolah jika ada -->
-                            </select>
-                            <small class="text-muted">Kosongkan jika untuk semua sekolah</small>
+                            <label class="form-label fw-bold">Target Agenda</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light text-primary">
+                                    <i class="bi bi-building-fill-check"></i>
+                                </span>
+                                <input type="text" class="form-control bg-light"
+                                    value="<?= empty(session('school_id')) ? 'UMUM / PUSAT' : 'Agenda Sekolah' ?>"
+                                    readonly disabled>
+                            </div>
+                            <small class="text-muted">
+                                <?php if (empty(session('school_id'))): ?>
+                                    Agenda ini akan tampil di <strong>Portal Utama</strong>.
+                                <?php else: ?>
+                                    Agenda ini hanya tampil di website <strong>Sekolah Anda</strong>.
+                                <?php endif; ?>
+                            </small>
                         </div>
                     </div>
 
@@ -83,11 +111,11 @@
                             <label for="time_start" class="form-label fw-bold">
                                 Waktu Mulai (Opsional)
                             </label>
-                            <input type="time" 
-                                   class="form-control" 
-                                   id="time_start" 
-                                   name="time_start" 
-                                   value="<?= old('time_start') ?>">
+                            <input type="time"
+                                class="form-control"
+                                id="time_start"
+                                name="time_start"
+                                value="<?= old('time_start') ?>">
                         </div>
 
                         <!-- Time End -->
@@ -95,11 +123,11 @@
                             <label for="time_end" class="form-label fw-bold">
                                 Waktu Selesai (Opsional)
                             </label>
-                            <input type="time" 
-                                   class="form-control" 
-                                   id="time_end" 
-                                   name="time_end" 
-                                   value="<?= old('time_end') ?>">
+                            <input type="time"
+                                class="form-control"
+                                id="time_end"
+                                name="time_end"
+                                value="<?= old('time_end') ?>">
                         </div>
                     </div>
 
@@ -108,12 +136,12 @@
                         <label for="location" class="form-label fw-bold">
                             Lokasi (Opsional)
                         </label>
-                        <input type="text" 
-                               class="form-control" 
-                               id="location" 
-                               name="location" 
-                               placeholder="Contoh: Aula Utama MBS"
-                               value="<?= old('location') ?>">
+                        <input type="text"
+                            class="form-control"
+                            id="location"
+                            name="location"
+                            placeholder="Contoh: Aula Utama MBS"
+                            value="<?= old('location') ?>">
                     </div>
 
                     <!-- Description -->
@@ -121,11 +149,11 @@
                         <label for="description" class="form-label fw-bold">
                             Deskripsi (Opsional)
                         </label>
-                        <textarea class="form-control" 
-                                  id="description" 
-                                  name="description" 
-                                  rows="5"
-                                  placeholder="Tambahkan detail tentang agenda ini..."><?= old('description') ?></textarea>
+                        <textarea class="form-control"
+                            id="description"
+                            name="description"
+                            rows="5"
+                            placeholder="Tambahkan detail tentang agenda ini..."><?= old('description') ?></textarea>
                     </div>
 
                     <!-- Submit Buttons -->

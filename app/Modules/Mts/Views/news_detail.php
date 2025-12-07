@@ -36,7 +36,7 @@
                 <div class="row justify-content-center">
                     <div class="col-lg-10">
                         <div class="article-content lh-lg text-secondary text-break">
-                            <?= $post['content'] ?>
+                            <?= clean_content($post['content']) ?>
                         </div>
 
                         <div class="mt-5 pt-4 border-top d-flex justify-content-between align-items-center flex-wrap gap-3">

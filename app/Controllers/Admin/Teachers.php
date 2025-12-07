@@ -44,7 +44,7 @@ class Teachers extends BaseAdminController
         if (!$this->validate([
             'name'     => 'required|min_length[3]',
             'position' => 'required',
-            'photo'    => 'permit_empty|uploaded[photo]|max_size[photo,2048]|is_image[photo]|mime_in[photo,image/jpg,image/jpeg,image/png]',
+            'photo'    => 'permit_empty|max_size[photo,2048]|is_image[photo]|mime_in[photo,image/jpg,image/jpeg,image/png,image/webp]'
         ])) {
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
@@ -111,7 +111,7 @@ class Teachers extends BaseAdminController
         }
 
         $photoUrl = $exists['photo'];
-
+        
         // Cek jika ada upload foto baru
         $filePhoto = $this->request->getFile('photo');
         if ($filePhoto && $filePhoto->isValid() && !$filePhoto->hasMoved()) {

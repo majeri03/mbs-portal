@@ -23,10 +23,10 @@ class Posts extends BaseAdminController
         $data['title'] = 'Kelola Berita';
         $query = $this->filterBySchool($this->postModel);
         $data['posts'] = $this->postModel->select('posts.*, schools.name as school_name')
-                                         ->join('schools', 'schools.id = posts.school_id', 'left')
-                                         ->orderBy('posts.created_at', 'DESC')
-                                         ->findAll();
-        
+            ->join('schools', 'schools.id = posts.school_id', 'left')
+            ->orderBy('posts.created_at', 'DESC')
+            ->findAll();
+
         return view('admin/posts/index', $data);
     }
 
@@ -35,7 +35,7 @@ class Posts extends BaseAdminController
     {
         $data['title'] = 'Tambah Berita Baru';
         $data['schools'] = $this->schoolModel->findAll();
-        
+
         return view('admin/posts/create', $data);
     }
 
@@ -45,7 +45,15 @@ class Posts extends BaseAdminController
         $rules = [
             'title'     => 'required|min_length[10]|max_length[255]',
             'content'   => 'required|min_length[50]',
-            'thumbnail' => 'uploaded[thumbnail]|max_size[thumbnail,2048]|is_image[thumbnail]',
+            'thumbnail' => [
+                'rules' => 'uploaded[thumbnail]|max_size[thumbnail,2048]|is_image[thumbnail]|mime_in[thumbnail,image/jpg,image/jpeg,image/png,image/webp]',
+                'errors' => [
+                    'uploaded' => 'Pilih gambar thumbnail terlebih dahulu.',
+                    'max_size' => 'Ukuran gambar terlalu besar (Maks 2MB).',
+                    'is_image' => 'File yang diupload bukan gambar.',
+                    'mime_in'  => 'Format gambar harus JPG, PNG, atau WEBP.'
+                ]
+            ]
         ];
 
         if (!$this->validate($rules)) {
@@ -60,17 +68,17 @@ class Posts extends BaseAdminController
             $thumbnailName = $thumbnail->getRandomName();
             // 1. Pindahkan file original dulu
             $thumbnail->move('uploads/posts', $thumbnailName);
-            
+
             // 2. KOMPRESI & RESIZE GAMBAR
             // Path file yang baru diupload
             $filePath = 'uploads/posts/' . $thumbnailName;
-            
+
             // Panggil Service Image
             $image = \Config\Services::image();
-            
+
             $image->withFile($filePath)
-                  ->resize(1024, 1024, true, 'width') // Resize proporsional max lebar 1024px
-                  ->save($filePath, 80); // Simpan dengan kualitas 80% (Kompresi)
+                ->resize(1024, 1024, true, 'width') // Resize proporsional max lebar 1024px
+                ->save($filePath, 80); // Simpan dengan kualitas 80% (Kompresi)
         }
 
         $slug = url_title($this->request->getPost('title'), '-', true);
@@ -127,7 +135,7 @@ class Posts extends BaseAdminController
 
             $newName = $thumbnail->getRandomName();
             $thumbnail->move('uploads/posts', $newName);
-            
+
             // KOMPRESI GAMBAR BARU
             $filePath = 'uploads/posts/' . $newName;
             \Config\Services::image()

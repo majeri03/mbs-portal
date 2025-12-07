@@ -22,7 +22,8 @@ class EventModel extends Model
         'time_start',
         'time_end',
         'location',
-        'description'
+        'description',
+        'scope'
     ];
 
     // Dates

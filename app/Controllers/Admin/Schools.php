@@ -65,7 +65,13 @@ class Schools extends BaseAdminController
         $rules = [
             'name'        => 'required|min_length[3]',
             'description' => 'required|min_length[10]',
-            'image'       => 'uploaded[image]|max_size[image,2048]|is_image[image]',
+            'image'       => [
+                'rules' => 'uploaded[image]|max_size[image,2048]|is_image[image]|mime_in[image,image/jpg,image/jpeg,image/png,image/webp]',
+                'errors' => [
+                    'uploaded' => 'Logo/Foto sekolah wajib diupload.',
+                    'mime_in'  => 'Format harus JPG, PNG, atau WEBP.'
+                ]
+            ]
         ];
 
         if (!$this->validate($rules)) {
@@ -140,6 +146,7 @@ class Schools extends BaseAdminController
         $rules = [
             'name'        => 'required|min_length[3]',
             'description' => 'required|min_length[10]',
+            'image' => 'permit_empty|max_size[image,2048]|is_image[image]|mime_in[image,image/jpg,image/jpeg,image/png,image/webp]'
         ];
 
         if (!$this->validate($rules)) {

@@ -19,7 +19,10 @@ class Home extends BaseMtsController
         $curricModel = new CurriculumModel();
         $pageModel   = new \App\Models\PageModel();
         $programModel = new ProgramModel();
-
+        $isLoggedIn = session()->get('logged_in');
+        $userSchoolId = session()->get('school_id');
+        $userRole = session()->get('role');
+        $isInternal = ($isLoggedIn && ($userRole == 'superadmin' || $userSchoolId == $this->schoolId));
         // Masukkan data ke variabel $this->data (warisan dari BaseMtsController)
         $this->data['title'] = "Beranda - " . $this->data['school']['name'];
 
@@ -38,7 +41,17 @@ class Home extends BaseMtsController
 
         // Berita & Agenda (Limit 3 untuk Landing Page)
         $this->data['news'] = $postModel->where('school_id', $this->schoolId)->orderBy('created_at', 'DESC')->findAll(3);
-        $this->data['events'] = $eventModel->where('school_id', $this->schoolId)->where('event_date >=', date('Y-m-d'))->orderBy('event_date', 'ASC')->findAll(3);
+        $eventBuilder = $eventModel->where('school_id', $this->schoolId)
+            ->where('event_date >=', date('Y-m-d'));
+
+        // 2. Cek Scope (Privat/Publik)
+        // Variabel $isInternal sudah didefinisikan di baris atas file Home.php Anda
+        if (!$isInternal) {
+            $eventBuilder->where('scope', 'public');
+        }
+
+        // 3. Ambil Data (Limit 3 atau 6 tergantung desain)
+        $this->data['events'] = $eventBuilder->orderBy('event_date', 'ASC')->findAll(3);
 
         $this->data['teachers'] = $teacherModel->where('school_id', $this->schoolId)->findAll();
         $this->data['galleries'] = $galleryModel->where('school_id', $this->schoolId)->orderBy('created_at', 'DESC')->findAll(8);

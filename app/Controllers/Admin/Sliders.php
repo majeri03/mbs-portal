@@ -42,7 +42,15 @@ class Sliders extends BaseAdminController
 
         $rules = [
             'title'      => 'required|min_length[5]',
-            'image'      => 'uploaded[image]|max_size[image,3072]|is_image[image]',
+            'image' => [
+                'rules' => 'uploaded[image]|max_size[image,3072]|is_image[image]|mime_in[image,image/jpg,image/jpeg,image/png,image/webp]',
+                'errors' => [
+                    'uploaded' => 'Pilih gambar slider terlebih dahulu.',
+                    'max_size' => 'Ukuran terlalu besar (Maks 3MB).',
+                    'is_image' => 'File bukan gambar.',
+                    'mime_in'  => 'Hanya format JPG, PNG, atau WEBP.'
+                ]
+            ]
         ];
 
         if (!$this->validate($rules)) {
@@ -86,6 +94,14 @@ class Sliders extends BaseAdminController
     {
         $rules = [
             'title' => 'required|min_length[5]',
+            'image' => [
+                'rules' => 'permit_empty|max_size[image,3072]|is_image[image]|mime_in[image,image/jpg,image/jpeg,image/png,image/webp]',
+                'errors' => [
+                    'max_size' => 'Ukuran terlalu besar (Maks 3MB).',
+                    'is_image' => 'File bukan gambar.',
+                    'mime_in'  => 'Hanya format JPG, PNG, atau WEBP.'
+                ]
+            ]
         ];
 
         if (!$this->validate($rules)) {

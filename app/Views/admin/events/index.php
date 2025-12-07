@@ -39,6 +39,7 @@
                     <tr>
                         <th width="5%">No</th>
                         <th width="25%">Judul Agenda</th>
+                        <th width="15%">Milik</th>
                         <th width="12%">Tanggal</th>
                         <th width="10%">Waktu</th>
                         <th width="20%" class="hide-mobile">Lokasi</th>
@@ -53,6 +54,13 @@
                                 <td><?= $index + 1 ?></td>
                                 <td>
                                     <strong><?= esc($event['title']) ?></strong>
+                                </td>
+                                <td>
+                                    <?php if (empty($event['school_id'])): ?>
+                                        <span class="badge bg-dark">PUSAT</span>
+                                    <?php else: ?>
+                                        <span class="badge bg-primary"><?= esc($event['school_name'] ?? 'Sekolah') ?></span>
+                                    <?php endif; ?>
                                 </td>
                                 <td>
                                     <span class="badge bg-purple-light">
@@ -87,15 +95,15 @@
                                 </td>
                                 <td class="text-center">
                                     <div class="btn-group btn-group-sm" role="group">
-                                        <a href="<?= base_url('admin/events/edit/' . $event['id']) ?>" 
-                                           class="btn btn-outline-primary" 
-                                           title="Edit">
+                                        <a href="<?= base_url('admin/events/edit/' . $event['id']) ?>"
+                                            class="btn btn-outline-primary"
+                                            title="Edit">
                                             <i class="bi bi-pencil-square"></i>
                                         </a>
-                                        <button type="button" 
-                                                class="btn btn-outline-danger" 
-                                                onclick="deleteEvent(<?= $event['id'] ?>, '<?= esc($event['title']) ?>')"
-                                                title="Hapus">
+                                        <button type="button"
+                                            class="btn btn-outline-danger"
+                                            onclick="deleteEvent(<?= $event['id'] ?>, '<?= esc($event['title']) ?>')"
+                                            title="Hapus">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </div>
@@ -187,7 +195,9 @@
             language: {
                 url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/id.json'
             },
-            order: [[2, 'desc']], // Sort by date
+            order: [
+                [2, 'desc']
+            ], // Sort by date
             pageLength: 10
         });
     });

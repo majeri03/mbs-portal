@@ -66,3 +66,10 @@ Sesuai permintaan:
 | **Menu Manager** | Edit Menu Navigasi | Admin bisa menambah menu baru di navbar, misal: "Info PPDB" tanpa coding. |
 
 Apakah struktur tabel ini sudah cukup jelas dan mudah dibaca untukmu? Jika sudah pas, kita bisa kunci konsep ini.
+
+
+
+# BUG
+filter calender masih belum berfungsi di cabangsekolah
+2. edit profile masih tidak berfungsi
+3. agenda sekolah aja tidak usah ambil umum dan perhatikan privatnya
