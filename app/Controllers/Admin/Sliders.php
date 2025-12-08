@@ -2,13 +2,13 @@
 
 namespace App\Controllers\Admin;
 
-use App\Controllers\BaseController;
+use App\Controllers\Admin\BaseAdminController;
 use App\Models\SliderModel;
 
 class Sliders extends BaseAdminController
 {
     protected $sliderModel;
-
+    protected $schoolModel;
     public function __construct()
     {
         $this->sliderModel = new SliderModel();

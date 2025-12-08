@@ -6,6 +6,68 @@
     <a href="<?= base_url('admin/galleries/create') ?>" class="btn btn-primary"><i class="bi bi-upload me-2"></i>Upload Foto</a>
 </div>
 
+<!-- Filter Card -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+        <form action="<?= base_url('admin/galleries') ?>" method="GET" id="filterForm">
+            <div class="row g-3">
+                <!-- Search by Title -->
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">
+                        <i class="bi bi-search"></i> Cari Judul Foto
+                    </label>
+                    <input type="text" 
+                           name="search" 
+                           class="form-control" 
+                           placeholder="Ketik judul foto..."
+                           value="<?= esc($currentSearch ?? '') ?>">
+                </div>
+
+                <!-- Filter by Category -->
+                <div class="col-md-3">
+                    <label class="form-label fw-bold">
+                        <i class="bi bi-tag"></i> Kategori
+                    </label>
+                    <select name="category" class="form-select">
+                        <option value="">Semua Kategori</option>
+                        <?php foreach ($categories as $cat): ?>
+                            <option value="<?= esc($cat) ?>" <?= ($currentCategory ?? '') == $cat ? 'selected' : '' ?>>
+                                <?= esc($cat) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
+                <!-- Filter by School (hanya untuk superadmin) -->
+                <?php if (session()->get('role') == 'superadmin'): ?>
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">
+                            <i class="bi bi-building"></i> Sekolah
+                        </label>
+                        <select name="school_id" class="form-select">
+                            <option value="">Semua Sekolah</option>
+                            <?php foreach ($schools as $school): ?>
+                                <option value="<?= $school['id'] ?>" <?= ($currentSchoolFilter ?? '') == $school['id'] ? 'selected' : '' ?>>
+                                    <?= esc($school['name']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                <?php endif; ?>
+
+                <!-- Action Buttons -->
+                <div class="col-md-2 d-flex align-items-end gap-2">
+                    <button type="submit" class="btn btn-primary flex-fill">
+                        <i class="bi bi-funnel"></i> Filter
+                    </button>
+                    <a href="<?= base_url('admin/galleries') ?>" class="btn btn-outline-secondary" title="Reset Filter">
+                        <i class="bi bi-arrow-clockwise"></i>
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
 <?php if (session()->getFlashdata('success')) : ?>
     <div class="alert alert-success alert-dismissible fade show"><?= session()->getFlashdata('success') ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
 <?php endif; ?>

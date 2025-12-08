@@ -4,14 +4,95 @@
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-        <h4 class="mb-1"><i class="bi bi-people-fill me-2 text-purple"></i>Kelola Pimpinan Pondok</h4>
-        <p class="text-muted mb-0">Manajemen struktur organisasi dan pimpinan</p>
+        <h4 class="mb-1">
+            <i class="bi bi-people-fill me-2 text-purple"></i><?= esc($title) ?>
+        </h4>
+        <p class="text-muted mb-0"><?= esc($subtitle ?? 'Manajemen struktur organisasi') ?></p>
     </div>
     <a href="<?= base_url('admin/teachers/create') ?>" class="btn btn-primary">
         <i class="bi bi-plus-circle me-2"></i>Tambah Pimpinan
     </a>
 </div>
+<!-- Filter Card -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+        <form action="<?= base_url('admin/teachers') ?>" method="GET" id="filterForm">
+            <div class="row g-3">
+                <!-- Search by Name -->
+                <div class="col-md-3">
+                    <label class="form-label fw-bold">
+                        <i class="bi bi-search"></i> Cari Nama
+                    </label>
+                    <input type="text" 
+                           name="search" 
+                           class="form-control" 
+                           placeholder="Ketik nama pimpinan/guru..."
+                           value="<?= esc($currentSearch ?? '') ?>">
+                </div>
 
+                <!-- Filter by Position -->
+                <div class="col-md-3">
+                    <label class="form-label fw-bold">
+                        <i class="bi bi-briefcase"></i> Jabatan
+                    </label>
+                    <select name="position" class="form-select">
+                        <option value="">Semua Jabatan</option>
+                        <?php if (!empty($positions)): ?>
+                            <?php foreach ($positions as $pos): ?>
+                                <option value="<?= esc($pos) ?>" <?= ($currentPosition ?? '') == $pos ? 'selected' : '' ?>>
+                                    <?= esc($pos) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </select>
+                </div>
+
+                <!-- Filter by Leader Status -->
+                <div class="col-md-2">
+                    <label class="form-label fw-bold">
+                        <i class="bi bi-star"></i> Status
+                    </label>
+                    <select name="is_leader" class="form-select">
+                        <option value="">Semua</option>
+                        <option value="1" <?= ($currentIsLeader ?? '') === '1' ? 'selected' : '' ?>>
+                            Pimpinan
+                        </option>
+                        <option value="0" <?= ($currentIsLeader ?? '') === '0' ? 'selected' : '' ?>>
+                            Guru/Staff
+                        </option>
+                    </select>
+                </div>
+
+                <!-- Filter by School (hanya untuk superadmin) -->
+                <?php if (session()->get('role') == 'superadmin'): ?>
+                    <div class="col-md-2">
+                        <label class="form-label fw-bold">
+                            <i class="bi bi-building"></i> Sekolah
+                        </label>
+                        <select name="school_id" class="form-select">
+                            <option value="">Semua</option>
+                            <?php foreach ($schools as $school): ?>
+                                <option value="<?= $school['id'] ?>" <?= ($currentSchoolFilter ?? '') == $school['id'] ? 'selected' : '' ?>>
+                                    <?= esc($school['name']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                <?php endif; ?>
+
+                <!-- Action Buttons -->
+                <div class="col-md-<?= session()->get('role') == 'superadmin' ? '2' : '4' ?> d-flex align-items-end gap-2">
+                    <button type="submit" class="btn btn-primary flex-fill">
+                        <i class="bi bi-funnel"></i> Filter
+                    </button>
+                    <a href="<?= base_url('admin/teachers') ?>" class="btn btn-outline-secondary" title="Reset Filter">
+                        <i class="bi bi-arrow-clockwise"></i>
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
 <?php if (session()->getFlashdata('success')) : ?>
     <div class="alert alert-success alert-dismissible fade show">
         <?= session()->getFlashdata('success') ?>

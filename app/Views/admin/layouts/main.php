@@ -643,10 +643,31 @@
                 </li>
             <?php endif; ?>
 
+            <!-- Agenda Kegiatan -->
+            <?php
+            $isEventsActive = str_contains($uri, 'events');
+            ?>
             <li>
-                <a href="<?= base_url('admin/events') ?>" class="<?= str_contains($uri, 'events') ? 'active' : '' ?>">
-                    <i class="bi bi-calendar-event"></i> Agenda Kegiatan
-                </a>
+                <?php if ($userRole === 'guru'): ?>
+                    <!-- Guru: Langsung ke Agenda Internal (Read Only) -->
+                    <a href="<?= base_url('admin/events/internal') ?>" class="<?= $isEventsActive ? 'active' : '' ?>">
+                        <i class="bi bi-lock-fill text-danger"></i> Agenda Internal
+                    </a>
+                <?php else: ?>
+                    <!-- Admin & Superadmin: Ada submenu -->
+                    <a href="#submenuEvents" data-bs-toggle="collapse" aria-expanded="<?= $isEventsActive ? 'true' : 'false' ?>"
+                        class="d-flex justify-content-between align-items-center <?= $isEventsActive ? 'active' : '' ?>">
+                        <span><i class="bi bi-calendar-event"></i> Agenda Kegiatan</span>
+                        <i class="bi bi-chevron-down arrow-icon" style="font-size: 0.8rem;"></i>
+                    </a>
+
+                    <ul class="collapse sidebar-submenu <?= $isEventsActive ? 'show' : '' ?>" id="submenuEvents" data-bs-parent="#sidebar">
+                        <li><a href="<?= base_url('admin/events') ?>">Kelola Agenda</a></li>
+                        <li><a href="<?= base_url('admin/events/internal') ?>">
+                                <i class="bi bi-lock-fill text-danger me-2"></i>Agenda Internal
+                            </a></li>
+                    </ul>
+                <?php endif; ?>
             </li>
 
             <?php if ($userRole !== 'guru') : ?>

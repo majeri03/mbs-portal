@@ -53,10 +53,13 @@ $routes->group('admin', function ($routes) {
     $routes->get('login', 'Admin\Auth::login');
     $routes->post('login/attempt', 'Admin\Auth::attemptLogin');
     $routes->get('logout', 'Admin\Auth::logout');
+    
     $routes->group('', ['filter' => 'auth'], function($routes) {
     // Dashboard (nanti kita buat di Tahap 2)
     $routes->get('dashboard', 'Admin\Dashboard::index');
-
+    // Profile Routes - TAMBAHKAN 2 BARIS INI
+    $routes->get('profile', 'Admin\Profile::index');
+    $routes->post('profile/update', 'Admin\Profile::update');
     // Berita CRUD
     $routes->get('posts', 'Admin\Posts::index');
     $routes->get('posts/create', 'Admin\Posts::create');
@@ -93,6 +96,7 @@ $routes->group('admin', function ($routes) {
 
     // CRUD Events (TAMBAHKAN INI) 
     $routes->get('events', 'Admin\Events::index');
+    $routes->get('events/internal', 'Admin\Events::internal');
     $routes->get('events/create', 'Admin\Events::create');
     $routes->post('events/store', 'Admin\Events::store');
     $routes->get('events/edit/(:num)', 'Admin\Events::edit/$1');

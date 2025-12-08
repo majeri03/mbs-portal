@@ -19,11 +19,74 @@ class Teachers extends BaseAdminController
     // List Pimpinan
     public function index()
     {
-        $data['title'] = 'Kelola Pimpinan Pondok';
-        $query = $this->filterBySchool($this->teacherModel);
-        $data['teachers'] = $query->orderBy('is_leader', 'DESC') // Leader di atas
-            ->orderBy('order_position', 'ASC') // Lalu urutkan posisi
+        // Title dinamis berdasarkan role & sekolah
+        if ($this->mySchoolId) {
+            // Admin Sekolah - Tampilkan nama sekolah
+            $school = $this->schoolModel->find($this->mySchoolId);
+            $schoolName = $school ? $school['name'] : 'Sekolah';
+            $data['title'] = 'Kelola Pimpinan & Guru ' . $schoolName;
+            $data['subtitle'] = 'Manajemen struktur organisasi ' . $schoolName;
+        } else {
+            // Superadmin - Semua sekolah
+            $data['title'] = 'Kelola Pimpinan & Guru';
+            $data['subtitle'] = 'Manajemen struktur organisasi dan pimpinan semua jenjang';
+        }
+
+        // Ambil parameter filter dari URL
+        $search = $this->request->getGet('search');
+        $position = $this->request->getGet('position');
+        $schoolId = $this->request->getGet('school_id');
+        $isLeader = $this->request->getGet('is_leader');
+
+        // Query builder
+        $query = $this->teacherModel;
+
+        // Filter berdasarkan sekolah (jika admin sekolah)
+        if ($this->mySchoolId) {
+            $query = $query->where('school_id', $this->mySchoolId);
+        }
+
+        // Filter Search (Nama)
+        if (!empty($search)) {
+            $query = $query->like('name', $search);
+        }
+
+        // Filter Jabatan
+        if (!empty($position)) {
+            $query = $query->like('position', $position);
+        }
+
+        // Filter School (hanya untuk superadmin)
+        if (!empty($schoolId) && empty($this->mySchoolId)) {
+            $query = $query->where('school_id', $schoolId);
+        }
+
+        // Filter Status Pimpinan
+        if ($isLeader !== null && $isLeader !== '') {
+            $query = $query->where('is_leader', $isLeader);
+        }
+
+        $data['teachers'] = $query->orderBy('is_leader', 'DESC')
+            ->orderBy('order_position', 'ASC')
             ->findAll();
+
+        // Data untuk dropdown filter
+        $data['schools'] = $this->schoolModel->findAll();
+
+        // Ambil daftar jabatan unik dari database
+        $data['positions'] = $this->teacherModel
+            ->select('position')
+            ->distinct()
+            ->where('position IS NOT NULL')
+            ->where('position !=', '')
+            ->orderBy('position', 'ASC')
+            ->findColumn('position');
+
+        // Kirim nilai filter ke view
+        $data['currentSearch'] = $search;
+        $data['currentPosition'] = $position;
+        $data['currentSchoolFilter'] = $schoolId;
+        $data['currentIsLeader'] = $isLeader;
 
         return view('admin/teachers/index', $data);
     }
@@ -111,7 +174,7 @@ class Teachers extends BaseAdminController
         }
 
         $photoUrl = $exists['photo'];
-        
+
         // Cek jika ada upload foto baru
         $filePhoto = $this->request->getFile('photo');
         if ($filePhoto && $filePhoto->isValid() && !$filePhoto->hasMoved()) {

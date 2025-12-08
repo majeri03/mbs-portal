@@ -4,15 +4,18 @@ namespace App\Controllers\Admin;
 
 use App\Controllers\Admin\BaseAdminController;
 use App\Models\EventModel;
+use App\Models\SchoolModel;
 
 class Events extends BaseAdminController
 {
     protected $eventModel;
+    protected $schoolModel;
     protected $session;
 
     public function __construct()
     {
         $this->eventModel = new EventModel();
+        $this->schoolModel = new SchoolModel();
         $this->session = \Config\Services::session();
         helper(['form', 'url', 'text']);
     }
@@ -20,9 +23,23 @@ class Events extends BaseAdminController
     public function initController(\CodeIgniter\HTTP\RequestInterface $request, \CodeIgniter\HTTP\ResponseInterface $response, \Psr\Log\LoggerInterface $logger)
     {
         parent::initController($request, $response, $logger);
-        // Panggil Satpam (Cek Role)
-        $this->restrictToAdmin();
+
+        // Cek role dan URI segment untuk method yang diakses
+        if (session('role') === 'guru') {
+            // Ambil segment terakhir dari URI untuk deteksi method
+            $uri = service('uri');
+            $segment = $uri->getSegment(3); // Segment ke-3 setelah /admin/events/
+
+            // Guru hanya boleh akses 'internal' atau tanpa segment (untuk getEvents API)
+            $allowedSegments = ['internal', null, '']; // null = /admin/events (untuk redirect ke internal)
+
+            if (!in_array($segment, $allowedSegments)) {
+                // Method lain (create, edit, dll) → 404
+                throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+            }
+        }
     }
+
     /**
      * Display list of events
      */
@@ -32,17 +49,18 @@ class Events extends BaseAdminController
             ->join('schools', 'schools.id = events.school_id', 'left');
 
         if ($this->mySchoolId) {
-            // Filter Khusus Admin Sekolah
             $builder->where('events.school_id', $this->mySchoolId);
         }
+
         $data = [
             'title' => 'Manajemen Agenda',
-            'events' => $this->eventModel->orderBy('event_date', 'DESC')->findAll(),
+            'events' => $builder->orderBy('event_date', 'DESC')->findAll(),
             'currentSchoolName' => $this->mySchoolId ? 'Sekolah (Unit)' : 'Pusat / Umum'
         ];
 
         return view('admin/events/index', $data);
     }
+
     /**
      * Show create event form
      */
@@ -77,7 +95,13 @@ class Events extends BaseAdminController
         $title = $this->request->getPost('title');
         $slug = url_title($title, '-', true) . '-' . time();
         $schoolId = $this->mySchoolId;
-        // PENTING: Hanya kirim field yang ada di allowedFields
+
+        // Ambil scope dari form, default 'public' jika tidak ada
+        $scope = $this->request->getPost('scope');
+        if (empty($scope) || !in_array($scope, ['public', 'internal'])) {
+            $scope = 'public';
+        }
+
         $data = [
             'school_id' => $schoolId,
             'title' => $title,
@@ -87,21 +111,14 @@ class Events extends BaseAdminController
             'time_end' => $this->request->getPost('time_end') ?: null,
             'location' => $this->request->getPost('location') ?: null,
             'description' => $this->request->getPost('description') ?: null,
-            'scope' => $this->request->getPost('scope') ?: 'public'
+            'scope' => $scope
         ];
-
-        // Tambahkan school_id jika ada
-        $schoolId = $this->request->getPost('school_id');
-        if (!empty($schoolId)) {
-            $data['school_id'] = $schoolId;
-        }
 
         try {
             if ($this->eventModel->skipValidation(true)->insert($data)) {
                 return redirect()->to('/admin/events')->with('success', 'Agenda berhasil ditambahkan!');
             }
 
-            // Tampilkan error dari model
             return redirect()->back()->withInput()->with('errors', $this->eventModel->errors());
         } catch (\Exception $e) {
             log_message('error', 'Error inserting event: ' . $e->getMessage());
@@ -138,25 +155,23 @@ class Events extends BaseAdminController
      */
     public function update($id)
     {
-        // 1. Cek Data Lama
+        // Cek Data Lama
         $check = $this->eventModel->find($id);
         if (!$check) {
-             return redirect()->to('/admin/events')->with('error', 'Agenda tidak ditemukan.');
+            return redirect()->to('/admin/events')->with('error', 'Agenda tidak ditemukan.');
         }
 
         // Cek Kepemilikan (Kecuali Superadmin)
         if ($this->mySchoolId && $check['school_id'] != $this->mySchoolId) {
-             return redirect()->to('/admin/events')->with('error', 'Akses Ditolak.');
+            return redirect()->to('/admin/events')->with('error', 'Akses Ditolak.');
         }
 
-        // 2. DEFINISI RULES (ATURAN) - Perbaikan Error Disini
-        // Jangan masukkan $this->request->getPost(...) disini!
+        // Validasi
         $rules = [
-            'title'      => 'required|min_length[3]',
-            'event_date' => 'required|valid_date' 
+            'title' => 'required|min_length[3]',
+            'event_date' => 'required|valid_date'
         ];
 
-        // 3. JALANKAN VALIDASI
         if (!$this->validate($rules)) {
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
@@ -170,6 +185,21 @@ class Events extends BaseAdminController
             $slug = $check['slug'];
         }
 
+        // ✅ Ambil scope dengan benar - JANGAN PAKAI OPERATOR ?:
+        $scopePost = $this->request->getPost('scope');
+
+        // Debug: Log POST data
+        log_message('debug', 'POST scope value: ' . var_export($scopePost, true));
+        log_message('debug', 'All POST data: ' . json_encode($this->request->getPost()));
+
+        // Validasi scope
+        if (in_array($scopePost, ['public', 'internal'], true)) {
+            $scope = $scopePost;
+        } else {
+            $scope = 'public'; // Default fallback
+            log_message('warning', 'Invalid scope value received: ' . var_export($scopePost, true));
+        }
+
         $data = [
             'title' => $title,
             'slug' => $slug,
@@ -178,11 +208,32 @@ class Events extends BaseAdminController
             'time_end' => $this->request->getPost('time_end') ?: null,
             'location' => $this->request->getPost('location') ?: null,
             'description' => $this->request->getPost('description') ?: null,
-            'scope' => $this->request->getPost('scope') ?: 'public'
+            'scope' => $scope
         ];
 
-        $this->eventModel->update($id, $data);
-        return redirect()->to('/admin/events')->with('success', 'Agenda berhasil diupdate!');
+        log_message('info', 'Updating Event #' . $id);
+        log_message('info', 'Data to update: ' . json_encode($data));
+
+        try {
+            // ✅ PENTING: Skip validation untuk update
+            $result = $this->eventModel->skipValidation(true)->update($id, $data);
+
+            log_message('info', 'Update result: ' . var_export($result, true));
+
+            if ($result) {
+                return redirect()->to('/admin/events')->with('success', 'Agenda berhasil diupdate!');
+            }
+
+            // Jika gagal, cek error dari model
+            $errors = $this->eventModel->errors();
+            log_message('error', 'Update failed. Model errors: ' . json_encode($errors));
+
+            return redirect()->back()->withInput()->with('error', 'Gagal update agenda. ' . json_encode($errors));
+        } catch (\Exception $e) {
+            log_message('error', 'Exception during update: ' . $e->getMessage());
+            log_message('error', 'Stack trace: ' . $e->getTraceAsString());
+            return redirect()->back()->withInput()->with('error', 'Gagal mengupdate agenda: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -193,9 +244,6 @@ class Events extends BaseAdminController
         $event = $this->eventModel->find($id);
         if (!$event || ($this->mySchoolId && $event['school_id'] != $this->mySchoolId)) {
             return redirect()->to('/admin/events')->with('error', 'Gagal menghapus.');
-        }
-        if (!$event) {
-            return redirect()->to('/admin/events')->with('error', 'Agenda tidak ditemukan.');
         }
 
         if ($this->eventModel->delete($id)) {
@@ -219,6 +267,12 @@ class Events extends BaseAdminController
             }
 
             $builder = $this->eventModel->builder();
+
+            // Filter berdasarkan sekolah jika admin sekolah
+            if ($this->mySchoolId) {
+                $builder->where('school_id', $this->mySchoolId);
+            }
+
             $events = $builder
                 ->where('event_date >=', $start)
                 ->where('event_date <=', $end)
@@ -228,16 +282,19 @@ class Events extends BaseAdminController
 
             $calendarEvents = [];
             foreach ($events as $event) {
+                // Warna berdasarkan scope
+                $color = ($event['scope'] == 'internal') ? '#dc3545' : '#7c3aed';
+
                 $calendarEvents[] = [
                     'id' => $event['id'],
-                    'title' => $event['title'],
+                    'title' => ($event['scope'] == 'internal' ? '🔒 ' : '') . $event['title'],
                     'start' => $event['event_date'] . (!empty($event['time_start']) ? 'T' . $event['time_start'] : ''),
                     'end' => $event['event_date'] . (!empty($event['time_end']) ? 'T' . $event['time_end'] : ''),
                     'location' => $event['location'] ?? '',
                     'description' => $event['description'] ?? '',
                     'url' => base_url('admin/events/edit/' . $event['id']),
-                    'backgroundColor' => '#2f3f58',
-                    'borderColor' => '#1a253a',
+                    'backgroundColor' => $color,
+                    'borderColor' => $color,
                     'textColor' => '#ffffff'
                 ];
             }
@@ -247,5 +304,61 @@ class Events extends BaseAdminController
             log_message('error', 'Error in Admin getEvents: ' . $e->getMessage());
             return $this->response->setJSON([]);
         }
+    }
+
+    /**
+     * Halaman Agenda Internal - Khusus yang login (Admin & Guru)
+     */
+    public function internal()
+    {
+        // Title dinamis
+        if ($this->mySchoolId) {
+            $school = $this->schoolModel->find($this->mySchoolId);
+            $schoolName = $school ? $school['name'] : 'Sekolah';
+            $data['title'] = 'Agenda Internal ' . $schoolName;
+            $data['subtitle'] = 'Agenda khusus internal ' . $schoolName;
+        } else {
+            $data['title'] = 'Agenda Internal';
+            $data['subtitle'] = 'Agenda khusus internal semua jenjang';
+        }
+
+        // Base query - filter scope internal
+        $baseQuery = $this->eventModel->where('scope', 'internal');
+
+        // Filter by school
+        if ($this->mySchoolId) {
+            // Admin Sekolah: hanya lihat agenda sekolahnya
+            $baseQuery = $baseQuery->where('school_id', $this->mySchoolId);
+        }
+        // Superadmin: lihat semua agenda internal (tidak perlu filter tambahan)
+
+        // Upcoming events (7 hari ke depan)
+        $upcomingBuilder = clone $this->eventModel;
+        $data['upcoming_events'] = $upcomingBuilder
+            ->where('scope', 'internal')
+            ->where('event_date >=', date('Y-m-d'))
+            ->where('event_date <=', date('Y-m-d', strtotime('+7 days')))
+            ->when($this->mySchoolId, function ($query) {
+                return $query->where('school_id', $this->mySchoolId);
+            })
+            ->orderBy('event_date', 'ASC')
+            ->orderBy('time_start', 'ASC')
+            ->findAll();
+
+        // All internal events
+        $allBuilder = clone $this->eventModel;
+        $data['all_internal_events'] = $allBuilder
+            ->where('scope', 'internal')
+            ->when($this->mySchoolId, function ($query) {
+                return $query->where('school_id', $this->mySchoolId);
+            })
+            ->orderBy('event_date', 'DESC')
+            ->findAll();
+
+        // Count untuk info
+        $data['upcoming_count'] = count($data['upcoming_events']);
+        $data['total_count'] = count($data['all_internal_events']);
+
+        return view('admin/events/internal', $data);
     }
 }

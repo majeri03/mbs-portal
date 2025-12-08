@@ -20,12 +20,52 @@ class Galleries extends BaseAdminController
     public function index()
     {
         $data['title'] = 'Kelola Galeri Foto';
-        $query = $this->filterBySchool($this->galleryModel);
-        $data['galleries'] = $this->galleryModel
+
+        // Ambil parameter filter dari URL
+        $search = $this->request->getGet('search');
+        $category = $this->request->getGet('category');
+        $schoolId = $this->request->getGet('school_id');
+
+        // Query builder
+        $builder = $this->galleryModel
             ->select('galleries.*, schools.name as school_name')
-            ->join('schools', 'schools.id = galleries.school_id', 'left')
-            ->orderBy('galleries.created_at', 'DESC')
-            ->findAll();
+            ->join('schools', 'schools.id = galleries.school_id', 'left');
+
+        // Filter berdasarkan sekolah (jika admin sekolah)
+        if ($this->mySchoolId) {
+            $builder->where('galleries.school_id', $this->mySchoolId);
+        }
+
+        // Filter Search (Judul)
+        if (!empty($search)) {
+            $builder->like('galleries.title', $search);
+        }
+
+        // Filter Category
+        if (!empty($category)) {
+            $builder->where('galleries.category', $category);
+        }
+
+        // Filter School (hanya untuk superadmin)
+        if (!empty($schoolId) && empty($this->mySchoolId)) {
+            $builder->where('galleries.school_id', $schoolId);
+        }
+
+        $data['galleries'] = $builder->orderBy('galleries.created_at', 'DESC')->findAll();
+
+        // Data untuk dropdown filter
+        $data['schools'] = $this->schoolModel->findAll();
+        $data['categories'] = $this->galleryModel
+            ->select('category')
+            ->distinct()
+            ->where('category IS NOT NULL')
+            ->where('category !=', '')
+            ->orderBy('category', 'ASC')
+            ->findColumn('category');
+        // Kirim nilai filter ke view
+        $data['currentSearch'] = $search;
+        $data['currentCategory'] = $category;
+        $data['currentSchoolFilter'] = $schoolId;
 
         return view('admin/galleries/index', $data);
     }
