@@ -1,3 +1,6 @@
+<?php
+$slug = $school['slug'] ?? 'mts'; 
+?>
 <!DOCTYPE html>
 <html lang="id">
 
@@ -490,7 +493,7 @@
 
     <nav class="navbar navbar-expand-lg navbar-school sticky-top bg-white shadow-sm">
         <div class="container">
-            <a class="navbar-brand d-flex align-items-center gap-2" href="<?= site_url('mts') ?>">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="<?= site_url($slug) ?>">
                 <?php
                 // LOGIKA LOGO
                 if (!empty($school_site['site_logo'])) {
@@ -519,7 +522,7 @@
                 <ul class="navbar-nav ms-auto align-items-center gap-1">
 
                     <li class="nav-item">
-                        <a class="nav-link" href="<?= site_url('mts') ?>">Beranda</a>
+                        <a class="nav-link" href="<?= site_url($slug) ?>">Beranda</a>
                     </li>
 
                     <?php if (!empty($school_pages_grouped)) : ?>
@@ -539,7 +542,7 @@
                                         <ul class="dropdown-menu">
                                             <?php foreach ($pages as $p): ?>
                                                 <li>
-                                                    <a class="dropdown-item" href="<?= site_url('mts/halaman/' . $p['slug']) ?>">
+                                                    <a class="dropdown-item" href="<?= site_url($slug . '/halaman/' . $p['slug']) ?>">
                                                         <?= esc($p['title']) ?>
                                                     </a>
                                                 </li>
@@ -552,11 +555,11 @@
                     <?php endif; ?>
 
                     <li class="nav-item">
-                        <a class="nav-link" href="<?= site_url('mts/#guru') ?>">Asatidz</a>
+                        <a class="nav-link" href="<?= site_url($slug . '/#guru') ?>">Asatidz</a>
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" href="<?= site_url('mts/kabar') ?>">Kabar</a>
+                        <a class="nav-link" href="<?= site_url($slug . '/kabar') ?>">Kabar</a>
                     </li>
 
                     <li class="nav-item dropdown">
@@ -565,7 +568,7 @@
                         </a>
                         <ul class="dropdown-menu border-0 shadow-sm mt-2" style="border-top: 3px solid var(--mbs-purple);">
                             <li>
-                                <a class="dropdown-item py-2 fw-bold text-purple" href="<?= site_url('mts/dokumen') ?>">
+                                <a class="dropdown-item py-2 fw-bold text-purple" href="<?= site_url($slug . '/dokumen') ?>">
                                     <i class="bi bi-grid-fill"></i> Lihat Semua
                                 </a>
                             </li>
@@ -576,7 +579,7 @@
                             <?php if (!empty($nav_doc_categories)): ?>
                                 <?php foreach ($nav_doc_categories as $cat): ?>
                                     <li>
-                                        <a class="dropdown-item py-2" href="<?= site_url('mts/dokumen?kategori=' . $cat['slug']) ?>">
+                                        <a class="dropdown-item py-2" href="<?= site_url($slug . '/dokumen?kategori=' . $cat['slug']) ?>">
                                             <?= esc($cat['name']) ?>
                                         </a>
                                     </li>
@@ -588,11 +591,11 @@
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" href="<?= site_url('mts/agenda') ?>">Agenda</a>
+                        <a class="nav-link" href="<?= site_url($slug . '/agenda') ?>">Agenda</a>
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" href="<?= site_url('mts/galeri') ?>">Galeri</a>
+                        <a class="nav-link" href="<?= site_url($slug . '/galeri') ?>">Galeri</a>
                     </li>
                 </ul>
 
@@ -657,11 +660,11 @@
                 <div class="col-lg-2 col-md-6">
                     <h6 class="footer-title">Akses Cepat</h6>
                     <ul class="list-unstyled footer-link">
-                        <li><a href="<?= site_url('mts') ?>"><i class="bi bi-chevron-right x-small me-2"></i> Beranda</a></li>
-                        <li><a href="<?= site_url('mts/#guru') ?>"><i class="bi bi-chevron-right x-small me-2"></i> Asatidz</a></li>
-                        <li><a href="<?= site_url('mts/kabar') ?>"><i class="bi bi-chevron-right x-small me-2"></i> Kabar Sekolah</a></li>
-                        <li><a href="<?= site_url('mts/agenda') ?>"><i class="bi bi-chevron-right x-small me-2"></i> Agenda</a></li>
-                        <li><a href="<?= site_url('mts/galeri') ?>"><i class="bi bi-chevron-right x-small me-2"></i> Galeri Foto</a></li>
+                        <li><a href="<?= site_url($slug) ?>"><i class="bi bi-chevron-right x-small me-2"></i> Beranda</a></li>
+                        <li><a href="<?= site_url($slug . '/#guru') ?>"><i class="bi bi-chevron-right x-small me-2"></i> Asatidz</a></li>
+                        <li><a href="<?= site_url($slug . '/kabar') ?>"><i class="bi bi-chevron-right x-small me-2"></i> Kabar Sekolah</a></li>
+                        <li><a href="<?= site_url($slug . '/agenda') ?>"><i class="bi bi-chevron-right x-small me-2"></i> Agenda</a></li>
+                        <li><a href="<?= site_url($slug . '/galeri') ?>"><i class="bi bi-chevron-right x-small me-2"></i> Galeri Foto</a></li>
                         <li><a href="<?= base_url() ?>" class="fw-bold text-purple"><i class="bi bi-arrow-left-circle me-2"></i> Portal Yayasan</a></li>
                         
                     </ul>
@@ -683,7 +686,7 @@
                             <span><?= esc($school_site['email'] ?? 'info@mbs.sch.id') ?></span>
                         </li>
                         <li>
-                            <a href="<?= site_url('mts/informasi') ?>">
+                            <a href="<?= site_url($slug . '/informasi') ?>">
                                 <i class="bi bi-info-circle-fill text-purple me-3"></i> Informasi
                             </a>
                         </li>

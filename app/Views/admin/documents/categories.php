@@ -50,32 +50,33 @@
                             </td>
                         </tr>
                     <?php else : ?>
-                        <?php $no = 1; foreach ($categories as $cat) : ?>
-                        <tr>
-                            <td class="px-4"><?= $no++ ?></td>
-                            <td class="px-4 fw-bold text-dark"><?= esc($cat['name']) ?></td>
-                            <td class="px-4 text-muted small"><code><?= esc($cat['slug']) ?></code></td>
-                            <td class="px-4">
-                                <?php if(empty($cat['school_id'])): ?>
-                                    <span class="badge bg-secondary">Umum / Pusat</span>
-                                <?php else: ?>
-                                    <span class="badge bg-info text-dark"><?= esc($cat['school_name']) ?></span>
-                                <?php endif; ?>
-                            </td>
-                            <td class="px-4 text-center">
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-sm btn-outline-warning" 
+                        <?php $no = 1;
+                        foreach ($categories as $cat) : ?>
+                            <tr>
+                                <td class="px-4"><?= $no++ ?></td>
+                                <td class="px-4 fw-bold text-dark"><?= esc($cat['name']) ?></td>
+                                <td class="px-4 text-muted small"><code><?= esc($cat['slug']) ?></code></td>
+                                <td class="px-4">
+                                    <?php if (empty($cat['school_id'])): ?>
+                                        <span class="badge bg-secondary">Umum / Pusat</span>
+                                    <?php else: ?>
+                                        <span class="badge bg-info text-dark"><?= esc($cat['school_name']) ?></span>
+                                    <?php endif; ?>
+                                </td>
+                                <td class="px-4 text-center">
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-sm btn-outline-warning"
                                             onclick="editCategory('<?= $cat['id'] ?>', '<?= esc($cat['name']) ?>')">
-                                        <i class="bi bi-pencil-square"></i>
-                                    </button>
-                                    <a href="<?= base_url('admin/document-categories/delete/' . $cat['id']) ?>" 
-                                       class="btn btn-sm btn-outline-danger" 
-                                       onclick="return confirm('Hapus kategori ini? Semua dokumen di dalamnya mungkin akan kehilangan kategori.')">
-                                        <i class="bi bi-trash"></i>
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
+                                            <i class="bi bi-pencil-square"></i>
+                                        </button>
+                                        <a href="<?= base_url('admin/document-categories/delete/' . $cat['id']) ?>"
+                                            class="btn btn-sm btn-outline-danger"
+                                            onclick="return confirm('Hapus kategori ini? Semua dokumen di dalamnya mungkin akan kehilangan kategori.')">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
                         <?php endforeach; ?>
                     <?php endif; ?>
                 </tbody>
@@ -92,18 +93,19 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <form action="<?= base_url('admin/document-categories/store') ?>" method="POST">
+                <?= csrf_field() ?>
                 <div class="modal-body p-4">
                     <div class="mb-3">
                         <label class="form-label fw-bold">Nama Kategori</label>
                         <input type="text" name="name" class="form-control" placeholder="Contoh: Akademik, Keuangan" required>
                     </div>
-                    
-                    <?php if(empty($currentSchoolId)): ?>
+
+                    <?php if (empty($currentSchoolId)): ?>
                         <div class="mb-3">
                             <label class="form-label fw-bold">Milik Sekolah</label>
                             <select name="school_id" class="form-select">
                                 <option value="">-- Umum / Pusat --</option>
-                                <?php foreach($schools as $s): ?>
+                                <?php foreach ($schools as $s): ?>
                                     <option value="<?= $s['id'] ?>"><?= esc($s['name']) ?></option>
                                 <?php endforeach; ?>
                             </select>
@@ -127,6 +129,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <form id="editForm" method="POST">
+                <?= csrf_field() ?>
                 <div class="modal-body p-4">
                     <div class="mb-3">
                         <label class="form-label fw-bold">Nama Kategori</label>
@@ -151,10 +154,24 @@
 </script>
 
 <style>
-    .bg-purple { background-color: var(--mbs-purple) !important; }
-    .text-purple { color: var(--mbs-purple) !important; }
-    .btn-purple { background-color: var(--mbs-purple); color: white; border: none; }
-    .btn-purple:hover { background-color: #1a253a; color: white; }
+    .bg-purple {
+        background-color: var(--mbs-purple) !important;
+    }
+
+    .text-purple {
+        color: var(--mbs-purple) !important;
+    }
+
+    .btn-purple {
+        background-color: var(--mbs-purple);
+        color: white;
+        border: none;
+    }
+
+    .btn-purple:hover {
+        background-color: #1a253a;
+        color: white;
+    }
 </style>
 
 <?= $this->endSection() ?>

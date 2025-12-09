@@ -35,7 +35,27 @@ $routes->group('mts', ['namespace' => 'Modules\Mts\Controllers'], function ($rou
 });
 
 $routes->group('ma', ['namespace' => 'Modules\Ma\Controllers'], function ($routes) {
-    $routes->get('/', 'Home::index'); // Diakses via: mbs.sch.id/ma
+    $routes->get('/', 'Home::index');
+
+    // Halaman Statis (Profil, Sejarah, dll)
+    $routes->get('halaman/(:segment)', 'Page::show/$1');
+
+    // Berita
+    $routes->get('kabar', 'News::index');
+    $routes->get('kabar/(:segment)', 'News::show/$1');
+
+    // Agenda
+    // Route Agenda
+    $routes->get('agenda', 'Events::index');          // Daftar Agenda
+    $routes->get('agenda/(:segment)', 'Events::show/$1'); // Detail Agenda
+
+    $routes->get('galeri', 'Gallery::index');
+
+    // Dokumen
+    $routes->get('dokumen', 'Documents::index');
+    $routes->get('dokumen/(:segment)', 'Documents::show/$1');
+    //Informasi
+    $routes->get('informasi', 'Page::index');
 });
 
 $routes->group('smk', ['namespace' => 'Modules\Smk\Controllers'], function ($routes) {
