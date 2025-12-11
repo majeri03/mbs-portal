@@ -62,6 +62,7 @@ class Galleries extends BaseAdminController
             ->where('category !=', '')
             ->orderBy('category', 'ASC')
             ->findColumn('category');
+        
         // Kirim nilai filter ke view
         $data['currentSearch'] = $search;
         $data['currentCategory'] = $category;
@@ -80,12 +81,11 @@ class Galleries extends BaseAdminController
 
     public function store()
     {
-        // 1. VALIDASI KETAT (1MB MAX)
+        // Validasi
         $rules = [
             'title'    => 'required|min_length[3]',
             'category' => 'required',
             'image'    => [
-                // max_size: 1024 KB = 1 MB
                 'rules' => 'uploaded[image]|max_size[image,1024]|is_image[image]|mime_in[image,image/jpg,image/jpeg,image/png,image/webp]',
                 'errors' => [
                     'uploaded' => 'Pilih foto galeri terlebih dahulu.',
@@ -100,19 +100,16 @@ class Galleries extends BaseAdminController
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
 
-        // Upload Image
+        // ✅ Upload & Resize dengan Helper
         $file = $this->request->getFile('image');
-        $fileName = $file->getRandomName();
-        $file->move('uploads/galleries', $fileName);
+        $fileName = upload_and_resize_image($file, 'uploads/galleries/', 1200, 85);
+        
+        if (!$fileName) {
+            return redirect()->back()->with('error', 'Gagal upload gambar.');
+        }
 
-        // KOMPRESI GAMBAR GALERI
-        // Kita set max lebar 1200px agar tetap tajam di layar besar tapi file kecil
-        $filePath = 'uploads/galleries/' . $fileName;
-        \Config\Services::image()
-            ->withFile($filePath)
-            ->resize(1200, 1200, true, 'width')
-            ->save($filePath, 85); // Kualitas 85% (sedikit lebih tinggi dari berita)
         $schoolId = $this->mySchoolId ? $this->mySchoolId : ($this->request->getPost('school_id') ?: null);
+        
         $this->galleryModel->save([
             'school_id' => $schoolId,
             'title'     => $this->request->getPost('title'),
@@ -139,9 +136,11 @@ class Galleries extends BaseAdminController
     public function update($id)
     {
         $gallery = $this->filterBySchool($this->galleryModel)->find($id);
-        if (!$gallery) return redirect()->to('admin/galleries')->with('error', 'Akses ditolak!');
+        if (!$gallery) {
+            return redirect()->to('admin/galleries')->with('error', 'Akses ditolak!');
+        }
 
-        // 1. VALIDASI UPDATE (Image Optional/Permit Empty)
+        // Validasi
         $rules = [
             'title'    => 'required|min_length[3]',
             'category' => 'required',
@@ -162,24 +161,23 @@ class Galleries extends BaseAdminController
         $imageUrl = $gallery['image_url'];
         $file = $this->request->getFile('image');
 
-        // Cek jika ada gambar baru
+        // ✅ Cek jika ada gambar baru
         if ($file && $file->isValid() && !$file->hasMoved()) {
+            // Hapus gambar lama
             if (file_exists($gallery['image_url'])) {
                 unlink($gallery['image_url']);
             }
-            $fileName = $file->getRandomName();
-            $file->move('uploads/galleries', $fileName);
-
-            // KOMPRESI GAMBAR BARU
-            $filePath = 'uploads/galleries/' . $fileName;
-            \Config\Services::image()
-                ->withFile($filePath)
-                ->resize(1200, 1200, true, 'width')
-                ->save($filePath, 85);
-
-            $imageUrl = 'uploads/galleries/' . $fileName;
+            
+            // Upload & resize gambar baru dengan Helper
+            $fileName = upload_and_resize_image($file, 'uploads/galleries/', 1200, 85);
+            
+            if ($fileName) {
+                $imageUrl = 'uploads/galleries/' . $fileName;
+            }
         }
+
         $schoolId = $this->mySchoolId ? $this->mySchoolId : ($this->request->getPost('school_id') ?: null);
+        
         $this->galleryModel->update($id, [
             'school_id' => $schoolId,
             'title'     => $this->request->getPost('title'),
