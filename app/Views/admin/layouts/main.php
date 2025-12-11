@@ -574,7 +574,48 @@
                     <i class="bi bi-speedometer2"></i> Dashboard
                 </a>
             </li>
+            <!-- ✅ MENU BARU: LIHAT WEBSITE -->
+            <?php
+            $schoolId = session('school_id');
+            $schoolSlug = '';
 
+            // Tentukan slug berdasarkan school_id
+            if ($schoolId == 1) {
+                $schoolSlug = 'mts';
+            } elseif ($schoolId == 2) {
+                $schoolSlug = 'ma';
+            } elseif ($schoolId == 3) {
+                $schoolSlug = 'smk';
+            }
+
+            // Jika superadmin (school_id = null), tampilkan dropdown
+            if (empty($schoolId)) {
+            ?>
+                <li>
+                    <a href="#submenuWebsite" data-bs-toggle="collapse" aria-expanded="false"
+                        class="d-flex justify-content-between align-items-center">
+                        <span><i class="bi bi-globe2"></i> Lihat Website</span>
+                        <i class="bi bi-chevron-down arrow-icon" style="font-size: 0.8rem;"></i>
+                    </a>
+                    <ul class="collapse sidebar-submenu" id="submenuWebsite" data-bs-parent="#sidebar">
+                        <li><a href="<?= base_url('/') ?>" target="_blank"><i class="bi bi-house-door me-2"></i>Portal Pusat</a></li>
+                        <li><a href="<?= base_url('mts') ?>" target="_blank"><i class="bi bi-mortarboard me-2"></i>Website MTs</a></li>
+                        <li><a href="<?= base_url('ma') ?>" target="_blank"><i class="bi bi-book me-2"></i>Website MA</a></li>
+                        <li><a href="<?= base_url('smk') ?>" target="_blank"><i class="bi bi-gear me-2"></i>Website SMK</a></li>
+                    </ul>
+                </li>
+            <?php
+            } else {
+                // Admin sekolah, langsung ke website sekolahnya
+            ?>
+                <li>
+                    <a href="<?= base_url($schoolSlug) ?>" target="_blank" class="text-success">
+                        <i class="bi bi-box-arrow-up-right"></i> Lihat Website
+                    </a>
+                </li>
+            <?php
+            }
+            ?>
             <?php $isDocActive = str_contains(uri_string(), 'document'); ?>
             <li>
                 <a href="#submenuDokumen" data-bs-toggle="collapse" aria-expanded="<?= $isDocActive ? 'true' : 'false' ?>"
