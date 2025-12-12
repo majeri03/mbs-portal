@@ -39,7 +39,7 @@ class Home extends BaseController
     {
         $data['site'] = $this->settingModel->getSettings(null);
         $data['title'] = "Beranda - " . ($data['site']['site_name'] ?? 'MBS Portal');
-        $data['sliders'] = $this->sliderModel->getActiveSliders($this->schoolId);
+        $data['sliders'] = $this->sliderModel->getActiveSliders(null);
         // 2. Data Sekolah (Untuk 3 Kartu Utama)
         $data['schools'] = $this->schoolModel->findAll();
 
