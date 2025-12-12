@@ -1,0 +1,4 @@
+# File-file ini hanya untuk deploy-heroku
+Dockerfile merge=ours
+heroku.yml merge=ours
+Procfile merge=ours
