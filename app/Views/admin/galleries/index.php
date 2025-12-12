@@ -68,9 +68,6 @@
         </form>
     </div>
 </div>
-<?php if (session()->getFlashdata('success')) : ?>
-    <div class="alert alert-success alert-dismissible fade show"><?= session()->getFlashdata('success') ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
-<?php endif; ?>
 
 <div class="row g-3">
     <?php foreach ($galleries as $item) : ?>

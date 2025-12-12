@@ -780,30 +780,35 @@
 
     <!-- MAIN CONTENT -->
     <div class="main-content">
+
+        <?= $this->renderSection('content') ?>
+    </div>
+
+    <!-- Toast Notification Container (Fixed Position) -->
+    <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 9999;">
         <?php if (session()->getFlashdata('success')) : ?>
-            <div class="alert alert-success alert-dismissible fade show shadow-sm border-0 mb-4" role="alert">
-                <div class="d-flex align-items-center">
-                    <i class="bi bi-check-circle-fill fs-4 me-3"></i>
-                    <div>
-                        <strong>Berhasil!</strong> <?= session()->getFlashdata('success') ?>
+            <div class="toast align-items-center text-white bg-success border-0 show" role="alert">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        <i class="bi bi-check-circle-fill me-2"></i>
+                        <strong><?= session()->getFlashdata('success') ?></strong>
                     </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
                 </div>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         <?php endif; ?>
 
         <?php if (session()->getFlashdata('error')) : ?>
-            <div class="alert alert-danger alert-dismissible fade show shadow-sm border-0 mb-4" role="alert">
-                <div class="d-flex align-items-center">
-                    <i class="bi bi-exclamation-triangle-fill fs-4 me-3"></i>
-                    <div>
-                        <strong>Gagal!</strong> <?= session()->getFlashdata('error') ?>
+            <div class="toast align-items-center text-white bg-danger border-0 show" role="alert">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        <strong><?= session()->getFlashdata('error') ?></strong>
                     </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
                 </div>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         <?php endif; ?>
-        <?= $this->renderSection('content') ?>
     </div>
 
     <!-- Bootstrap JS -->
@@ -872,6 +877,13 @@
                     });
                 });
             }
+            const toasts = document.querySelectorAll('.toast');
+            toasts.forEach(toast => {
+                setTimeout(() => {
+                    const bsToast = bootstrap.Toast.getOrCreateInstance(toast);
+                    bsToast.hide();
+                }, 4000);
+            });
         });
     </script>
 </body>

@@ -146,8 +146,20 @@ class Schools extends BaseAdminController
         $rules = [
             'name'        => 'required|min_length[3]',
             'description' => 'required|min_length[10]',
-            'image' => 'permit_empty|max_size[image,2048]|is_image[image]|mime_in[image,image/jpg,image/jpeg,image/png,image/webp]'
         ];
+
+        // HANYA validasi gambar jika ada upload
+        $image = $this->request->getFile('image');
+        if ($image && $image->isValid() && !$image->hasMoved()) {
+            $rules['image'] = [
+                'rules' => 'max_size[image,2048]|is_image[image]|mime_in[image,image/jpg,image/jpeg,image/png,image/webp]',
+                'errors' => [
+                    'max_size' => 'Ukuran gambar maksimal 2MB.',
+                    'is_image' => 'File harus berupa gambar.',
+                    'mime_in'  => 'Format harus JPG, PNG, atau WEBP.'
+                ]
+            ];
+        }
 
         if (!$this->validate($rules)) {
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
@@ -162,15 +174,14 @@ class Schools extends BaseAdminController
         $imageUrl = $school['image_url'] ?? '';
 
         // Jika upload gambar baru
-        $image = $this->request->getFile('image');
         if ($image && $image->isValid() && !$image->hasMoved()) {
             // Hapus gambar lama jika ada
-            if (!empty($school['image_url']) && file_exists($school['image_url'])) {
-                unlink($school['image_url']);
+            if (!empty($school['image_url']) && file_exists(FCPATH . $school['image_url'])) {
+                @unlink(FCPATH . $school['image_url']);
             }
 
             $imageName = $image->getRandomName();
-            $image->move('uploads/schools', $imageName);
+            $image->move(FCPATH . 'uploads/schools', $imageName);
             $imageUrl = 'uploads/schools/' . $imageName;
         }
 
@@ -206,8 +217,8 @@ class Schools extends BaseAdminController
         }
 
         // Hapus file image
-        if (file_exists($school['image_url'])) {
-            unlink($school['image_url']);
+        if (!empty($school['image_url']) && file_exists(FCPATH . $school['image_url'])) {
+            @unlink(FCPATH . $school['image_url']);
         }
 
         $this->schoolModel->delete($id);

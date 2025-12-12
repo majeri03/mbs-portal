@@ -6,13 +6,6 @@
     <h4><i class="bi bi-gear-fill me-2 text-purple"></i>Pengaturan Website</h4>
 </div>
 
-<?php if (session()->getFlashdata('success')) : ?>
-    <div class="alert alert-success alert-dismissible fade show">
-        <?= session()->getFlashdata('success') ?>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-<?php endif; ?>
-
 <form action="<?= base_url('admin/settings/update') ?>" method="POST" enctype="multipart/form-data">
     <?= csrf_field() ?>
 
@@ -45,7 +38,8 @@
                         <div class="card-body p-4">
                             <div class="mb-3">
                                 <label class="form-label">Nama Website / Sekolah</label>
-                                <input type="text" name="site_name" class="form-control" value="<?= esc($settings['site_name'] ?? '') ?>">
+                                <input type="text" name="site_name" class="form-control" value="<?= esc($settings['site_name'] ?? '') ?>" maxlength="25">
+<small class="text-muted"><i class="bi bi-info-circle"></i> Maksimal 25 karakter agar rapi di navbar</small>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Deskripsi Singkat (Footer)</label>
