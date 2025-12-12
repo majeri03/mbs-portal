@@ -96,7 +96,7 @@
                         <?php endforeach; ?>
                     <?php else: ?>
                         <tr>
-                            <td colspan="7" class="text-center py-5">
+                            <td colspan="8" class="text-center py-5">
                                 <i class="bi bi-calendar-x fs-1 text-muted d-block mb-3"></i>
                                 <p class="text-muted mb-0">Belum ada agenda yang ditambahkan</p>
                                 <a href="<?= base_url('admin/events/create') ?>" class="btn btn-purple btn-sm mt-3">
@@ -174,16 +174,16 @@
 <script>
     // Initialize DataTable
     $(document).ready(function() {
+        <?php if (!empty($events)): ?>
         $('#eventsTable').DataTable({
             responsive: true,
             language: {
                 url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/id.json'
             },
-            order: [
-                [2, 'desc']
-            ], // Sort by date
+            order: [[3, 'desc']], // Sort by tanggal
             pageLength: 10
         });
+        <?php endif; ?>
     });
 
     // Delete Confirmation

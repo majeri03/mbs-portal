@@ -109,8 +109,8 @@ class Pages extends BaseAdminController
         $page = $this->filterBySchool($this->pageModel)->find($id);
         if ($page) {
             $this->pageModel->delete($id);
-            return redirect()->to('admin/pages')->with('success', 'Halaman dihapus!');
+            return redirect()->to('admin/pages')->with('success', 'Halaman "' . esc($page['title']) . '" berhasil dihapus!');
         }
-        return redirect()->to('admin/pages')->with('success', 'Halaman dihapus!');
+        return redirect()->to('admin/pages')->with('error', 'Halaman tidak ditemukan atau akses ditolak.');
     }
 }

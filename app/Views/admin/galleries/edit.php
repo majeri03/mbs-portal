@@ -13,6 +13,26 @@
 
         <div class="card border-0 shadow-sm">
             <div class="card-body p-4">
+                <!-- Alert Error -->
+                <?php if (session()->getFlashdata('error')) : ?>
+                    <div class="alert alert-danger alert-dismissible fade show mb-3">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        <strong>Gagal!</strong> <?= session()->getFlashdata('error') ?>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                <?php endif; ?>
+
+                <?php if (session()->getFlashdata('errors')) : ?>
+                    <div class="alert alert-danger alert-dismissible fade show mb-3">
+                        <strong>Periksa input Anda:</strong>
+                        <ul class="mb-0 mt-2">
+                            <?php foreach (session()->getFlashdata('errors') as $error) : ?>
+                                <li><?= esc($error) ?></li>
+                            <?php endforeach; ?>
+                        </ul>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                <?php endif; ?>
                 <form action="<?= base_url('admin/galleries/update/' . $gallery['id']) ?>" method="POST" enctype="multipart/form-data">
                     <?= csrf_field() ?>
 

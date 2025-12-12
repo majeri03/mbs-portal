@@ -10,21 +10,21 @@
 </div>
 
 <?php if (session()->getFlashdata('errors')) : ?>
-<div class="alert alert-danger">
-    <strong>Error:</strong>
-    <ul class="mb-0">
-        <?php foreach (session()->getFlashdata('errors') as $error) : ?>
-            <li><?= $error ?></li>
-        <?php endforeach; ?>
-    </ul>
-</div>
+    <div class="alert alert-danger">
+        <strong>Error:</strong>
+        <ul class="mb-0">
+            <?php foreach (session()->getFlashdata('errors') as $error) : ?>
+                <li><?= $error ?></li>
+            <?php endforeach; ?>
+        </ul>
+    </div>
 <?php endif; ?>
 
 <div class="card border-0 shadow-sm">
     <div class="card-body p-4">
         <form action="<?= base_url('admin/schools/store') ?>" method="POST" enctype="multipart/form-data">
             <?= csrf_field() ?>
-            
+
             <div class="row">
                 <!-- Left Column -->
                 <div class="col-md-8">
@@ -32,95 +32,96 @@
                         <label class="form-label fw-bold">
                             Nama Jenjang Sekolah <span class="text-danger">*</span>
                         </label>
-                        <input type="text" 
-                               name="name" 
-                               class="form-control form-control-lg" 
-                               value="<?= old('name') ?>" 
-                               placeholder="Contoh: MTs MBS"
-                               required>
+                        <input type="text"
+                            name="name"
+                            class="form-control form-control-lg"
+                            value="<?= old('name') ?>"
+                            placeholder="Contoh: MBS Boarding School"
+                            maxlength="25"
+                            required>
                         <small class="text-muted">
                             <i class="bi bi-info-circle me-1"></i>
-                            Contoh: MTs MBS, MA MBS, SMK MBS
+                            Maksimal 25 karakter. Contoh: MTs MBS, MA MBS, SMK MBS, MBS Boarding School
                         </small>
                     </div>
-                    
+
                     <div class="mb-3">
                         <label class="form-label fw-bold">
                             Deskripsi Lengkap <span class="text-danger">*</span>
                         </label>
-                        <textarea name="description" 
-                                  class="form-control" 
-                                  rows="5" 
-                                  placeholder="Deskripsi singkat tentang jenjang sekolah ini..."
-                                  required><?= old('description') ?></textarea>
+                        <textarea name="description"
+                            class="form-control"
+                            rows="5"
+                            placeholder="Deskripsi singkat tentang jenjang sekolah ini..."
+                            required><?= old('description') ?></textarea>
                         <small class="text-muted">Minimal 10 karakter</small>
                     </div>
-                    
+
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-bold">Kontak Person</label>
-                            <input type="text" 
-                                   name="contact_person" 
-                                   class="form-control" 
-                                   value="<?= old('contact_person') ?>"
-                                   placeholder="Nama kepala sekolah/PIC">
+                            <input type="text"
+                                name="contact_person"
+                                class="form-control"
+                                value="<?= old('contact_person') ?>"
+                                placeholder="Nama kepala sekolah/PIC">
                         </div>
-                        
+
                         <div class="col-md-6 mb-3">
                             <label class="form-label fw-bold">Nomor Telepon</label>
-                            <input type="text" 
-                                   name="phone" 
-                                   class="form-control" 
-                                   value="<?= old('phone') ?>"
-                                   placeholder="08xxx atau (021)xxx">
+                            <input type="text"
+                                name="phone"
+                                class="form-control"
+                                value="<?= old('phone') ?>"
+                                placeholder="08xxx atau (021)xxx">
                         </div>
                     </div>
-                    
+
                     <div class="mb-3">
                         <label class="form-label fw-bold">Website URL (Opsional)</label>
-                        <input type="url" 
-                               name="website_url" 
-                               class="form-control" 
-                               value="<?= old('website_url') ?>"
-                               placeholder="https://mts.mbs.sch.id">
+                        <input type="url"
+                            name="website_url"
+                            class="form-control"
+                            value="<?= old('website_url') ?>"
+                            placeholder="https://mts.mbs.sch.id">
                         <small class="text-muted">URL lengkap termasuk https://</small>
                     </div>
                 </div>
-                
+
                 <!-- Right Column -->
                 <div class="col-md-4">
                     <div class="mb-3">
                         <label class="form-label fw-bold">
                             Upload Foto/Logo <span class="text-danger">*</span>
                         </label>
-                        <input type="file" 
-                               name="image" 
-                               class="form-control" 
-                               accept="image/*" 
-                               required 
-                               onchange="previewImage(event)">
+                        <input type="file"
+                            name="image"
+                            class="form-control"
+                            accept="image/*"
+                            required
+                            onchange="previewImage(event)">
                         <small class="text-muted">Maks 2MB (JPG, PNG)</small>
                     </div>
-                    
+
                     <!-- Image Preview -->
                     <div class="mb-3">
-                        <div id="imagePreview" 
-                             class="border rounded p-2 text-center bg-light" 
-                             style="min-height: 200px; display: flex; align-items: center; justify-content: center;">
+                        <div id="imagePreview"
+                            class="border rounded p-2 text-center bg-light"
+                            style="min-height: 200px; display: flex; align-items: center; justify-content: center;">
                             <span class="text-muted">Preview gambar akan muncul di sini</span>
                         </div>
                     </div>
-                    
+
                     <div class="mb-3">
                         <label class="form-label fw-bold">Urutan Tampil</label>
-                        <input type="number" 
-                               name="order_position" 
-                               class="form-control" 
-                               value="<?= old('order_position', 1) ?>" 
-                               min="1">
+                        <input type="number"
+                            name="order_position"
+                            class="form-control"
+                            value="<?= old('order_position', 1) ?>"
+                            min="1">
                         <small class="text-muted">Angka kecil = tampil lebih dulu</small>
                     </div>
-                                            <div class="mb-3">
+                    <div class="mb-3">
                         <label class="form-label fw-bold">Status Akreditasi</label>
                         <select name="accreditation_status" id="accreditationSelect" class="form-select" onchange="toggleCustomAccreditation()">
                             <option value="A" <?= old('accreditation_status') == 'A' ? 'selected' : '' ?>>
@@ -135,20 +136,20 @@
                             <option value="Belum Terakreditasi" <?= old('accreditation_status') == 'Belum Terakreditasi' ? 'selected' : '' ?>>
                                 ⏳ Belum Terakreditasi
                             </option>
-                            
+
                             <?php if (!empty($existing_accreditations)) : ?>
                                 <optgroup label="─── Status Lainnya (Dari Data Sebelumnya) ───">
                                     <?php foreach ($existing_accreditations as $acc) : ?>
                                         <?php if (!in_array($acc['accreditation_status'], ['A', 'B', 'C', 'Belum Terakreditasi'])) : ?>
-                                            <option value="<?= esc($acc['accreditation_status']) ?>" 
-                                                    <?= old('accreditation_status') == $acc['accreditation_status'] ? 'selected' : '' ?>>
+                                            <option value="<?= esc($acc['accreditation_status']) ?>"
+                                                <?= old('accreditation_status') == $acc['accreditation_status'] ? 'selected' : '' ?>>
                                                 <?= esc($acc['accreditation_status']) ?>
                                             </option>
                                         <?php endif; ?>
                                     <?php endforeach; ?>
                                 </optgroup>
                             <?php endif; ?>
-                            
+
                             <option value="custom">✏️ Tambah Status Baru (Ketik Manual)</option>
                         </select>
                         <small class="text-muted">
@@ -156,18 +157,18 @@
                             Pilih "Tambah Status Baru" jika status tidak ada di list
                         </small>
                     </div>
-                    
+
                     <!-- Input Custom Akreditasi (Hidden by default) -->
                     <div class="mb-3" id="customAccreditationWrapper" style="display: none;">
                         <label class="form-label fw-bold text-primary">
                             <i class="bi bi-pencil-square me-2"></i>Ketik Status Akreditasi Baru
                         </label>
-                        <input type="text" 
-                               name="custom_accreditation" 
-                               id="customAccreditationInput"
-                               class="form-control form-control-lg" 
-                               placeholder="Contoh: Akreditasi A+ atau Unggul"
-                               value="<?= old('custom_accreditation') ?>">
+                        <input type="text"
+                            name="custom_accreditation"
+                            id="customAccreditationInput"
+                            class="form-control form-control-lg"
+                            placeholder="Contoh: Akreditasi A+ atau Unggul"
+                            value="<?= old('custom_accreditation') ?>">
                         <small class="text-muted">
                             <i class="bi bi-lightbulb me-1"></i>
                             Contoh: "Akreditasi A+", "Akreditasi Unggul", "Dalam Proses", dll
@@ -195,12 +196,12 @@
     function previewImage(event) {
         const file = event.target.files[0];
         const reader = new FileReader();
-        
+
         reader.onload = function(e) {
-            document.getElementById('imagePreview').innerHTML = 
+            document.getElementById('imagePreview').innerHTML =
                 '<img src="' + e.target.result + '" class="img-fluid rounded" style="max-height: 250px;">';
         }
-        
+
         if (file) {
             reader.readAsDataURL(file);
         }
@@ -209,23 +210,23 @@
     function previewImage(event) {
         const file = event.target.files[0];
         const reader = new FileReader();
-        
+
         reader.onload = function(e) {
-            document.getElementById('imagePreview').innerHTML = 
+            document.getElementById('imagePreview').innerHTML =
                 '<img src="' + e.target.result + '" class="img-fluid rounded" style="max-height: 250px;">';
         }
-        
+
         if (file) {
             reader.readAsDataURL(file);
         }
     }
-    
+
     // Toggle Custom Accreditation Input
     function toggleCustomAccreditation() {
         const select = document.getElementById('accreditationSelect');
         const wrapper = document.getElementById('customAccreditationWrapper');
         const input = document.getElementById('customAccreditationInput');
-        
+
         if (select.value === 'custom') {
             wrapper.style.display = 'block';
             input.required = true;
@@ -236,7 +237,7 @@
             input.value = '';
         }
     }
-    
+
     // Check on page load (jika ada old input)
     document.addEventListener('DOMContentLoaded', function() {
         toggleCustomAccreditation();

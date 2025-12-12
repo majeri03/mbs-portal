@@ -62,7 +62,7 @@ class Galleries extends BaseAdminController
             ->where('category !=', '')
             ->orderBy('category', 'ASC')
             ->findColumn('category');
-        
+
         // Kirim nilai filter ke view
         $data['currentSearch'] = $search;
         $data['currentCategory'] = $category;
@@ -85,31 +85,37 @@ class Galleries extends BaseAdminController
         $rules = [
             'title'    => 'required|min_length[3]',
             'category' => 'required',
-            'image'    => [
-                'rules' => 'uploaded[image]|max_size[image,1024]|is_image[image]|mime_in[image,image/jpg,image/jpeg,image/png,image/webp]',
+        ];
+
+        // Cek apakah ada file yang diupload
+        $file = $this->request->getFile('image');
+        if ($file && $file->isValid() && !$file->hasMoved()) {
+            $rules['image'] = [
+                'rules' => 'max_size[image,2048]|is_image[image]|mime_in[image,image/jpg,image/jpeg,image/png,image/webp]',
                 'errors' => [
-                    'uploaded' => 'Pilih foto galeri terlebih dahulu.',
-                    'max_size' => 'Ukuran foto terlalu besar (Maksimal 1 MB).',
+                    'max_size' => 'Ukuran foto terlalu besar (Maksimal 2 MB).',
                     'is_image' => 'File yang diupload bukan gambar valid.',
                     'mime_in'  => 'Hanya format JPG, PNG, atau WEBP yang diperbolehkan.'
                 ]
-            ]
-        ];
+            ];
+        } else {
+            return redirect()->back()->withInput()->with('error', 'Pilih foto galeri terlebih dahulu.');
+        }
 
         if (!$this->validate($rules)) {
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
 
-        // ✅ Upload & Resize dengan Helper
-        $file = $this->request->getFile('image');
+        // Upload & Resize dengan Helper
         $fileName = upload_and_resize_image($file, 'uploads/galleries/', 1200, 85);
-        
+
         if (!$fileName) {
-            return redirect()->back()->with('error', 'Gagal upload gambar.');
+            log_message('error', 'Gallery upload failed for file: ' . $file->getName());
+            return redirect()->back()->withInput()->with('error', 'Gagal upload gambar. Cek log untuk detail.');
         }
 
         $schoolId = $this->mySchoolId ? $this->mySchoolId : ($this->request->getPost('school_id') ?: null);
-        
+
         $this->galleryModel->save([
             'school_id' => $schoolId,
             'title'     => $this->request->getPost('title'),
@@ -144,40 +150,46 @@ class Galleries extends BaseAdminController
         $rules = [
             'title'    => 'required|min_length[3]',
             'category' => 'required',
-            'image'    => [
-                'rules' => 'permit_empty|max_size[image,1024]|is_image[image]|mime_in[image,image/jpg,image/jpeg,image/png,image/webp]',
+        ];
+
+        // Cek apakah ada file yang diupload
+        $file = $this->request->getFile('image');
+        if ($file && $file->isValid() && !$file->hasMoved()) {
+            $rules['image'] = [
+                'rules' => 'max_size[image,2048]|is_image[image]|mime_in[image,image/jpg,image/jpeg,image/png,image/webp]',
                 'errors' => [
-                    'max_size' => 'Ukuran foto terlalu besar (Maksimal 1 MB).',
+                    'max_size' => 'Ukuran foto terlalu besar (Maksimal 2 MB).',
                     'is_image' => 'File yang diupload bukan gambar valid.',
                     'mime_in'  => 'Hanya format JPG, PNG, atau WEBP yang diperbolehkan.'
                 ]
-            ]
-        ];
+            ];
+        }
 
         if (!$this->validate($rules)) {
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
 
         $imageUrl = $gallery['image_url'];
-        $file = $this->request->getFile('image');
 
-        // ✅ Cek jika ada gambar baru
+        // Cek jika ada gambar baru
         if ($file && $file->isValid() && !$file->hasMoved()) {
             // Hapus gambar lama
-            if (file_exists($gallery['image_url'])) {
-                unlink($gallery['image_url']);
+            if (!empty($gallery['image_url']) && file_exists(FCPATH . $gallery['image_url'])) {
+                @unlink(FCPATH . $gallery['image_url']);
             }
-            
+
             // Upload & resize gambar baru dengan Helper
             $fileName = upload_and_resize_image($file, 'uploads/galleries/', 1200, 85);
-            
+
             if ($fileName) {
                 $imageUrl = 'uploads/galleries/' . $fileName;
+            } else {
+                log_message('error', 'Gallery update failed for ID: ' . $id);
             }
         }
 
         $schoolId = $this->mySchoolId ? $this->mySchoolId : ($this->request->getPost('school_id') ?: null);
-        
+
         $this->galleryModel->update($id, [
             'school_id' => $schoolId,
             'title'     => $this->request->getPost('title'),
@@ -192,8 +204,8 @@ class Galleries extends BaseAdminController
     {
         $gallery = $this->filterBySchool($this->galleryModel)->find($id);
         if ($gallery) {
-            if (file_exists($gallery['image_url'])) {
-                unlink($gallery['image_url']);
+            if (!empty($gallery['image_url']) && file_exists(FCPATH . $gallery['image_url'])) {
+                @unlink(FCPATH . $gallery['image_url']);
             }
             $this->galleryModel->delete($id);
             return redirect()->to('admin/galleries')->with('success', 'Foto berhasil dihapus!');

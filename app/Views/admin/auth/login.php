@@ -205,26 +205,24 @@
             top: 20px;
             left: 50%;
             transform: translateX(-50%);
-            /* supaya di tengah */
             width: calc(100% - 40px);
-            /* 20px jarak kiri + 20px jarak kanan */
             max-width: 400px;
             min-width: auto;
             z-index: 9999;
-            animation: slideInRight 0.5s ease-out;
+            animation: slideInDown 0.5s ease-out;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
         }
 
-
-        @keyframes slideInRight {
+        @keyframes slideInDown {
             from {
                 opacity: 0;
-                transform: translateX(100%);
+                transform: translateX(-50%) translateY(-100%);
             }
 
             to {
                 opacity: 1;
-                transform: translateX(0);
+                transform: translateX(-50%) translateY(0);
             }
         }
 
@@ -312,13 +310,26 @@
                 font-size: 0.75rem;
             }
 
+            /* FIX: Reset position notifikasi untuk mobile */
             .alert-notification {
-                position: fixed;
                 top: 10px;
-                right: 10px;
                 left: 10px;
-                min-width: auto;
+                right: 10px;
+                width: auto;
                 max-width: 100%;
+                transform: none;
+            }
+
+            @keyframes slideInDown {
+                from {
+                    opacity: 0;
+                    transform: translateY(-100%);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
             }
         }
     </style>

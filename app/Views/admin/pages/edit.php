@@ -21,7 +21,9 @@
                 <form action="<?= base_url('admin/pages/update/' . $page['id']) ?>" method="POST">
                     <?= csrf_field() ?>
                     <div class="mb-4">
-                        <label class="form-label fw-bold text-dark">Kelompok Menu (Navbar)</label>
+                        <label class="form-label fw-bold text-dark">
+                            Kelompok Menu (Navbar) <i class="bi bi-info-circle text-muted" title="Halaman dengan nama menu sama akan dikelompokkan"></i>
+                        </label>
                         
                         <div class="input-group">
                             <span class="input-group-text bg-white text-purple"><i class="bi bi-menu-button-wide"></i></span>
@@ -29,40 +31,32 @@
                             <input type="text" 
                                    name="menu_title" 
                                    id="menuTitleInputEdit" 
-                                   class="form-control bg-light" 
+                                   class="form-control" 
                                    value="<?= old('menu_title', $page['menu_title']) ?>" 
-                                   required
-                                   autocomplete="off">
+                                   list="existingMenus"
+                                   placeholder="Ketik atau pilih menu..."
+                                   required>
                             
-                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Pilih
-                            </button>
-                            
-                            <ul class="dropdown-menu dropdown-menu-end shadow-sm" style="max-height: 200px; overflow-y: auto;">
-                                <li><h6 class="dropdown-header">Pindah ke Menu...</h6></li>
-                                
+                            <datalist id="existingMenus">
                                 <?php if (!empty($existingMenus)): ?>
                                     <?php foreach ($existingMenus as $menu): ?>
-                                        <li>
-                                            <button type="button" class="dropdown-item" onclick="selectMenuEdit('<?= esc($menu['menu_title']) ?>')">
-                                                <?= esc($menu['menu_title']) ?>
-                                            </button>
-                                        </li>
+                                        <option value="<?= esc($menu['menu_title']) ?>">
                                     <?php endforeach; ?>
                                 <?php else: ?>
-                                    <li><button type="button" class="dropdown-item" onclick="selectMenuEdit('Profil Sekolah')">Profil Sekolah</button></li>
-                                    <li><button type="button" class="dropdown-item" onclick="selectMenuEdit('Kesiswaan')">Kesiswaan</button></li>
+                                    <option value="Profil Sekolah">
+                                    <option value="Kesiswaan">
+                                    <option value="Akademik">
+                                    <option value="Sarana Prasarana">
                                 <?php endif; ?>
-                            </ul>
+                            </datalist>
                         </div>
-                        <small class="text-muted">Ubah nama ini untuk memindahkan halaman ke menu lain.</small>
+                        
+                        <small class="text-muted">
+                            <i class="bi bi-lightbulb"></i> 
+                            <strong>Tips:</strong> Ketik manual untuk membuat menu baru, atau pilih dari daftar untuk memindahkan ke menu yang sudah ada.
+                        </small>
                     </div>
 
-                    <script>
-                        function selectMenuEdit(value) {
-                            document.getElementById('menuTitleInputEdit').value = value;
-                        }
-                    </script>
                     <div class="mb-4">
                         <label class="form-label fw-bold text-dark">Judul Halaman</label>
                         <input type="text" name="title" class="form-control form-control-lg bg-light" value="<?= esc($page['title']) ?>" required>

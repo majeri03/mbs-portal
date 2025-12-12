@@ -6,9 +6,6 @@
     <a href="<?= base_url('admin/pages/create') ?>" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Halaman Baru</a>
 </div>
 
-<?php if (session()->getFlashdata('success')) : ?>
-    <div class="alert alert-success alert-dismissible fade show"><?= session()->getFlashdata('success') ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
-<?php endif; ?>
 
 <div class="card border-0 shadow-sm">
     <div class="card-body">
