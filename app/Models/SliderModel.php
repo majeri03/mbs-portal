@@ -12,10 +12,19 @@ class SliderModel extends Model
     protected $useTimestamps    = true;
 
     // Ambil slider aktif untuk landing page (urut berdasarkan order_position)
-    public function getActiveSliders()
+    public function getActiveSliders($schoolId = null)
     {
-        return $this->where('is_active', 1)
-                    ->orderBy('order_position', 'ASC')
-                    ->findAll();
+        $query = $this->where('is_active', 1);
+        
+        // Jika ada schoolId, ambil slider pusat (NULL) atau slider sekolah tertentu
+        if ($schoolId) {
+            $query->groupStart()
+                    ->where('school_id', null)
+                    ->orWhere('school_id', $schoolId)
+                ->groupEnd();
+        }
+        
+        return $query->orderBy('order_position', 'ASC')
+                     ->findAll();
     }
 }

@@ -105,9 +105,17 @@
         const btn = $(this);
         const id = btn.data('id');
         
-        $.post('<?= base_url('admin/sliders/toggle-status') ?>/' + id, function(response) {
-            if (response.status === 'success') {
+        $.ajax({
+            url: '<?= base_url('admin/sliders/toggle-status') ?>/' + id,
+            type: 'POST',
+            data: {
+                '<?= csrf_token() ?>': '<?= csrf_hash() ?>'
+            },
+            success: function(response) {
                 location.reload();
+            },
+            error: function(xhr) {
+                alert('Error: ' + xhr.status);
             }
         });
     });
