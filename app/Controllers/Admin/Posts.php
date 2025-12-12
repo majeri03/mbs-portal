@@ -60,29 +60,59 @@ class Posts extends BaseAdminController
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
 
+        // Pastikan folder upload ada
+        $uploadPath = FCPATH . 'uploads/posts/';
+        if (!is_dir($uploadPath)) {
+            mkdir($uploadPath, 0755, true);
+        }
+
         // Handle Upload Thumbnail
         $thumbnail = $this->request->getFile('thumbnail');
         $thumbnailName = null;
 
         if ($thumbnail->isValid() && !$thumbnail->hasMoved()) {
             $thumbnailName = $thumbnail->getRandomName();
-            // 1. Pindahkan file original dulu
-            $thumbnail->move('uploads/posts', $thumbnailName);
+            $thumbnail->move($uploadPath, $thumbnailName);
+            $filePath = $uploadPath . $thumbnailName;
 
-            // 2. KOMPRESI & RESIZE GAMBAR
-            // Path file yang baru diupload
-            $filePath = 'uploads/posts/' . $thumbnailName;
+            // ✅ RESIZE GAMBAR (Smart Fallback: ImageMagick → GD → Skip)
+            $resized = false;
 
-            // Panggil Service Image
-            $image = \Config\Services::image();
+            // Try ImageMagick first (Best for Heroku)
+            if (extension_loaded('imagick')) {
+                try {
+                    $image = \Config\Services::image('imagick');
+                    $image->withFile($filePath)
+                        ->resize(1024, 1024, true, 'width')
+                        ->save($filePath, 80);
+                    $resized = true;
+                } catch (\Exception $e) {
+                    log_message('warning', 'ImageMagick resize failed: ' . $e->getMessage());
+                }
+            }
 
-            $image->withFile($filePath)
-                ->resize(1024, 1024, true, 'width') // Resize proporsional max lebar 1024px
-                ->save($filePath, 80); // Simpan dengan kualitas 80% (Kompresi)
+            // Fallback to GD if ImageMagick not available
+            if (!$resized && extension_loaded('gd')) {
+                try {
+                    $image = \Config\Services::image('gd');
+                    $image->withFile($filePath)
+                        ->resize(1024, 1024, true, 'width')
+                        ->save($filePath, 80);
+                    $resized = true;
+                } catch (\Exception $e) {
+                    log_message('warning', 'GD resize failed: ' . $e->getMessage());
+                }
+            }
+
+            // Log result
+            if (!$resized) {
+                log_message('info', 'Image uploaded without resize (handlers unavailable)');
+            }
         }
 
         $slug = url_title($this->request->getPost('title'), '-', true);
         $schoolId = $this->mySchoolId ? $this->mySchoolId : ($this->request->getPost('school_id') ?: null);
+
         $this->postModel->save([
             'school_id'    => $schoolId,
             'title'        => $this->request->getPost('title'),
@@ -93,7 +123,7 @@ class Posts extends BaseAdminController
             'is_published' => 1,
         ]);
 
-        return redirect()->to('admin/posts')->with('success', 'Berita berhasil ditambahkan & gambar dikompres!');
+        return redirect()->to('admin/posts')->with('success', 'Berita berhasil ditambahkan!');
     }
 
     // Halaman Form Edit Berita

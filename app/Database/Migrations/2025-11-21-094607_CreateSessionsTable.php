@@ -26,7 +26,7 @@ class CreateSessionsTable extends Migration
                 'default'  => 0,
             ],
             'data' => [
-                'type' => 'TEXT',
+                'type' => 'BLOB',
                 'null' => false,
             ],
         ]);
