@@ -22,40 +22,76 @@
                     <?= csrf_field() ?>
                     <div class="mb-4">
                         <label class="form-label fw-bold text-dark">
-                            Kelompok Menu (Navbar) <i class="bi bi-info-circle text-muted" title="Halaman dengan nama menu sama akan dikelompokkan"></i>
+                            Kelompok Menu (Navbar)
+                            <span class="badge bg-info ms-2">
+                                <i class="bi bi-info-circle"></i> Halaman dengan nama menu sama akan dikelompokkan
+                            </span>
                         </label>
-                        
+
                         <div class="input-group">
-                            <span class="input-group-text bg-white text-purple"><i class="bi bi-menu-button-wide"></i></span>
-                            
-                            <input type="text" 
-                                   name="menu_title" 
-                                   id="menuTitleInputEdit" 
-                                   class="form-control" 
-                                   value="<?= old('menu_title', $page['menu_title']) ?>" 
-                                   list="existingMenus"
-                                   placeholder="Ketik atau pilih menu..."
-                                   required>
-                            
-                            <datalist id="existingMenus">
+                            <span class="input-group-text bg-white text-purple">
+                                <i class="bi bi-menu-button-wide"></i>
+                            </span>
+
+                            <input type="text"
+                                name="menu_title"
+                                id="menuTitleInputEdit"
+                                class="form-control"
+                                value="<?= old('menu_title', $page['menu_title']) ?>"
+                                placeholder="Ketik atau pilih dari dropdown..."
+                                required>
+
+                            <button class="btn btn-outline-primary dropdown-toggle"
+                                type="button"
+                                data-bs-toggle="dropdown">
+                                <i class="bi bi-list-ul"></i> Pilih Menu
+                            </button>
+
+                            <ul class="dropdown-menu dropdown-menu-end shadow" style="max-height: 300px; overflow-y: auto; min-width: 250px;">
+                                <li>
+                                    <h6 class="dropdown-header text-purple"><i class="bi bi-folder2-open me-2"></i>Pindah ke Menu Lain:</h6>
+                                </li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+
                                 <?php if (!empty($existingMenus)): ?>
                                     <?php foreach ($existingMenus as $menu): ?>
-                                        <option value="<?= esc($menu['menu_title']) ?>">
+                                        <li>
+                                            <button type="button"
+                                                class="dropdown-item <?= ($menu['menu_title'] == $page['menu_title']) ? 'active' : '' ?>"
+                                                onclick="selectMenuEdit('<?= esc($menu['menu_title'], 'js') ?>')">
+                                                <i class="bi bi-arrow-return-right me-2"></i>
+                                                <?= esc($menu['menu_title']) ?>
+                                                <?php if ($menu['menu_title'] == $page['menu_title']): ?>
+                                                    <span class="badge bg-success ms-2">Saat Ini</span>
+                                                <?php endif; ?>
+                                            </button>
+                                        </li>
                                     <?php endforeach; ?>
                                 <?php else: ?>
-                                    <option value="Profil Sekolah">
-                                    <option value="Kesiswaan">
-                                    <option value="Akademik">
-                                    <option value="Sarana Prasarana">
+                                    <li><button type="button" class="dropdown-item" onclick="selectMenuEdit('Profil Sekolah')">Profil Sekolah</button></li>
+                                    <li><button type="button" class="dropdown-item" onclick="selectMenuEdit('Kesiswaan')">Kesiswaan</button></li>
+                                    <li><button type="button" class="dropdown-item" onclick="selectMenuEdit('Akademik')">Akademik</button></li>
                                 <?php endif; ?>
-                            </datalist>
+
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li class="px-3 py-2 bg-light">
+                                    <small class="text-muted">
+                                        <i class="bi bi-lightbulb"></i> Atau ketik manual untuk membuat menu baru
+                                    </small>
+                                </li>
+                            </ul>
                         </div>
-                        
-                        <small class="text-muted">
-                            <i class="bi bi-lightbulb"></i> 
-                            <strong>Tips:</strong> Ketik manual untuk membuat menu baru, atau pilih dari daftar untuk memindahkan ke menu yang sudah ada.
-                        </small>
                     </div>
+
+                    <script>
+                        function selectMenuEdit(value) {
+                            document.getElementById('menuTitleInputEdit').value = value;
+                        }
+                    </script>
 
                     <div class="mb-4">
                         <label class="form-label fw-bold text-dark">Judul Halaman</label>
@@ -70,7 +106,7 @@
                         <div class="col-md-6">
                             <label class="form-label fw-bold text-dark">Milik Sekolah</label>
                             <?php if (empty($currentSchoolId)) : ?>
-                                <select name="school_id" class="form-select">
+                                <select name="school_id" id="schoolSelectEdit" class="form-select" onchange="toggleFeaturedOptionEdit()">
                                     <option value="">-- Web Utama / Yayasan --</option>
                                     <?php foreach ($schools as $s) : ?>
                                         <option value="<?= $s['id'] ?>" <?= ($page['school_id'] == $s['id']) ? 'selected' : '' ?>>
@@ -89,26 +125,38 @@
                                 }
                                 ?>
                                 <input type="text" class="form-control bg-light" value="<?= esc($schoolName) ?>" readonly disabled>
-                                <input type="hidden" name="school_id" value="<?= $currentSchoolId ?>">
+                                <input type="hidden" name="school_id" id="schoolSelectEdit" value="<?= $currentSchoolId ?>">
                                 <small class="text-success fw-bold"><i class="bi bi-check-circle-fill"></i> Milik <?= esc($schoolName) ?></small>
                             <?php endif; ?>
                         </div>
 
                         <div class="col-md-6">
-                            <label class="form-label fw-bold text-dark">Opsi Tampilan</label>
-                            <div class="p-3 border rounded bg-light d-flex align-items-start">
-                                <div class="form-check form-switch me-3">
-                                    <input class="form-check-input" type="checkbox" style="width: 3em; height: 1.5em; cursor: pointer;" name="is_featured" value="1" id="isFeatured" <?= (isset($page) && $page['is_featured'] == 1) ? 'checked' : '' ?>>
-                                </div>
+                            <!-- Opsi Tampilan - Dinamis berdasarkan dropdown -->
+                            <div id="featuredOptionDivEdit">
+                                <label class="form-label fw-bold text-dark">Opsi Tampilan</label>
+                                <div class="p-3 border rounded bg-light d-flex align-items-start">
+                                    <div class="form-check form-switch me-3">
+                                        <input class="form-check-input" type="checkbox" style="width: 3em; height: 1.5em; cursor: pointer;" name="is_featured" value="1" id="isFeatured" <?= (isset($page) && $page['is_featured'] == 1) ? 'checked' : '' ?>>
+                                    </div>
 
-                                <div>
-                                    <label class="form-check-label fw-bold text-purple cursor-pointer mb-1" for="isFeatured" style="font-size: 1rem;">
-                                        Tampilkan di Landing Page?
-                                    </label>
-                                    <small class="d-block text-muted lh-sm">
-                                        Aktifkan ini untuk menjadikan halaman ini sebagai <strong>Konten Utama (Profil/Tentang Kami)</strong> di halaman depan sekolah.
-                                    </small>
+                                    <div>
+                                        <label class="form-check-label fw-bold text-purple cursor-pointer mb-1" for="isFeatured" style="font-size: 1rem;">
+                                            Tampilkan di Landing Page?
+                                        </label>
+                                        <small class="d-block text-muted lh-sm">
+                                            Aktifkan ini untuk menjadikan halaman ini sebagai <strong>Konten Utama (Profil/Tentang Kami)</strong> di halaman depan sekolah.
+                                        </small>
+                                    </div>
                                 </div>
+                            </div>
+
+                            <!-- Info untuk Web Utama -->
+                            <div id="mainWebInfoDivEdit" style="display: none;">
+                                <div class="alert alert-info mb-0">
+                                    <i class="bi bi-info-circle me-2"></i>
+                                    <strong>Info:</strong> Halaman web utama/yayasan tidak ditampilkan di landing page. Akses melalui menu navigasi.
+                                </div>
+                                <input type="hidden" name="is_featured" value="0">
                             </div>
                         </div>
                     </div>
@@ -161,7 +209,27 @@
         $('.note-editable').css('background-color', '#fff').css('color', '#333');
         $('.note-toolbar').css('background-color', '#f8f9fa');
     });
+    // Toggle Featured Option berdasarkan dropdown sekolah
+    function toggleFeaturedOptionEdit() {
+        const schoolSelect = document.getElementById('schoolSelectEdit');
+        const featuredDiv = document.getElementById('featuredOptionDivEdit');
+        const mainWebInfoDiv = document.getElementById('mainWebInfoDivEdit');
 
+        if (schoolSelect.value === '') {
+            // Web Utama dipilih - hide checkbox, show info
+            featuredDiv.style.display = 'none';
+            mainWebInfoDiv.style.display = 'block';
+        } else {
+            // Sekolah dipilih - show checkbox, hide info
+            featuredDiv.style.display = 'block';
+            mainWebInfoDiv.style.display = 'none';
+        }
+    }
+
+    // Jalankan saat halaman load
+    document.addEventListener('DOMContentLoaded', function() {
+        toggleFeaturedOptionEdit();
+    });
     /**
      * Fungsi untuk Mengompres Gambar di Browser
      * @param {File} file - File gambar asli

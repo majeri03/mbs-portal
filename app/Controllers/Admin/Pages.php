@@ -113,4 +113,42 @@ class Pages extends BaseAdminController
         }
         return redirect()->to('admin/pages')->with('error', 'Halaman tidak ditemukan atau akses ditolak.');
     }
+    // Rename menu
+    public function renameMenu()
+    {
+        $oldName = $this->request->getPost('old_menu_name');
+        $newName = $this->request->getPost('new_menu_name');
+
+        if (empty($newName) || strlen($newName) < 3) {
+            return redirect()->back()->with('error', 'Nama menu minimal 3 karakter.');
+        }
+
+        $builder = $this->filterBySchool($this->pageModel)->where('menu_title', $oldName);
+        $builder->set(['menu_title' => $newName])->update();
+
+        return redirect()->to('admin/pages')->with('success', "Menu \"$oldName\" berhasil diubah menjadi \"$newName\"!");
+    }
+
+    // Delete menu
+    public function deleteMenu()
+    {
+        $menuName = $this->request->getPost('menu_name');
+        $action = $this->request->getPost('action');
+        $targetMenu = $this->request->getPost('target_menu');
+
+        $builder = $this->filterBySchool($this->pageModel)->where('menu_title', $menuName);
+        $pages = $builder->findAll();
+
+        if ($action === 'move' && !empty($targetMenu)) {
+            foreach ($pages as $p) {
+                $this->pageModel->update($p['id'], ['menu_title' => $targetMenu]);
+            }
+            return redirect()->to('admin/pages')->with('success', "Menu \"$menuName\" dihapus. Halaman dipindahkan ke \"$targetMenu\".");
+        } else {
+            foreach ($pages as $p) {
+                $this->pageModel->delete($p['id']);
+            }
+            return redirect()->to('admin/pages')->with('success', "Menu \"$menuName\" dan semua halamannya berhasil dihapus!");
+        }
+    }
 }

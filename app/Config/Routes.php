@@ -171,7 +171,8 @@ $routes->group('admin', function ($routes) {
     $routes->get('pages/edit/(:num)', 'Admin\Pages::edit/$1');
     $routes->post('pages/update/(:num)', 'Admin\Pages::update/$1');
     $routes->get('pages/delete/(:num)', 'Admin\Pages::delete/$1');
-
+    $routes->post('pages/renameMenu', 'Admin\Pages::renameMenu');
+$routes->post('pages/deleteMenu', 'Admin\Pages::deleteMenu');
     // CRUD Programs Pendidikan
     $routes->get('programs', 'Admin\Programs::index');
     $routes->get('programs/create', 'Admin\Programs::create');

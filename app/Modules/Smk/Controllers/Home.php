@@ -26,7 +26,7 @@ class Home extends BaseSmkController
         // Masukkan data ke variabel $this->data (warisan dari BaseSmkController)
         $this->data['title'] = "Beranda - " . $this->data['school']['name'];
 
-        $data['sliders'] = $this->sliderModel->getActiveSliders($this->schoolId);
+        $this->data['sliders'] = $sliderModel->where('school_id', $this->schoolId)->where('is_active', 1)->orderBy('order_position', 'ASC')->findAll();
         $today = date('Y-m-d');
         $this->data['announcements'] = $annoModel->groupStart()
             ->where('school_id', $this->schoolId) // Khusus MTs
