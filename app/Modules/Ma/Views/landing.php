@@ -222,17 +222,51 @@
     }
 
     /* Mobile Responsive */
+    /* --- PERBAIKAN RESPONSIVE MOBILE (HP) --- */
     @media (max-width: 768px) {
-        .hero-section,
-        .swiper-slide {
+        
+        /* 1. Fix Renggang Putih di Atas */
+        .hero-section {
+            margin-top: 0 !important; /* Hapus jarak luar atas */
+            padding-top: 0 !important; /* Hapus jarak dalam atas container */
+        }
+        
+        /* 2. Fix Tombol Tenggelam (Kasih Ruang Bawah Lebih Besar) */
+        .heroSwiper .swiper-slide {
             height: auto !important;
             min-height: auto !important;
             
-            /* Padding atas biar ga ketabrak menu */
-            padding-top: 150px !important; 
+            /* Jarak teks dari atas (agar tidak ketutup Navbar) */
+            padding-top: 120px !important; 
             
-            /* Padding bawah besar biar ga ketabrak kartu program di bawahnya */
-            padding-bottom: 10px !important; 
+            /* Jarak Bawah EKSTRA BESAR (KUNCI AGAR TOMBOL NAIK) */
+            /* Kita kasih 300px biar aman dari kartu yang menimpa */
+            padding-bottom: 300px !important; 
+            
+            /* Pastikan background cover penuh */
+            background-size: cover !important;
+            background-position: center top !important;
+        }
+
+        /* 3. Atur Posisi Konten Teks */
+        .hero-content-flex {
+            height: auto !important;
+            justify-content: flex-start !important; /* Mulai dari atas */
+        }
+
+        /* Ukuran Font Judul di HP */
+        .hero-title,
+        .slider-title-jenjang {
+            font-size: 1.8rem !important; /* Kecilkan dikit biar muat */
+            line-height: 1.3;
+            margin-bottom: 15px;
+        }
+
+        /* Tombol di HP */
+        .btn-hero {
+            padding: 10px 25px !important;
+            font-size: 0.9rem !important;
+            margin-top: 10px;
         }
     }
 
