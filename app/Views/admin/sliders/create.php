@@ -32,7 +32,21 @@
                         <input type="text" name="title" class="form-control form-control-lg" value="<?= old('title') ?>" placeholder="Contoh: Membangun Generasi Qur'ani" required>
                         <small class="text-muted">Judul utama yang tampil di hero slider</small>
                     </div>
-                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">
+                            Teks Badge 
+                            <span class="badge bg-secondary small ms-1">Opsional</span>
+                        </label>
+                        <input type="text" 
+                               name="badge_text" 
+                               class="form-control" 
+                               value="<?= old('badge_text') ?>" 
+                               placeholder="Contoh: PPDB 2025, PENGUMUMAN, PRESTASI">
+                        <small class="text-muted">
+                            <i class="bi bi-info-circle me-1"></i>
+                            Kosongkan untuk menggunakan nama site otomatis
+                        </small>
+                    </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold">Deskripsi</label>
                         <textarea name="description" class="form-control" rows="4" placeholder="Deskripsi singkat di bawah judul..."><?= old('description') ?></textarea>

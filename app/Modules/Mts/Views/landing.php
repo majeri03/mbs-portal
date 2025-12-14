@@ -407,7 +407,7 @@
                                 <div class="col-lg-10">
 
                                     <span class="badge bg-white text-purple px-3 py-2 rounded-pill mb-3 fw-bold shadow-sm animate__animated animate__fadeInDown">
-                                        <?= esc($school['name']) ?>
+                                        <?= esc($slide['badge_text'] ?? $school['name']) ?>
                                     </span>
 
                                     <h1 class="display-4 fw-bold text-white mb-4 hero-title animate__animated animate__fadeInUp">

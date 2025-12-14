@@ -25,7 +25,7 @@
                                 <div class="row">
                                     <div class="col-lg-8">
                                         <span class="badge bg-white text-dark text-uppercase mb-3 px-3 py-2 fw-bold ls-2">
-                                            MBS Boarding School
+                                            <?= esc($slider['badge_text'] ?? $site['site_name'] ?? 'MBS Boarding School') ?>
                                         </span>
                                         <h1 class="display-3 fw-bold mb-4 animate__animated animate__fadeInUp">
                                             <?= esc($slider['title']) ?>
