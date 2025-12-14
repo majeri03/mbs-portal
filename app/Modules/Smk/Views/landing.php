@@ -93,6 +93,76 @@
         position: relative;
     }
 
+    .hero-content-flex {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        max-height: calc(85vh - 150px);
+        padding: 0;
+    }
+
+    .hero-content-flex .badge {
+        align-self: center;
+        /* ← Center badge */
+    }
+
+    /* Batasi tinggi judul slider */
+    .slider-title-jenjang {
+        max-height: 200px;
+        overflow: hidden;
+        display: -webkit-box;
+        line-clamp: 3;
+        /* Maksimal 3 baris */
+        -webkit-box-orient: vertical;
+        line-height: 1.2;
+    }
+
+    /* Batasi tinggi deskripsi slider */
+    .slider-desc-jenjang {
+        max-width: 700px;
+        max-height: 140px;
+        overflow: hidden;
+        display: -webkit-box;
+        line-clamp: 4;
+        /* Maksimal 4 baris */
+        -webkit-box-orient: vertical;
+        line-height: 1.6;
+    }
+
+    /* Mobile Responsive - Update yang sudah ada */
+    @media (max-width: 768px) {
+
+        .hero-section,
+        .swiper-slide {
+            height: auto;
+            min-height: 500px;
+            padding-bottom: 50px;
+        }
+
+        .hero-title,
+        .slider-title-jenjang {
+            font-size: 2rem !important;
+            max-height: 130px;
+            line-clamp: 2;
+        }
+
+        .slider-desc-jenjang {
+            font-size: 0.95rem !important;
+            max-height: 100px;
+            line-clamp: 3;
+        }
+
+        .btn-hero {
+            padding: 0.75rem 2rem !important;
+            font-size: 0.9rem !important;
+        }
+
+        .hero-content-flex {
+            max-height: calc(500px - 100px);
+        }
+    }
+
     .heroSwiper .swiper-slide {
         height: 85vh;
         min-height: 600px;
@@ -181,9 +251,9 @@
     @media (min-width: 992px) {
         .hero-content-wrapper {
             /* Jarak dari Navbar */
-            padding-top: 180px;
+            padding-top: 100px;
             /* Ruang kosong di bawah untuk ditimpa kartu */
-            padding-bottom: 180px;
+            padding-bottom: 100px;
             min-height: 90vh;
         }
 
@@ -203,7 +273,7 @@
     @media (max-width: 991px) {
         .hero-content-wrapper {
             padding-top: 40px;
-            padding-bottom: 80px;
+            padding-bottom: 60px;
             min-height: 450px;
 
         }
@@ -213,13 +283,13 @@
         }
 
         .row.h-100.align-items-start {
-            padding-top: 8vh !important;
+            padding-top: 5vh !important;
         }
 
         .floating-section {
             /* 3. EFEK MENIMPA: */
             /* Tarik kartu ke atas menutupi padding-bottom gambar tadi */
-            margin-top: -100px !important;
+            margin-top: -80px !important;
             position: relative;
             z-index: 20;
             /* Layer paling atas */
@@ -388,8 +458,6 @@
     .cursor-pointer {
         cursor: pointer;
     }
-
-    
 </style>
 
 <section class="hero-section position-relative overflow-hidden pb-5">
@@ -403,32 +471,34 @@
                         <div class="hero-overlay"></div>
 
                         <div class="container h-100 position-relative z-2">
-                            <div class="row h-100 align-items-start justify-content-center text-center" style="padding-top: 20vh;">
+                            <div class="row h-100 align-items-center justify-content-center text-center">
                                 <div class="col-lg-10">
+                                    <div class="hero-content-flex">
 
-                                    <span class="badge bg-white text-purple px-3 py-2 rounded-pill mb-3 fw-bold shadow-sm animate__animated animate__fadeInDown">
-                                        <?= esc($slide['badge_text'] ?? $school['name']) ?>
-                                    </span>
+                                        <span class="badge bg-white text-purple px-3 py-2 rounded-pill mb-3 fw-bold shadow-sm animate__animated animate__fadeInDown">
+                                            <?= esc($slide['badge_text'] ?? $school['name']) ?>
+                                        </span>
 
-                                    <h1 class="display-4 fw-bold text-white mb-4 hero-title animate__animated animate__fadeInUp">
-                                        <?= esc($slide['title']) ?>
-                                    </h1>
+                                        <h1 class="display-4 fw-bold text-white mb-3 hero-title slider-title-jenjang animate__animated animate__fadeInUp">
+                                            <?= esc($slide['title']) ?>
+                                        </h1>
 
-                                    <?php if (!empty($slide['description'])): ?>
-                                        <p class="lead text-white opacity-90 mb-5 mx-auto hero-desc animate__animated animate__fadeInUp animate__delay-1s" style="max-width: 700px;">
-                                            <?= esc($slide['description']) ?>
-                                        </p>
-                                    <?php endif; ?>
+                                        <?php if (!empty($slide['description'])): ?>
+                                            <p class="lead text-white opacity-90 mb-4 mx-auto hero-desc slider-desc-jenjang animate__animated animate__fadeInUp animate__delay-1s">
+                                                <?= esc($slide['description']) ?>
+                                            </p>
+                                        <?php endif; ?>
 
-                                    <?php if (!empty($slide['button_text'])): ?>
-                                        <div class="d-flex justify-content-center gap-3 animate__animated animate__fadeInUp animate__delay-2s">
-                                            <a href="<?= esc($slide['button_link']) ?>" class="btn btn-light btn-lg rounded-pill px-5 fw-bold text-purple shadow-lg btn-hero">
-                                                <?= esc($slide['button_text']) ?>
-                                                <i class="bi bi-arrow-right ms-2"></i>
-                                            </a>
-                                        </div>
-                                    <?php endif; ?>
+                                        <?php if (!empty($slide['button_text'])): ?>
+                                            <div class="d-flex justify-content-center gap-3 animate__animated animate__fadeInUp animate__delay-2s">
+                                                <a href="<?= esc($slide['button_link']) ?>" class="btn btn-light btn-lg rounded-pill px-5 fw-bold text-purple shadow-lg btn-hero">
+                                                    <?= esc($slide['button_text']) ?>
+                                                    <i class="bi bi-arrow-right ms-2"></i>
+                                                </a>
+                                            </div>
+                                        <?php endif; ?>
 
+                                    </div>
                                 </div>
                             </div>
                         </div>

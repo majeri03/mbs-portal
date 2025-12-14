@@ -12,54 +12,55 @@
         <div class="swiper-wrapper">
             <?php if (!empty($sliders)) : ?>
                 <?php foreach ($sliders as $slider) : ?>
-                    <div class="swiper-slide">
-                        <!-- Background Image -->
-                        <div class="hero-slide position-relative d-flex align-items-center text-white"
-                            style="min-height: 85vh; 
-                                    padding-bottom: 150px;
-                                    background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.7)), 
-                                                url('<?= get_image_url($slider['image_url']) ?>') no-repeat center center/cover;">
+                   <div class="swiper-slide">
+                    <!-- Background Image -->
+                    <div class="hero-slide position-relative d-flex align-items-center text-white"
+                        style="min-height: 85vh; 
+                                background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.7)), 
+                                            url('<?= get_image_url($slider['image_url']) ?>') no-repeat center center/cover;">
 
-                            <!-- Content -->
-                            <div class="container position-relative z-index-1" style="padding-top: 80px;">
-                                <div class="row">
-                                    <div class="col-lg-8">
-                                        <span class="badge bg-white text-dark text-uppercase mb-3 px-3 py-2 fw-bold ls-2">
-                                            <?= esc($slider['badge_text'] ?? $site['site_name'] ?? 'MBS Boarding School') ?>
-                                        </span>
-                                        <h1 class="display-3 fw-bold mb-4 animate__animated animate__fadeInUp">
-                                            <?= esc($slider['title']) ?>
-                                        </h1>
-                                        <?php if (!empty($slider['description'])) : ?>
-                                            <p class="lead mb-5 text-light opacity-90 w-75 animate__animated animate__fadeInUp animate__delay-1s">
-                                                <?= esc($slider['description']) ?>
-                                            </p>
-                                        <?php endif; ?>
+                        <!-- Content -->
+                        <div class="container position-relative z-index-1">
+                            <div class="row">
+                                <div class="col-lg-8">
+                                    <span class="badge bg-white text-dark text-uppercase mb-3 px-3 py-2 fw-bold ls-2">
+                                        <?= esc($slider['badge_text'] ?? $site['site_name'] ?? 'MBS Boarding School') ?>
+                                    </span>
+                                    <h1 class="display-3 fw-bold mb-3 animate__animated animate__fadeInUp slider-title">
+                                        <?= esc($slider['title']) ?>
+                                    </h1>
+                                    <?php if (!empty($slider['description'])) : ?>
+                                        <p class="lead mb-4 text-light opacity-90 animate__animated animate__fadeInUp animate__delay-1s slider-description">
+                                            <?= esc($slider['description']) ?>
+                                        </p>
+                                    <?php endif; ?>
 
-                                        <?php if (!empty($slider['button_text']) && !empty($slider['button_link'])) : ?>
-                                            <?php
-                                            // Cek apakah link external (http/https) atau internal (#)
-                                            $isExternal = (strpos($slider['button_link'], 'http://') === 0 || strpos($slider['button_link'], 'https://') === 0);
-                                            $targetBlank = $isExternal ? 'target="_blank" rel="noopener noreferrer"' : '';
-                                            ?>
+                                    <?php if (!empty($slider['button_text']) && !empty($slider['button_link'])) : ?>
+                                        <?php
+                                        $isExternal = (strpos($slider['button_link'], 'http://') === 0 || strpos($slider['button_link'], 'https://') === 0);
+                                        $targetBlank = $isExternal ? 'target="_blank" rel="noopener noreferrer"' : '';
+                                        ?>
+                                        <div class="mt-3">
                                             <a href="<?= esc($slider['button_link']) ?>"
                                                 <?= $targetBlank ?>
                                                 class="btn btn-light btn-lg px-5 py-3 rounded-pill fw-bold animate__animated animate__fadeInUp animate__delay-2s">
                                                 <?= esc($slider['button_text']) ?>
                                                 <i class="bi bi-arrow-right ms-2"></i>
                                             </a>
-                                        <?php endif; ?>
-                                    </div>
+                                        </div>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
                 <?php endforeach; ?>
             <?php else : ?>
                 <!-- Default Slide jika database kosong -->
                 <div class="swiper-slide">
                     <div class="hero-slide position-relative d-flex align-items-center text-white"
                         style="min-height: 85vh; 
+                                padding: 120px 0 80px;
                                 background: linear-gradient(to bottom, rgba(47, 63, 88, 0.8), rgba(61, 31, 92, 0.9));">
                         <div class="container text-center">
                             <h1 class="display-3 fw-bold mb-4">Selamat Datang di MBS</h1>
@@ -69,10 +70,6 @@
                 </div>
             <?php endif; ?>
         </div>
-
-        <!-- Navigation Buttons -->
-        <!-- <div class="swiper-button-next"></div>
-        <div class="swiper-button-prev"></div> -->
 
         <!-- Pagination Dots -->
         <div class="swiper-pagination"></div>
@@ -613,6 +610,57 @@
         display: flex;
         align-items: center;
         justify-content: center;
+    }
+
+    /* Batasi tinggi title agar tidak terlalu panjang */
+    .slider-title {
+        max-height: 180px;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        line-clamp: 3;
+        /* Maksimal 3 baris */
+        -webkit-box-orient: vertical;
+        line-height: 1.2;
+    }
+
+    /* Batasi tinggi description */
+    .slider-description {
+        max-height: 120px;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        line-clamp: 3;
+        /* Maksimal 3 baris */
+        -webkit-box-orient: vertical;
+        line-height: 1.6;
+    }
+
+    /* Responsive Mobile */
+    @media (max-width: 991px) {
+        .hero-slide {
+            min-height: 70vh !important;
+            padding: 100px 0 60px !important;
+        }
+
+        .slider-title {
+            font-size: 2rem !important;
+            max-height: 150px;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+        }
+
+        .slider-description {
+            font-size: 1rem !important;
+            max-height: 100px;
+            -webkit-line-clamp: 3;
+            line-clamp: 3;
+        }
+
+        .hero-slide .btn {
+            padding: 0.75rem 2rem !important;
+            font-size: 0.9rem !important;
+        }
     }
 
     /* Hilangkan panah navigasi (jika masih muncul) */
