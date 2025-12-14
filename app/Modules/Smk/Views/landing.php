@@ -622,7 +622,7 @@
                                 <div class="row g-0">
                                     <div class="col-md-4 position-relative">
                                         <div class="h-100" style="min-height: 200px;">
-                                            <img src="<?= base_url($n['thumbnail']) ?>"
+                                            <img src="<?= get_image_url($n['thumbnail'], 'https://placehold.co/600x400/eee/999?text=No+Image') ?>"
                                                 class="w-100 h-100 object-fit-cover position-absolute top-0 start-0"
                                                 alt="<?= esc($n['title']) ?>"
                                                 onerror="this.src='https://placehold.co/600x400/eee/999?text=No+Image'">
