@@ -834,9 +834,9 @@
 
                     <div class="<?= $colClass ?>">
                         <div class="gallery-card position-relative overflow-hidden rounded-4 shadow-sm h-100 cursor-pointer"
-                            onclick="openGalleryModal('<?= base_url($g['image_url']) ?>', '<?= esc($g['title']) ?>', '<?= esc(ucfirst($g['category'])) ?>')">
+                            onclick="openGalleryModal('<?= get_image_url($g['image_url']) ?>', '<?= esc($g['title']) ?>', '<?= esc(ucfirst($g['category'])) ?>')">
 
-                            <img src="<?= base_url($g['image_url']) ?>"
+                            <img src="<?= get_image_url($g['image_url']) ?>"
                                 class="w-100 h-100 object-fit-cover transition-transform"
                                 style="min-height: <?= $heightClass ?>;"
                                 alt="<?= esc($g['title']) ?>"
