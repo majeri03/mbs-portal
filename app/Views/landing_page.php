@@ -15,7 +15,7 @@
                    <div class="swiper-slide">
                     <!-- Background Image -->
                     <div class="hero-slide position-relative d-flex align-items-center text-white"
-                        style="min-height: 85vh; 
+                        style="min-height: 85vh; padding-bottom: 120px;
                                 background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.7)), 
                                             url('<?= get_image_url($slider['image_url']) ?>') no-repeat center center/cover;">
 
@@ -614,47 +614,37 @@
 
     /* Batasi tinggi title agar tidak terlalu panjang */
     .slider-title {
-        max-height: 180px;
-        overflow: hidden;
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        line-clamp: 3;
-        /* Maksimal 3 baris */
-        -webkit-box-orient: vertical;
+        height: auto;
+        overflow: visible;
+        display: block;
+        /* Hapus line-clamp agar semua teks muncul */
         line-height: 1.2;
     }
 
     /* Batasi tinggi description */
     .slider-description {
-        max-height: 120px;
-        overflow: hidden;
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        line-clamp: 3;
-        /* Maksimal 3 baris */
-        -webkit-box-orient: vertical;
+        height: auto;
+        overflow: visible;
+        display: block;
         line-height: 1.6;
     }
 
     /* Responsive Mobile */
     @media (max-width: 991px) {
         .hero-slide {
-            min-height: 70vh !important;
-            padding: 100px 0 60px !important;
+            /* Ubah min-height jadi auto atau kecil, biar ngikutin konten */
+            min-height: auto !important; 
+            padding: 150px 0 100px !important; /* Padding besar biar ga ketutup menu */
         }
 
         .slider-title {
             font-size: 2rem !important;
-            max-height: 150px;
-            -webkit-line-clamp: 2;
-            line-clamp: 2;
+            height: auto; /* Biarkan bebas */
         }
 
         .slider-description {
             font-size: 1rem !important;
-            max-height: 100px;
-            -webkit-line-clamp: 3;
-            line-clamp: 3;
+            height: auto; /* Biarkan bebas */
         }
 
         .hero-slide .btn {
