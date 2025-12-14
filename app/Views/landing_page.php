@@ -18,7 +18,7 @@
                             style="min-height: 85vh; 
                                     padding-bottom: 150px;
                                     background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.7)), 
-                                                url('<?= base_url($slider['image_url']) ?>') no-repeat center center/cover;">
+                                                url('<?= get_image_url($slider['image_url']) ?>') no-repeat center center/cover;">
 
                             <!-- Content -->
                             <div class="container position-relative z-index-1" style="padding-top: 80px;">

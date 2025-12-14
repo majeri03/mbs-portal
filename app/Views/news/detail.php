@@ -22,7 +22,7 @@
                 <span><i class="bi bi-eye me-1"></i> <?= $post['views'] ?>x dilihat</span>
             </div>
 
-            <img src="<?= base_url($post['thumbnail']) ?>" class="w-100 rounded-4 mb-4 shadow-sm" alt="Thumbnail">
+            <img src="<?= get_image_url($post['thumbnail']) ?>" class="w-100 rounded-4 mb-4 shadow-sm" alt="Thumbnail">
 
             <div class="article-content lh-lg text-dark text-break">
                 <?= clean_content($post['content']) ?>
