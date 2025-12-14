@@ -88,9 +88,13 @@
     }
 
     .hero-section {
-        height: 85vh;
-        min-height: 600px;
+        height: auto !important;
+        /* Biarkan tinggi menyesuaikan */
+        min-height: 100vh;
+        /* Minimal setinggi layar */
         position: relative;
+        /* Padding Bawah Besar untuk kompensasi tumpukan kartu (overlap) */
+        padding-bottom: 10px !important;
     }
 
     .hero-content-flex {
@@ -98,7 +102,8 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        max-height: calc(85vh - 150px);
+        height: auto;
+        /* Biarkan tingginya menyesuaikan isi */
         padding: 0;
     }
 
@@ -107,67 +112,59 @@
         /* ← Center badge */
     }
 
-    /* Batasi tinggi judul slider */
     .slider-title-jenjang {
-        max-height: 200px;
-        overflow: hidden;
-        display: -webkit-box;
-        line-clamp: 3;
-        /* Maksimal 3 baris */
-        -webkit-box-orient: vertical;
+        height: auto;
+        /* Bebaskan tingginya */
         line-height: 1.2;
     }
 
-    /* Batasi tinggi deskripsi slider */
     .slider-desc-jenjang {
         max-width: 700px;
-        max-height: 140px;
-        overflow: hidden;
-        display: -webkit-box;
-        line-clamp: 4;
-        /* Maksimal 4 baris */
-        -webkit-box-orient: vertical;
+        height: auto;
+        /* Bebaskan tingginya */
         line-height: 1.6;
     }
 
     /* Mobile Responsive - Update yang sudah ada */
     @media (max-width: 768px) {
 
+        /* Tambahkan padding agar tombol tidak nempel ke bawah layar HP */
         .hero-section,
         .swiper-slide {
-            height: auto;
-            min-height: 500px;
-            padding-bottom: 50px;
+            height: auto !important;
+            min-height: auto !important;
+            padding-top: 120px;
+            /* Tambahan Jarak Atas */
+            padding-bottom: 10px;
+            /* Tambahan Jarak Bawah (Penting) */
         }
 
         .hero-title,
         .slider-title-jenjang {
             font-size: 2rem !important;
-            max-height: 130px;
-            line-clamp: 2;
+            height: auto;
         }
 
         .slider-desc-jenjang {
             font-size: 0.95rem !important;
-            max-height: 100px;
-            line-clamp: 3;
-        }
-
-        .btn-hero {
-            padding: 0.75rem 2rem !important;
-            font-size: 0.9rem !important;
+            height: auto;
         }
 
         .hero-content-flex {
-            max-height: calc(500px - 100px);
+            height: auto;
+            /* Bebaskan container */
         }
     }
 
     .heroSwiper .swiper-slide {
-        height: 85vh;
-        min-height: 600px;
+        height: auto !important;
+        min-height: 100vh;
         position: relative;
         overflow: hidden;
+        /* Pastikan konten di tengah, tapi punya ruang napas bawah */
+        display: flex;
+        align-items: center; 
+        padding-bottom: 10px !important; /* KUNCI AGAR TIDAK TENGGELAM */
     }
 
     /* Background Image & Zoom Effect */
@@ -226,16 +223,16 @@
 
     /* Mobile Responsive */
     @media (max-width: 768px) {
-
         .hero-section,
         .swiper-slide {
-            height: auto;
-            min-height: 500px;
-            padding-bottom: 50px;
-        }
-
-        .hero-title {
-            font-size: 2.5rem;
+            height: auto !important;
+            min-height: auto !important;
+            
+            /* Padding atas biar ga ketabrak menu */
+            padding-top: 150px !important; 
+            
+            /* Padding bawah besar biar ga ketabrak kartu program di bawahnya */
+            padding-bottom: 10px !important; 
         }
     }
 
@@ -466,7 +463,7 @@
             <div class="swiper-wrapper">
                 <?php foreach ($sliders as $slide): ?>
                     <div class="swiper-slide">
-                        <div class="hero-bg" style="background-image: url('<?= base_url($slide['image_url']) ?>');"></div>
+                        <div class="hero-bg" style="background-image: url('<?= get_image_url($slide['image_url']) ?>');"></div>
 
                         <div class="hero-overlay"></div>
 
