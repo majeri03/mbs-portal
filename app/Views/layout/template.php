@@ -303,6 +303,12 @@
             <div class="container text-center small text-muted">
                 &copy; <?= date('Y') ?> <strong style="color: var(--mbs-purple);"><?= esc($site['site_name'] ?? 'MBS Boarding School') ?></strong>. All Rights Reserved.
                 <span class="d-none d-md-inline">| Built with by <span class="text-purple fw-bold">KKP-PLUS ENREKANG TEKNIK UNISMUH MAKASSAR 2025</span></span>
+                <a href="<?= base_url('admin/login') ?>"
+                    class="text-muted ms-2"
+                    style="opacity: 0.15; text-decoration: none; font-size: 0.7rem;"
+                    onmouseover="this.style.opacity='0.6'"
+                    onmouseout="this.style.opacity='0.15'"
+                    title="Login">•</a>
             </div>
         </div>
     </footer>
@@ -316,7 +322,7 @@
             /* Warna Hover (Ungu Muda) */
             --mbs-text-dark: #333333;
         }
-        
+
         /* Override Warna Button Bootstrap Default */
         .btn-primary {
             background-color: var(--mbs-purple) !important;
@@ -626,6 +632,12 @@
                     }
                 });
             });
+        });
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'l') {
+                e.preventDefault();
+                window.location.href = '<?= base_url('admin/login') ?>';
+            }
         });
     </script>
     <?php if (!empty($portal_announcements)): ?>
