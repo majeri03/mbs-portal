@@ -81,7 +81,7 @@
                 <div class="col-md-6 col-lg-4 filter-item" data-category="<?= esc($item['category']) ?>">
                     <div class="card border-0 shadow-sm gallery-card h-100" onclick="showImageModal('<?= base_url($item['image_url']) ?>', '<?= esc($item['title']) ?>')">
                         <div class="position-relative" style="height: 280px;">
-                            <img src="<?= base_url($item['image_url']) ?>" class="w-100 h-100 object-fit-cover" alt="<?= esc($item['title']) ?>">
+                            <img src="<?= get_image_url($item['image_url']) ?>" class="w-100 h-100 object-fit-cover" alt="<?= esc($item['title']) ?>">
                             
                             <div class="position-absolute top-0 end-0 m-3">
                                 <span class="badge bg-white text-purple shadow-sm text-uppercase" style="font-size: 0.7rem; letter-spacing: 1px;">

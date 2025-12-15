@@ -10,7 +10,10 @@
         <?php foreach($news_list as $n): ?>
         <div class="col-md-4">
             <div class="card h-100 border-0 shadow-sm hover-card">
-                <img src="<?= esc($n['thumbnail']) ?>" class="card-img-top object-fit-cover" height="200">
+                <img src="<?= get_image_url($n['thumbnail'], 'https://placehold.co/600x400/eee/999?text=No+Image') ?>" 
+                     class="card-img-top object-fit-cover" 
+                     height="200"
+                     alt="<?= esc($n['title']) ?>">
                 <div class="card-body">
                     <small class="text-muted"><?= date('d M Y', strtotime($n['created_at'])) ?></small>
                     <h5 class="fw-bold mt-2"><a href="<?= site_url('smk/kabar/'.$n['slug']) ?>" class="text-dark text-decoration-none"><?= esc($n['title']) ?></a></h5>

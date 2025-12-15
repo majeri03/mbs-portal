@@ -31,7 +31,21 @@
                         <label class="form-label fw-bold">Judul Slider <span class="text-danger">*</span></label>
                         <input type="text" name="title" class="form-control form-control-lg" value="<?= old('title', $slider['title']) ?>" required>
                     </div>
-                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">
+                            Teks Badge 
+                            <span class="badge bg-secondary small ms-1">Opsional</span>
+                        </label>
+                        <input type="text" 
+                               name="badge_text" 
+                               class="form-control" 
+                               value="<?= old('badge_text', $slider['badge_text'] ?? '') ?>" 
+                               placeholder="Contoh: PPDB 2025, PENGUMUMAN, PRESTASI">
+                        <small class="text-muted">
+                            <i class="bi bi-info-circle me-1"></i>
+                            Kosongkan untuk menggunakan nama site otomatis
+                        </small>
+                    </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold">Deskripsi</label>
                         <textarea name="description" class="form-control" rows="4"><?= old('description', $slider['description']) ?></textarea>

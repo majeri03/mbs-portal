@@ -15,7 +15,7 @@
             <div class="col-md-4">
                 <div class="card h-100 border-0 shadow-sm hover-top">
                     <div class="position-relative overflow-hidden" style="height: 200px;">
-                        <img src="<?= base_url($news['thumbnail']) ?>" class="w-100 h-100 object-fit-cover" alt="<?= esc($news['title']) ?>">
+                        <img src="<?= get_image_url($news['thumbnail']) ?>" class="w-100 h-100 object-fit-cover" alt="<?= esc($news['title']) ?>">
                         <span class="badge bg-purple position-absolute top-0 start-0 m-3 shadow-sm">
                             <?= esc($news['school_name'] ?? 'UMUM') ?>
                         </span>

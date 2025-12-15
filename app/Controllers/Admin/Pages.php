@@ -25,10 +25,65 @@ class Pages extends BaseAdminController
     public function index()
     {
         $data['title'] = 'Kelola Halaman Statis';
+
+        // ✅ AMBIL PARAMETER FILTER
+        $search = $this->request->getGet('search');
+        $menu = $this->request->getGet('menu');
+        $schoolId = $this->request->getGet('school_id');
+
+        // Query dasar
         $query = $this->filterBySchool($this->pageModel);
+
+        // Filter Search (Judul)
+        if (!empty($search)) {
+            $query = $query->like('pages.title', $search);
+        }
+
+        // Filter Menu
+        if (!empty($menu)) {
+            $query = $query->where('pages.menu_title', $menu);
+        }
+
+        // Filter School (khusus superadmin)
+        if (isset($schoolId) && $schoolId !== '' && empty($this->mySchoolId)) {
+            if ($schoolId == '0') {
+                // Filter PUSAT
+                $query = $query->where('pages.school_id', null);
+            } else {
+                // Filter sekolah tertentu
+                $query = $query->where('pages.school_id', $schoolId);
+            }
+        }
+
+        // Eksekusi query dengan JOIN
         $data['pages'] = $query->select('pages.*, schools.name as school_name')
             ->join('schools', 'schools.id = pages.school_id', 'left')
+            ->orderBy('pages.menu_title', 'ASC')
+            ->orderBy('pages.title', 'ASC')
             ->findAll();
+
+        // ✅ DATA UNTUK DROPDOWN FILTER
+        // Ambil semua menu yang ada
+        $allMenusQuery = $this->pageModel->select('menu_title')
+            ->distinct()
+            ->where('menu_title IS NOT NULL')
+            ->where('menu_title !=', '')
+            ->orderBy('menu_title', 'ASC');
+
+        if ($this->mySchoolId) {
+            $allMenusQuery->where('school_id', $this->mySchoolId);
+        }
+
+        $data['allMenus'] = array_column($allMenusQuery->findAll(), 'menu_title');
+
+        // Ambil daftar sekolah (untuk superadmin)
+        $data['schools'] = $this->schoolModel->findAll();
+
+        // Kirim nilai filter ke view
+        $data['currentSearch'] = $search;
+        $data['currentMenu'] = $menu;
+        $data['currentSchoolFilter'] = $schoolId;
+
         return view('admin/pages/index', $data);
     }
 

@@ -64,6 +64,7 @@ class Sliders extends BaseAdminController
 
         $this->sliderModel->save([
             'school_id'      => $this->mySchoolId,
+            'badge_text'     => $this->request->getPost('badge_text'),
             'title'          => $this->request->getPost('title'),
             'description'    => $this->request->getPost('description'),
             'image_url'      => 'uploads/sliders/' . $imageName,
@@ -125,6 +126,7 @@ class Sliders extends BaseAdminController
         }
 
         $this->sliderModel->update($id, [
+            'badge_text'     => $this->request->getPost('badge_text'),
             'title'          => $this->request->getPost('title'),
             'description'    => $this->request->getPost('description'),
             'image_url'      => $imageUrl,

@@ -55,3 +55,27 @@ if (!function_exists('upload_and_resize_image')) {
         return $fileName;
     }
 }
+if (!function_exists('get_image_url')) {
+    /**
+     * Get proper image URL - handle both external URLs and local paths
+     * 
+     * @param string|null $path Image path or URL
+     * @param string $default Default image URL if path is empty
+     * @return string
+     */
+    function get_image_url(?string $path, string $default = ''): string
+    {
+        // Jika kosong, return default
+        if (empty($path)) {
+            return $default;
+        }
+        
+        // Jika sudah URL lengkap (http/https), return langsung
+        if (filter_var($path, FILTER_VALIDATE_URL)) {
+            return $path;
+        }
+        
+        // Jika path lokal, tambahkan base_url()
+        return base_url($path);
+    }
+}

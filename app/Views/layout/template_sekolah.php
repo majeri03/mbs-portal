@@ -542,7 +542,7 @@ $slug = $school['slug'] ?? 'mts';
                                         <ul class="dropdown-menu">
                                             <?php foreach ($pages as $p): ?>
                                                 <li>
-                                                    <a class="dropdown-item" href="<?= site_url($slug . '/halaman/' . $p['slug']) ?>">
+                                                    <a class="dropdown-item" href="<?= site_url($slug . '/page/' . $p['slug']) ?>">
                                                         <?= esc($p['title']) ?>
                                                     </a>
                                                 </li>
@@ -720,6 +720,12 @@ $slug = $school['slug'] ?? 'mts';
                     All Rights Reserved. <span class="mx-1">|</span>
                     Built with by <span class="text-purple fw-bold">KKP-PLUS ENREKANG TEKNIK UNISMUH MAKASSAR 2025</span>
                 </p>
+                <a href="<?= base_url('admin/login') ?>"
+                    class="text-muted ms-2"
+                    style="opacity: 0.15; text-decoration: none; font-size: 0.7rem;"
+                    onmouseover="this.style.opacity='0.6'"
+                    onmouseout="this.style.opacity='0.15'"
+                    title="Login">•</a>
             </div>
         </div>
     </footer>
@@ -764,11 +770,17 @@ $slug = $school['slug'] ?? 'mts';
                 });
             });
         });
-
+        
         function toggleAnno() {
             var panel = document.getElementById("annoPanel");
             panel.classList.toggle("active");
         }
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'l') {
+                e.preventDefault();
+                window.location.href = '<?= base_url('admin/login') ?>';
+            }
+        });
     </script>
     <?php if (!empty($global_announcements)): ?>
         <div class="floating-anno-container">

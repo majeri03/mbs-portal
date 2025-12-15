@@ -45,7 +45,7 @@
                     <?php if(!empty($pages_list)): ?>
                         <div class="list-group list-group-flush custom-list">
                             <?php foreach($pages_list as $p): ?>
-                                <a href="<?= site_url('mts/halaman/' . $p['slug']) ?>" class="list-group-item list-group-item-action d-flex align-items-center py-3 px-4">
+                                <a href="<?= site_url('mts/page/' . $p['slug']) ?>" class="list-group-item list-group-item-action d-flex align-items-center py-3 px-4">
                                     
                                     <div class="flex-grow-1">
                                         <span class="badge bg-light text-secondary border mb-1" style="font-size: 0.65rem;">

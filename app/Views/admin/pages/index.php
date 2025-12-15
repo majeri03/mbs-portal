@@ -5,7 +5,73 @@
     <h4><i class="bi bi-file-text me-2 text-purple"></i>Kelola Halaman Statis</h4>
     <a href="<?= base_url('admin/pages/create') ?>" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Halaman Baru</a>
 </div>
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-light">
+        <h6 class="mb-0"><i class="bi bi-funnel me-2"></i>Filter & Pencarian</h6>
+    </div>
+    <div class="card-body">
+        <form action="<?= base_url('admin/pages') ?>" method="GET" id="filterForm">
+            <div class="row g-3">
+                <!-- Search by Title -->
+                <div class="col-md-4">
+                    <label class="form-label fw-bold small">
+                        <i class="bi bi-search"></i> Cari Judul Halaman
+                    </label>
+                    <input type="text"
+                        name="search"
+                        class="form-control"
+                        placeholder="Ketik judul halaman..."
+                        value="<?= esc($currentSearch ?? '') ?>">
+                </div>
 
+                <!-- Filter by Menu -->
+                <div class="col-md-3">
+                    <label class="form-label fw-bold small">
+                        <i class="bi bi-folder"></i> Menu/Kategori
+                    </label>
+                    <select name="menu" class="form-select">
+                        <option value="">Semua Menu</option>
+                        <?php foreach ($allMenus as $menu): ?>
+                            <option value="<?= esc($menu) ?>" <?= ($currentMenu ?? '') == $menu ? 'selected' : '' ?>>
+                                <?= esc($menu) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
+                <!-- Filter by School (hanya untuk superadmin) -->
+                <?php if (session()->get('role') == 'superadmin'): ?>
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold small">
+                            <i class="bi bi-building"></i> Sekolah
+                        </label>
+                        <select name="school_id" class="form-select">
+                            <option value="">Semua</option>
+                            <option value="0" <?= ($currentSchoolFilter ?? '') === '0' ? 'selected' : '' ?>>
+                                ⭐ PUSAT
+                            </option>
+                            <?php foreach ($schools as $school): ?>
+                                <option value="<?= $school['id'] ?>" <?= ($currentSchoolFilter ?? '') == $school['id'] ? 'selected' : '' ?>>
+                                    <?= esc($school['name']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                <?php endif; ?>
+
+                <!-- Action Buttons -->
+                <div class="col-md-<?= session()->get('role') == 'superadmin' ? '2' : '5' ?> d-flex align-items-end gap-2">
+                    <button type="submit" class="btn btn-primary flex-fill">
+                        <i class="bi bi-funnel"></i> Filter
+                    </button>
+                    <a href="<?= base_url('admin/pages') ?>" class="btn btn-outline-secondary" title="Reset Filter">
+                        <i class="bi bi-arrow-clockwise"></i>
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
 <div class="card border-0 shadow-sm mb-4">
     <div class="card-header bg-light">
         <h5 class="mb-0"><i class="bi bi-folder2 me-2"></i>Kelola Menu/Kategori</h5>
@@ -19,7 +85,7 @@
             $groupedPages[$menu][] = $p;
         }
         ?>
-        
+
         <?php if (!empty($groupedPages)): ?>
             <?php foreach ($groupedPages as $menuName => $menuPages): ?>
                 <div class="menu-group mb-4 p-3 border rounded">
@@ -31,7 +97,7 @@
                             </h5>
                             <span class="badge bg-primary"><?= count($menuPages) ?> halaman</span>
                         </div>
-                        
+
                         <div class="btn-group btn-group-sm">
                             <button class="btn btn-outline-warning" onclick="editMenuName('<?= esc($menuName, 'js') ?>', '<?= md5($menuName) ?>')">
                                 <i class="bi bi-pencil"></i> Edit Nama Menu
@@ -41,12 +107,13 @@
                             </button>
                         </div>
                     </div>
-                    
+
                     <div class="table-responsive">
                         <table class="table table-sm table-hover mb-0">
                             <thead class="table-light">
                                 <tr>
                                     <th>Judul Halaman</th>
+                                    <th width="12%">Milik</th>
                                     <th>Slug</th>
                                     <th width="15%">Update</th>
                                     <th width="10%">Aksi</th>
@@ -57,18 +124,46 @@
                                     <tr>
                                         <td><?= esc($p['title']) ?></td>
                                         <td>
-                                            <a href="<?= base_url('page/'.$p['slug']) ?>" target="_blank" class="text-decoration-none small">
-                                                /page/<?= esc($p['slug']) ?> <i class="bi bi-box-arrow-up-right"></i>
+                                            <?php if (empty($p['school_id'])): ?>
+                                                <span class="badge bg-dark">
+                                                    <i class="bi bi-star-fill"></i> PUSAT
+                                                </span>
+                                            <?php else: ?>
+                                                <span class="badge bg-primary">
+                                                    <i class="bi bi-building"></i> <?= esc($p['school_name']) ?>
+                                                </span>
+                                            <?php endif; ?>
+                                        </td>
+                                        <td>
+                                            <?php
+                                            // Tentukan URL berdasarkan school_id
+                                            if (empty($p['school_id'])) {
+                                                // Halaman PUSAT
+                                                $pageUrl = base_url('page/' . $p['slug']);
+                                                $displayUrl = '/page/' . esc($p['slug']);
+                                            } else {
+                                                // Halaman SEKOLAH - Cari slug sekolahnya
+                                                $schoolSlug = '';
+                                                if ($p['school_id'] == 1) $schoolSlug = 'mts';
+                                                elseif ($p['school_id'] == 2) $schoolSlug = 'ma';
+                                                elseif ($p['school_id'] == 3) $schoolSlug = 'smk';
+
+                                                $pageUrl = base_url($schoolSlug . '/page/' . $p['slug']);
+                                                $displayUrl = '/' . $schoolSlug . '/page/' . esc($p['slug']);
+                                            }
+                                            ?>
+                                            <a href="<?= $pageUrl ?>" target="_blank" class="text-decoration-none small">
+                                                <?= $displayUrl ?> <i class="bi bi-box-arrow-up-right"></i>
                                             </a>
                                         </td>
                                         <td><small class="text-muted"><?= date('d M Y', strtotime($p['updated_at'])) ?></small></td>
                                         <td>
-                                            <a href="<?= base_url('admin/pages/edit/'.$p['id']) ?>" class="btn btn-sm btn-warning">
+                                            <a href="<?= base_url('admin/pages/edit/' . $p['id']) ?>" class="btn btn-sm btn-warning">
                                                 <i class="bi bi-pencil"></i>
                                             </a>
-                                            <a href="<?= base_url('admin/pages/delete/'.$p['id']) ?>" 
-                                               class="btn btn-sm btn-danger" 
-                                               onclick="return confirm('⚠️ HAPUS HALAMAN?\n\nJudul: <?= esc($p['title'], 'js') ?>\n\n❌ Data tidak bisa dikembalikan!')">
+                                            <a href="<?= base_url('admin/pages/delete/' . $p['id']) ?>"
+                                                class="btn btn-sm btn-danger"
+                                                onclick="return confirm('⚠️ HAPUS HALAMAN?\n\nJudul: <?= esc($p['title'], 'js') ?>\n\n❌ Data tidak bisa dikembalikan!')">
                                                 <i class="bi bi-trash"></i>
                                             </a>
                                         </td>
@@ -131,14 +226,14 @@
                         <strong>PERINGATAN!</strong> Menu "<span id="displayMenuName"></span>" memiliki <strong><span id="totalPages"></span> halaman</strong>.
                     </p>
                     <p class="mb-3">Apa yang ingin dilakukan dengan halaman-halaman tersebut?</p>
-                    
+
                     <div class="form-check mb-3">
                         <input class="form-check-input" type="radio" name="action" id="actionMove" value="move" checked>
                         <label class="form-check-label" for="actionMove">
                             <strong>Pindahkan ke menu lain</strong>
                         </label>
                     </div>
-                    
+
                     <div id="moveToDiv" class="mb-3 ms-4">
                         <select name="target_menu" class="form-select">
                             <option value="">Pilih menu tujuan...</option>
@@ -147,7 +242,7 @@
                             <?php endforeach; ?>
                         </select>
                     </div>
-                    
+
                     <div class="form-check">
                         <input class="form-check-input" type="radio" name="action" id="actionDelete" value="delete">
                         <label class="form-check-label text-danger" for="actionDelete">
@@ -172,18 +267,18 @@
         document.getElementById('newMenuName').value = oldName;
         new bootstrap.Modal(document.getElementById('editMenuModal')).show();
     }
-    
+
     function deleteMenu(menuName, totalPages) {
         document.getElementById('deleteMenuName').value = menuName;
         document.getElementById('displayMenuName').textContent = menuName;
         document.getElementById('totalPages').textContent = totalPages;
         new bootstrap.Modal(document.getElementById('deleteMenuModal')).show();
     }
-    
+
     // Toggle move to div
     document.querySelectorAll('input[name="action"]').forEach(radio => {
         radio.addEventListener('change', function() {
-            document.getElementById('moveToDiv').style.display = 
+            document.getElementById('moveToDiv').style.display =
                 this.value === 'move' ? 'block' : 'none';
         });
     });
@@ -193,9 +288,10 @@
     .menu-group {
         transition: all 0.3s;
     }
+
     .menu-group:hover {
         background-color: #f8f9fa;
-        box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
     }
 </style>
 

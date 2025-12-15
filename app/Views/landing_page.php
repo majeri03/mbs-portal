@@ -15,39 +15,39 @@
                     <div class="swiper-slide">
                         <!-- Background Image -->
                         <div class="hero-slide position-relative d-flex align-items-center text-white"
-                            style="min-height: 85vh; 
-                                    padding-bottom: 150px;
-                                    background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.7)), 
-                                                url('<?= base_url($slider['image_url']) ?>') no-repeat center center/cover;">
+                            style="min-height: 85vh; padding-bottom: 120px;
+                                background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.7)), 
+                                            url('<?= get_image_url($slider['image_url']) ?>') no-repeat center center/cover;">
 
                             <!-- Content -->
-                            <div class="container position-relative z-index-1" style="padding-top: 80px;">
+                            <div class="container position-relative z-index-1">
                                 <div class="row">
                                     <div class="col-lg-8">
                                         <span class="badge bg-white text-dark text-uppercase mb-3 px-3 py-2 fw-bold ls-2">
-                                            MBS Boarding School
+                                            <?= esc($slider['badge_text'] ?? $site['site_name'] ?? 'MBS Boarding School') ?>
                                         </span>
-                                        <h1 class="display-3 fw-bold mb-4 animate__animated animate__fadeInUp">
+                                        <h1 class="display-3 fw-bold mb-3 animate__animated animate__fadeInUp slider-title">
                                             <?= esc($slider['title']) ?>
                                         </h1>
                                         <?php if (!empty($slider['description'])) : ?>
-                                            <p class="lead mb-5 text-light opacity-90 w-75 animate__animated animate__fadeInUp animate__delay-1s">
+                                            <p class="lead mb-4 text-light opacity-90 animate__animated animate__fadeInUp animate__delay-1s slider-description">
                                                 <?= esc($slider['description']) ?>
                                             </p>
                                         <?php endif; ?>
 
                                         <?php if (!empty($slider['button_text']) && !empty($slider['button_link'])) : ?>
                                             <?php
-                                            // Cek apakah link external (http/https) atau internal (#)
                                             $isExternal = (strpos($slider['button_link'], 'http://') === 0 || strpos($slider['button_link'], 'https://') === 0);
                                             $targetBlank = $isExternal ? 'target="_blank" rel="noopener noreferrer"' : '';
                                             ?>
-                                            <a href="<?= esc($slider['button_link']) ?>"
-                                                <?= $targetBlank ?>
-                                                class="btn btn-light btn-lg px-5 py-3 rounded-pill fw-bold animate__animated animate__fadeInUp animate__delay-2s">
-                                                <?= esc($slider['button_text']) ?>
-                                                <i class="bi bi-arrow-right ms-2"></i>
-                                            </a>
+                                            <div class="mt-3">
+                                                <a href="<?= esc($slider['button_link']) ?>"
+                                                    <?= $targetBlank ?>
+                                                    class="btn btn-light btn-lg px-5 py-3 rounded-pill fw-bold animate__animated animate__fadeInUp animate__delay-2s">
+                                                    <?= esc($slider['button_text']) ?>
+                                                    <i class="bi bi-arrow-right ms-2"></i>
+                                                </a>
+                                            </div>
                                         <?php endif; ?>
                                     </div>
                                 </div>
@@ -60,6 +60,7 @@
                 <div class="swiper-slide">
                     <div class="hero-slide position-relative d-flex align-items-center text-white"
                         style="min-height: 85vh; 
+                                padding: 120px 0 80px;
                                 background: linear-gradient(to bottom, rgba(47, 63, 88, 0.8), rgba(61, 31, 92, 0.9));">
                         <div class="container text-center">
                             <h1 class="display-3 fw-bold mb-4">Selamat Datang di MBS</h1>
@@ -69,10 +70,6 @@
                 </div>
             <?php endif; ?>
         </div>
-
-        <!-- Navigation Buttons -->
-        <!-- <div class="swiper-button-next"></div>
-        <div class="swiper-button-prev"></div> -->
 
         <!-- Pagination Dots -->
         <div class="swiper-pagination"></div>
@@ -206,20 +203,27 @@
                         <div class="card border-0 shadow-sm h-100 hover-lift-school">
                             <!-- School Image -->
                             <div class="position-relative overflow-hidden" style="height: 250px;">
-                                <?php if (!empty($school['image_url']) && file_exists($school['image_url'])) : ?>
-                                    <img src="<?= base_url($school['image_url']) ?>"
+                                <?php if (!empty($school['image_url'])) : ?>
+                                    <!-- Tampilkan image_url (URL eksternal atau lokal) -->
+                                    <img src="<?= get_image_url($school['image_url']) ?>"
                                         class="w-100 h-100 object-fit-cover"
-                                        alt="<?= esc($school['name']) ?>">
-                                <?php elseif (!empty($school['hero_image']) && file_exists($school['hero_image'])) : ?>
-                                    <!-- Fallback ke hero_image jika ada -->
-                                    <img src="<?= base_url($school['hero_image']) ?>"
-                                        class="w-100 h-100 object-fit-cover"
-                                        alt="<?= esc($school['name']) ?>">
+                                        alt="<?= esc($school['name']) ?>"
+                                        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+
+                                    <!-- Fallback jika gambar gagal load -->
+                                    <div class="w-100 h-100 d-flex align-items-center justify-content-center text-white"
+                                        style="display: none; background: linear-gradient(135deg, 
+                <?= $index == 0 ? '#2f3f58, #e8ecf1' : ($index == 1 ? '#3b82f6, #60a5fa' : '#10b981, #34d399') ?>);">
+                                        <div class="text-center">
+                                            <i class="bi bi-building" style="font-size: 4rem;"></i>
+                                            <h4 class="mt-3 fw-bold"><?= esc($school['name']) ?></h4>
+                                        </div>
+                                    </div>
                                 <?php else : ?>
-                                    <!-- Placeholder dengan gradient -->
+                                    <!-- Placeholder jika tidak ada image_url -->
                                     <div class="w-100 h-100 d-flex align-items-center justify-content-center text-white"
                                         style="background: linear-gradient(135deg, 
-                                            <?= $index == 0 ? '#2f3f58, #e8ecf1' : ($index == 1 ? '#3b82f6, #60a5fa' : '#10b981, #34d399') ?>);">
+                                         <?= $index == 0 ? '#2f3f58, #e8ecf1' : ($index == 1 ? '#3b82f6, #60a5fa' : '#10b981, #34d399') ?>);">
                                         <div class="text-center">
                                             <i class="bi bi-building" style="font-size: 4rem;"></i>
                                             <h4 class="mt-3 fw-bold"><?= esc($school['name']) ?></h4>
@@ -264,29 +268,31 @@
                             </div>
 
                             <!-- Card Body -->
-                            <div class="card-body p-4">
+                            <div class="card-body p-4 d-flex flex-column">
                                 <h4 class="card-title fw-bold text-purple mb-3">
                                     <i class="bi bi-mortarboard-fill me-2"></i>
                                     <?= esc($school['name']) ?>
                                 </h4>
-                                <p class="card-text text-muted mb-4" style="min-height: 80px;">
+
+                                <!-- Deskripsi dengan tinggi fixed -->
+                                <p class="card-text text-muted mb-4" style="height: 120px; overflow: hidden;">
                                     <?= esc($school['description']) ?>
                                 </p>
 
-                                <!-- Info Kontak (Jika Ada) -->
+                                <!-- Info Kontak (Jika Ada) - Push ke atas dengan flex-grow -->
                                 <?php if (!empty($school['contact_person']) || !empty($school['phone'])) : ?>
                                     <div class="mb-3 small text-muted">
                                         <?php if (!empty($school['contact_person'])) : ?>
                                             <div class="mb-1">
-                                                <i class="bi bi-person-badge me-2"></i>
+                                                <i class="bi bi-person-circle me-1"></i>
                                                 <?= esc($school['contact_person']) ?>
                                             </div>
                                         <?php endif; ?>
 
                                         <?php if (!empty($school['phone'])) : ?>
                                             <div>
-                                                <i class="bi bi-telephone me-2"></i>
-                                                <a href="tel:<?= esc($school['phone']) ?>" class="text-muted">
+                                                <i class="bi bi-telephone-fill me-1"></i>
+                                                <a href="tel:<?= esc($school['phone']) ?>" class="text-decoration-none text-muted">
                                                     <?= esc($school['phone']) ?>
                                                 </a>
                                             </div>
@@ -294,21 +300,23 @@
                                     </div>
                                 <?php endif; ?>
 
-                                <!-- Button -->
-                                <?php if (!empty($school['website_url'])) : ?>
-                                    <a href="<?= esc($school['website_url']) ?>"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        class="btn btn-outline-purple w-100">
-                                        <i class="bi bi-box-arrow-up-right me-2"></i>
-                                        Kunjungi Website
-                                    </a>
-                                <?php else : ?>
-                                    <a href="#kontak" class="btn btn-outline-purple w-100">
-                                        <i class="bi bi-info-circle me-2"></i>
-                                        Info Lebih Lanjut
-                                    </a>
-                                <?php endif; ?>
+                                <!-- Button - Paksa ke bawah dengan margin-top: auto -->
+                                <div class="mt-auto">
+                                    <?php if (!empty($school['website_url'])) : ?>
+                                        <a href="<?= esc($school['website_url']) ?>"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            class="btn btn-outline-purple w-100">
+                                            <i class="bi bi-box-arrow-up-right me-2"></i>
+                                            Kunjungi Website
+                                        </a>
+                                    <?php else : ?>
+                                        <a href="#kontak" class="btn btn-outline-purple w-100">
+                                            <i class="bi bi-info-circle me-2"></i>
+                                            Info Lebih Lanjut
+                                        </a>
+                                    <?php endif; ?>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -613,6 +621,50 @@
         display: flex;
         align-items: center;
         justify-content: center;
+    }
+
+    /* Batasi tinggi title agar tidak terlalu panjang */
+    .slider-title {
+        height: auto;
+        overflow: visible;
+        display: block;
+        /* Hapus line-clamp agar semua teks muncul */
+        line-height: 1.2;
+    }
+
+    /* Batasi tinggi description */
+    .slider-description {
+        height: auto;
+        overflow: visible;
+        display: block;
+        line-height: 1.6;
+    }
+
+    /* Responsive Mobile */
+    @media (max-width: 991px) {
+        .hero-slide {
+            /* Ubah min-height jadi auto atau kecil, biar ngikutin konten */
+            min-height: auto !important;
+            padding: 150px 0 100px !important;
+            /* Padding besar biar ga ketutup menu */
+        }
+
+        .slider-title {
+            font-size: 2rem !important;
+            height: auto;
+            /* Biarkan bebas */
+        }
+
+        .slider-description {
+            font-size: 1rem !important;
+            height: auto;
+            /* Biarkan bebas */
+        }
+
+        .hero-slide .btn {
+            padding: 0.75rem 2rem !important;
+            font-size: 0.9rem !important;
+        }
     }
 
     /* Hilangkan panah navigasi (jika masih muncul) */

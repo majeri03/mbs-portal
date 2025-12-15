@@ -88,16 +88,83 @@
     }
 
     .hero-section {
-        height: 85vh;
-        min-height: 600px;
+        height: auto !important;
+        /* Biarkan tinggi menyesuaikan */
+        min-height: 100vh;
+        /* Minimal setinggi layar */
         position: relative;
+        /* Padding Bawah Besar untuk kompensasi tumpukan kartu (overlap) */
+        padding-bottom: 10px !important;
+    }
+
+    .hero-content-flex {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: auto;
+        /* Biarkan tingginya menyesuaikan isi */
+        padding: 0;
+    }
+
+    .hero-content-flex .badge {
+        align-self: center;
+        /* ← Center badge */
+    }
+
+    .slider-title-jenjang {
+        height: auto;
+        /* Bebaskan tingginya */
+        line-height: 1.2;
+    }
+
+    .slider-desc-jenjang {
+        max-width: 700px;
+        height: auto;
+        /* Bebaskan tingginya */
+        line-height: 1.6;
+    }
+
+    /* Mobile Responsive - Update yang sudah ada */
+    @media (max-width: 768px) {
+
+        /* Tambahkan padding agar tombol tidak nempel ke bawah layar HP */
+        .hero-section,
+        .swiper-slide {
+            height: auto !important;
+            min-height: auto !important;
+            padding-top: 120px;
+            /* Tambahan Jarak Atas */
+            padding-bottom: 10px;
+            /* Tambahan Jarak Bawah (Penting) */
+        }
+
+        .hero-title,
+        .slider-title-jenjang {
+            font-size: 2rem !important;
+            height: auto;
+        }
+
+        .slider-desc-jenjang {
+            font-size: 0.95rem !important;
+            height: auto;
+        }
+
+        .hero-content-flex {
+            height: auto;
+            /* Bebaskan container */
+        }
     }
 
     .heroSwiper .swiper-slide {
-        height: 85vh;
-        min-height: 600px;
+        height: auto !important;
+        min-height: 100vh;
         position: relative;
         overflow: hidden;
+        /* Pastikan konten di tengah, tapi punya ruang napas bawah */
+        display: flex;
+        align-items: center; 
+        padding-bottom: 10px !important; /* KUNCI AGAR TIDAK TENGGELAM */
     }
 
     /* Background Image & Zoom Effect */
@@ -155,17 +222,51 @@
     }
 
     /* Mobile Responsive */
+    /* --- PERBAIKAN RESPONSIVE MOBILE (HP) --- */
     @media (max-width: 768px) {
-
-        .hero-section,
-        .swiper-slide {
-            height: auto;
-            min-height: 500px;
-            padding-bottom: 50px;
+        
+        /* 1. Fix Renggang Putih di Atas */
+        .hero-section {
+            margin-top: 0 !important; /* Hapus jarak luar atas */
+            padding-top: 0 !important; /* Hapus jarak dalam atas container */
+        }
+        
+        /* 2. Fix Tombol Tenggelam (Kasih Ruang Bawah Lebih Besar) */
+        .heroSwiper .swiper-slide {
+            height: auto !important;
+            min-height: auto !important;
+            
+            /* Jarak teks dari atas (agar tidak ketutup Navbar) */
+            padding-top: 120px !important; 
+            
+            /* Jarak Bawah EKSTRA BESAR (KUNCI AGAR TOMBOL NAIK) */
+            /* Kita kasih 300px biar aman dari kartu yang menimpa */
+            padding-bottom: 300px !important; 
+            
+            /* Pastikan background cover penuh */
+            background-size: cover !important;
+            background-position: center top !important;
         }
 
-        .hero-title {
-            font-size: 2.5rem;
+        /* 3. Atur Posisi Konten Teks */
+        .hero-content-flex {
+            height: auto !important;
+            justify-content: flex-start !important; /* Mulai dari atas */
+        }
+
+        /* Ukuran Font Judul di HP */
+        .hero-title,
+        .slider-title-jenjang {
+            font-size: 1.8rem !important; /* Kecilkan dikit biar muat */
+            line-height: 1.3;
+            margin-bottom: 15px;
+        }
+
+        /* Tombol di HP */
+        .btn-hero {
+            padding: 10px 25px !important;
+            font-size: 0.9rem !important;
+            margin-top: 10px;
         }
     }
 
@@ -181,9 +282,9 @@
     @media (min-width: 992px) {
         .hero-content-wrapper {
             /* Jarak dari Navbar */
-            padding-top: 180px;
+            padding-top: 100px;
             /* Ruang kosong di bawah untuk ditimpa kartu */
-            padding-bottom: 180px;
+            padding-bottom: 100px;
             min-height: 90vh;
         }
 
@@ -203,7 +304,7 @@
     @media (max-width: 991px) {
         .hero-content-wrapper {
             padding-top: 40px;
-            padding-bottom: 80px;
+            padding-bottom: 60px;
             min-height: 450px;
 
         }
@@ -213,13 +314,13 @@
         }
 
         .row.h-100.align-items-start {
-            padding-top: 8vh !important;
+            padding-top: 5vh !important;
         }
 
         .floating-section {
             /* 3. EFEK MENIMPA: */
             /* Tarik kartu ke atas menutupi padding-bottom gambar tadi */
-            margin-top: -100px !important;
+            margin-top: -80px !important;
             position: relative;
             z-index: 20;
             /* Layer paling atas */
@@ -388,8 +489,6 @@
     .cursor-pointer {
         cursor: pointer;
     }
-
-    
 </style>
 
 <section class="hero-section position-relative overflow-hidden pb-5">
@@ -398,37 +497,39 @@
             <div class="swiper-wrapper">
                 <?php foreach ($sliders as $slide): ?>
                     <div class="swiper-slide">
-                        <div class="hero-bg" style="background-image: url('<?= base_url($slide['image_url']) ?>');"></div>
+                        <div class="hero-bg" style="background-image: url('<?= get_image_url($slide['image_url']) ?>');"></div>
 
                         <div class="hero-overlay"></div>
 
                         <div class="container h-100 position-relative z-2">
-                            <div class="row h-100 align-items-start justify-content-center text-center" style="padding-top: 20vh;">
+                            <div class="row h-100 align-items-center justify-content-center text-center">
                                 <div class="col-lg-10">
+                                    <div class="hero-content-flex">
 
-                                    <span class="badge bg-white text-purple px-3 py-2 rounded-pill mb-3 fw-bold shadow-sm animate__animated animate__fadeInDown">
-                                        <?= esc($school['name']) ?>
-                                    </span>
+                                        <span class="badge bg-white text-purple px-3 py-2 rounded-pill mb-3 fw-bold shadow-sm animate__animated animate__fadeInDown">
+                                            <?= esc($slide['badge_text'] ?? $school['name']) ?>
+                                        </span>
 
-                                    <h1 class="display-4 fw-bold text-white mb-4 hero-title animate__animated animate__fadeInUp">
-                                        <?= esc($slide['title']) ?>
-                                    </h1>
+                                        <h1 class="display-4 fw-bold text-white mb-3 hero-title slider-title-jenjang animate__animated animate__fadeInUp">
+                                            <?= esc($slide['title']) ?>
+                                        </h1>
 
-                                    <?php if (!empty($slide['description'])): ?>
-                                        <p class="lead text-white opacity-90 mb-5 mx-auto hero-desc animate__animated animate__fadeInUp animate__delay-1s" style="max-width: 700px;">
-                                            <?= esc($slide['description']) ?>
-                                        </p>
-                                    <?php endif; ?>
+                                        <?php if (!empty($slide['description'])): ?>
+                                            <p class="lead text-white opacity-90 mb-4 mx-auto hero-desc slider-desc-jenjang animate__animated animate__fadeInUp animate__delay-1s">
+                                                <?= esc($slide['description']) ?>
+                                            </p>
+                                        <?php endif; ?>
 
-                                    <?php if (!empty($slide['button_text'])): ?>
-                                        <div class="d-flex justify-content-center gap-3 animate__animated animate__fadeInUp animate__delay-2s">
-                                            <a href="<?= esc($slide['button_link']) ?>" class="btn btn-light btn-lg rounded-pill px-5 fw-bold text-purple shadow-lg btn-hero">
-                                                <?= esc($slide['button_text']) ?>
-                                                <i class="bi bi-arrow-right ms-2"></i>
-                                            </a>
-                                        </div>
-                                    <?php endif; ?>
+                                        <?php if (!empty($slide['button_text'])): ?>
+                                            <div class="d-flex justify-content-center gap-3 animate__animated animate__fadeInUp animate__delay-2s">
+                                                <a href="<?= esc($slide['button_link']) ?>" class="btn btn-light btn-lg rounded-pill px-5 fw-bold text-purple shadow-lg btn-hero">
+                                                    <?= esc($slide['button_text']) ?>
+                                                    <i class="bi bi-arrow-right ms-2"></i>
+                                                </a>
+                                            </div>
+                                        <?php endif; ?>
 
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -517,7 +618,7 @@
                             </div>
 
                             <div class="text-center mt-4">
-                                <a href="<?= site_url('ma/halaman/' . $page['slug']) ?>" class="btn btn-outline-purple rounded-pill px-4 hover-lift-sm">
+                                <a href="<?= site_url('ma/page/' . $page['slug']) ?>" class="btn btn-outline-purple rounded-pill px-4 hover-lift-sm">
                                     Baca Selengkapnya <i class="bi bi-arrow-right ms-1"></i>
                                 </a>
                             </div>
@@ -552,7 +653,7 @@
                                 <div class="row g-0">
                                     <div class="col-md-4 position-relative">
                                         <div class="h-100" style="min-height: 200px;">
-                                            <img src="<?= base_url($n['thumbnail']) ?>"
+                                            <img src="<?= get_image_url($n['thumbnail'], 'https://placehold.co/600x400/eee/999?text=No+Image') ?>"
                                                 class="w-100 h-100 object-fit-cover position-absolute top-0 start-0"
                                                 alt="<?= esc($n['title']) ?>"
                                                 onerror="this.src='https://placehold.co/600x400/eee/999?text=No+Image'">
@@ -764,9 +865,9 @@
 
                     <div class="<?= $colClass ?>">
                         <div class="gallery-card position-relative overflow-hidden rounded-4 shadow-sm h-100 cursor-pointer"
-                            onclick="openGalleryModal('<?= base_url($g['image_url']) ?>', '<?= esc($g['title']) ?>', '<?= esc(ucfirst($g['category'])) ?>')">
+                            onclick="openGalleryModal('<?= get_image_url($g['image_url']) ?>', '<?= esc($g['title']) ?>', '<?= esc(ucfirst($g['category'])) ?>')">
 
-                            <img src="<?= base_url($g['image_url']) ?>"
+                            <img src="<?= get_image_url($g['image_url']) ?>"
                                 class="w-100 h-100 object-fit-cover transition-transform"
                                 style="min-height: <?= $heightClass ?>;"
                                 alt="<?= esc($g['title']) ?>"
