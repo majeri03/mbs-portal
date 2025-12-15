@@ -21,7 +21,51 @@
         <i class="bi bi-plus-circle me-2"></i>Tambah Slider Baru
     </a>
 </div>
-
+<!-- Filter Card -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+        <form method="GET" action="<?= base_url('admin/sliders') ?>" class="row g-3">
+            <!-- Search -->
+            <div class="col-md-4">
+                <label class="form-label fw-bold">Cari Slider</label>
+                <input type="text" name="search" class="form-control" placeholder="Cari judul atau deskripsi..." value="<?= esc($current_search ?? '') ?>">
+            </div>
+            
+            <!-- Filter Status -->
+            <div class="col-md-3">
+                <label class="form-label fw-bold">Status</label>
+                <select name="status" class="form-select">
+                    <option value="">Semua Status</option>
+                    <option value="1" <?= ($current_status === '1') ? 'selected' : '' ?>>Aktif</option>
+                    <option value="0" <?= ($current_status === '0') ? 'selected' : '' ?>>Nonaktif</option>
+                </select>
+            </div>
+            
+            <!-- Filter Sekolah (hanya untuk superadmin) -->
+            <?php if (!$mySchoolId) : ?>
+            <div class="col-md-3">
+                <label class="form-label fw-bold">Milik Sekolah</label>
+                <select name="school_id" class="form-select">
+                    <option value="">Semua Sekolah</option>
+                    <option value="pusat" <?= ($current_school_id === 'pusat') ? 'selected' : '' ?>>Portal Pusat</option>
+                    <?php foreach ($schools as $school) : ?>
+                        <option value="<?= $school['id'] ?>" <?= ($current_school_id == $school['id']) ? 'selected' : '' ?>>
+                            <?= esc($school['name']) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <?php endif; ?>
+            
+            <!-- Tombol Filter -->
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="bi bi-funnel me-1"></i> Filter
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
 <!-- Slider List -->
 <div class="row g-4">
     <?php if (empty($sliders)) : ?>

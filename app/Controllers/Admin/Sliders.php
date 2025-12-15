@@ -4,7 +4,7 @@ namespace App\Controllers\Admin;
 
 use App\Controllers\Admin\BaseAdminController;
 use App\Models\SliderModel;
-
+use App\Models\SchoolModel;
 class Sliders extends BaseAdminController
 {
     protected $sliderModel;
@@ -12,6 +12,7 @@ class Sliders extends BaseAdminController
     public function __construct()
     {
         $this->sliderModel = new SliderModel();
+        $this->schoolModel = new SchoolModel();
     }
     public function initController(\CodeIgniter\HTTP\RequestInterface $request, \CodeIgniter\HTTP\ResponseInterface $response, \Psr\Log\LoggerInterface $logger)
     {
@@ -24,8 +25,56 @@ class Sliders extends BaseAdminController
     public function index()
     {
         $data['title'] = 'Kelola Hero Slider';
-        $data['sliders'] = $this->filterBySchool($this->sliderModel)->orderBy('order_position', 'ASC')->findAll();
-
+        
+        // Ambil parameter filter
+        $search = $this->request->getGet('search');
+        $status = $this->request->getGet('status');
+        $schoolId = $this->request->getGet('school_id');
+        
+        // Query builder dengan JOIN ke tabel schools
+        $builder = $this->sliderModel
+            ->select('sliders.*, schools.name as school_name')
+            ->join('schools', 'schools.id = sliders.school_id', 'left');
+        
+        // Filter berdasarkan school (admin sekolah hanya lihat miliknya)
+        if ($this->mySchoolId) {
+            $builder->where('sliders.school_id', $this->mySchoolId);
+        }
+        
+        // Filter Search (judul atau deskripsi)
+        if ($search) {
+            $builder->groupStart()
+                ->like('sliders.title', $search)
+                ->orLike('sliders.description', $search)
+                ->groupEnd();
+        }
+        
+        // Filter Status (aktif/nonaktif)
+        if ($status !== null && $status !== '') {
+            $builder->where('sliders.is_active', $status);
+        }
+        
+        // Filter Sekolah (hanya untuk superadmin)
+        if (!$this->mySchoolId && $schoolId !== null && $schoolId !== '') {
+            if ($schoolId === 'pusat') {
+                $builder->where('sliders.school_id', null);
+            } else {
+                $builder->where('sliders.school_id', $schoolId);
+            }
+        }
+        
+        $data['sliders'] = $builder->orderBy('sliders.order_position', 'ASC')->findAll();
+        
+        // Data untuk dropdown filter (hanya superadmin)
+        if (!$this->mySchoolId) {
+            $data['schools'] = $this->schoolModel->orderBy('name', 'ASC')->findAll();
+        }
+        
+        // Pass current filters ke view
+        $data['current_search'] = $search;
+        $data['current_status'] = $status;
+        $data['current_school_id'] = $schoolId;
+        $data['mySchoolId'] = $this->mySchoolId;
         return view('admin/sliders/index', $data);
     }
 
