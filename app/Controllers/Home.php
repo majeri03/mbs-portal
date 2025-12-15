@@ -59,9 +59,18 @@ class Home extends BaseController
             ->where('is_published', 1)
             ->orderBy('posts.created_at', 'DESC')
             ->findAll(3);
-        $data['upcoming_events'] = $this->eventModel
-            ->where('school_id', null) // <--- FILTER
-            ->where('event_date >=', date('Y-m-d'))
+        $isLoggedIn = session()->get('logged_in');
+        $userRole = session()->get('role');
+        $isInternal = ($isLoggedIn && $userRole === 'superadmin');
+        $eventBuilder = $this->eventModel
+            ->where('school_id', null) // Hanya agenda pusat
+            ->where('event_date >=', date('Y-m-d'));
+
+        // Jika BELUM LOGIN atau BUKAN SUPERADMIN, hanya tampilkan PUBLIC
+        if (!$isInternal) {
+            $eventBuilder->where('scope', 'public');
+        }
+        $data['upcoming_events'] = $eventBuilder
             ->orderBy('event_date', 'ASC')
             ->limit(4)
             ->findAll();

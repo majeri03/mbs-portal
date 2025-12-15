@@ -27,8 +27,21 @@ class EventsController extends Controller
         $data['site'] = $this->settingModel->getSiteSettings();
 
         $data['title'] = 'Kalender Agenda';
-        $data['upcoming_events'] = $this->eventModel
-            ->where('event_date >=', date('Y-m-d'))
+
+        // Cek apakah user sudah login dan role/schoolnya
+        $isLoggedIn = session()->get('logged_in');
+        $userRole = session()->get('role');
+        $isInternal = ($isLoggedIn && $userRole === 'superadmin');
+        // Query upcoming events dengan filter scope
+        $eventBuilder = $this->eventModel
+            ->where('school_id', null) // Hanya agenda pusat
+            ->where('event_date >=', date('Y-m-d'));
+
+        // Jika BELUM LOGIN atau BUKAN SUPERADMIN, hanya tampilkan PUBLIC
+        if (!$isInternal) {
+            $eventBuilder->where('scope', 'public');
+        }
+        $data['upcoming_events'] = $eventBuilder
             ->orderBy('event_date', 'ASC')
             ->limit(5)
             ->findAll();
