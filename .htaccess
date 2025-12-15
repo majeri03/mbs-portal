@@ -1,0 +1,16 @@
+<IfModule authz_core_module>
+    # Deny access to .env
+    <Files ".env">
+        Require all denied
+    </Files>
+</IfModule>
+
+# Disable directory browsing
+Options -Indexes
+
+# Rewrite to public folder
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^$ public/ [L]
+    RewriteRule (.*) public/$1 [L]
+</IfModule>
