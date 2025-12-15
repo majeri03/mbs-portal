@@ -35,7 +35,7 @@ class News extends BaseMtsController
         if (!$post) {
             throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
         }
-
+        $this->postModel->update($post['id'], ['views' => $post['views'] + 1]);
         $this->data['title'] = $post['title'];
         $this->data['post'] = $post;
         

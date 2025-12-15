@@ -39,11 +39,18 @@
                             <div class="mb-3">
                                 <label class="form-label">Nama Website / Sekolah</label>
                                 <input type="text" name="site_name" class="form-control" value="<?= esc($settings['site_name'] ?? '') ?>" maxlength="25">
-<small class="text-muted"><i class="bi bi-info-circle"></i> Maksimal 25 karakter agar rapi di navbar</small>
+                                <small class="text-muted"><i class="bi bi-info-circle"></i> Maksimal 25 karakter agar rapi di navbar</small>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Deskripsi Singkat (Footer)</label>
-                                <textarea name="site_desc" class="form-control" rows="3"><?= esc($settings['site_desc'] ?? '') ?></textarea>
+                                <label class="form-label fw-bold">Deskripsi Singkat (Footer & Navbar)</label>
+                                <textarea name="site_desc"
+                                    class="form-control"
+                                    rows="3"
+                                    maxlength="100"
+                                    placeholder="Contoh: Madrasah Tsanawiyah berbasis pesantren dengan fokus Tahfidz Al-Quran"><?= esc($settings['site_desc'] ?? '') ?></textarea>
+                                <small class="text-muted">
+                                    <i class="bi bi-info-circle"></i> Maksimal 100 karakter. Tampil di navbar & footer.
+                                </small>
                             </div>
                         </div>
                     </div>
