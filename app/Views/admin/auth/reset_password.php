@@ -134,6 +134,7 @@
 
             <div class="login-body">
                 <form action="<?= base_url('admin/reset-password') ?>" method="post">
+                    <?= csrf_field() ?>
                     <input type="hidden" name="token" value="<?= esc($token) ?>">
 
                     <div class="mb-3">

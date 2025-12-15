@@ -184,7 +184,7 @@
 
             <div class="login-body">
                 <form action="<?= base_url('admin/forgot-password') ?>" method="post">
-
+                    <?= csrf_field() ?>
                     <div class="mb-4">
                         <label class="form-label fw-bold small text-muted text-uppercase">Email Terdaftar</label>
                         <div class="input-group">
