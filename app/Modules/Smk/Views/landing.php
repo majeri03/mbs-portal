@@ -618,7 +618,7 @@
                             </div>
 
                             <div class="text-center mt-4">
-                                <a href="<?= site_url('smk/halaman/' . $page['slug']) ?>" class="btn btn-outline-purple rounded-pill px-4 hover-lift-sm">
+                                <a href="<?= site_url('smk/page/' . $page['slug']) ?>" class="btn btn-outline-purple rounded-pill px-4 hover-lift-sm">
                                     Baca Selengkapnya <i class="bi bi-arrow-right ms-1"></i>
                                 </a>
                             </div>

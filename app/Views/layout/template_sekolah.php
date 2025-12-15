@@ -542,7 +542,7 @@ $slug = $school['slug'] ?? 'mts';
                                         <ul class="dropdown-menu">
                                             <?php foreach ($pages as $p): ?>
                                                 <li>
-                                                    <a class="dropdown-item" href="<?= site_url($slug . '/halaman/' . $p['slug']) ?>">
+                                                    <a class="dropdown-item" href="<?= site_url($slug . '/page/' . $p['slug']) ?>">
                                                         <?= esc($p['title']) ?>
                                                     </a>
                                                 </li>

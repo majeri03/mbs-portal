@@ -14,7 +14,7 @@ $routes->group('mts', ['namespace' => 'Modules\Mts\Controllers'], function ($rou
     $routes->get('/', 'Home::index');
 
     // Halaman Statis (Profil, Sejarah, dll)
-    $routes->get('halaman/(:segment)', 'Page::show/$1');
+    $routes->get('page/(:segment)', 'Page::show/$1');
 
     // Berita
     $routes->get('kabar', 'News::index');
@@ -38,7 +38,7 @@ $routes->group('ma', ['namespace' => 'Modules\Ma\Controllers'], function ($route
     $routes->get('/', 'Home::index');
 
     // Halaman Statis (Profil, Sejarah, dll)
-    $routes->get('halaman/(:segment)', 'Page::show/$1');
+    $routes->get('page/(:segment)', 'Page::show/$1');
 
     // Berita
     $routes->get('kabar', 'News::index');
@@ -62,7 +62,7 @@ $routes->group('smk', ['namespace' => 'Modules\Smk\Controllers'], function ($rou
     $routes->get('/', 'Home::index');
 
     // Halaman Statis (Profil, Sejarah, dll)
-    $routes->get('halaman/(:segment)', 'Page::show/$1');
+    $routes->get('page/(:segment)', 'Page::show/$1');
 
     // Berita
     $routes->get('kabar', 'News::index');
