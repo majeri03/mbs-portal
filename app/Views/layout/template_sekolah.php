@@ -1,5 +1,5 @@
 <?php
-$slug = $school['slug'] ?? 'mts'; 
+$slug = $school['slug'] ?? 'mts';
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -460,6 +460,12 @@ $slug = $school['slug'] ?? 'mts';
                 /* Lebih kecil di HP */
             }
         }
+
+        .navbar-brand span {
+            max-width: 280px;
+            line-height: 1.2;
+            word-wrap: break-word;
+        }
     </style>
 </head>
 
@@ -506,12 +512,9 @@ $slug = $school['slug'] ?? 'mts';
                 }
                 ?>
 
-                <div class="d-flex flex-column lh-1">
-                    <span class="fw-bold text-purple"><?= esc($school_site['site_name'] ?? $school['name']) ?></span>
-                    <span style="font-size: 0.75rem; color: #666;">
-                        <?= esc($school_site['site_desc'] ?? 'MBS Boarding School') ?>
-                    </span>
-                </div>
+                <span class="fw-bold text-purple d-inline-block" style="max-width: 280px; line-height: 1.2;">
+                    <?= esc($school_site['site_name'] ?? $school['name']) ?>
+                </span>
             </a>
 
             <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
@@ -666,7 +669,7 @@ $slug = $school['slug'] ?? 'mts';
                         <li><a href="<?= site_url($slug . '/agenda') ?>"><i class="bi bi-chevron-right x-small me-2"></i> Agenda</a></li>
                         <li><a href="<?= site_url($slug . '/galeri') ?>"><i class="bi bi-chevron-right x-small me-2"></i> Galeri Foto</a></li>
                         <li><a href="<?= base_url() ?>" class="fw-bold text-purple"><i class="bi bi-arrow-left-circle me-2"></i> Portal Yayasan</a></li>
-                        
+
                     </ul>
                 </div>
 
@@ -770,7 +773,7 @@ $slug = $school['slug'] ?? 'mts';
                 });
             });
         });
-        
+
         function toggleAnno() {
             var panel = document.getElementById("annoPanel");
             panel.classList.toggle("active");
