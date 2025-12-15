@@ -81,7 +81,7 @@
                     <?php if (!empty($groupedPages)) : ?>
                         <li class="nav-item dropdown">
                             <a class="nav-link fw-medium dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Tentang MBS
+                                Informasi
                                 <i class="bi bi-chevron-down ms-1" style="font-size: 0.75rem;"></i>
                             </a>
 

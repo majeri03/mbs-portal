@@ -761,7 +761,84 @@
         </div>
     </div>
 </section>
+<?php if (!empty($school_site['director_name']) && !empty($school_site['profile_description'])): ?>
+<!-- SECTION: SAMBUTAN KEPALA SEKOLAH (DESAIN CARD STYLE) -->
+<section class="py-5 bg-light">
+    <div class="container py-4">
+        <!-- Header Section -->
+        <div class="text-center mb-5">
+            <span class="badge bg-purple text-white mb-3 px-3 py-2 rounded-pill">
+                <i class="bi bi-chat-heart me-2"></i>SAMBUTAN
+            </span>
+            <h2 class="fw-bold display-6 text-purple mb-2">
+                <?= esc($school_site['profile_title'] ?? 'Sambutan Kepala Sekolah') ?>
+            </h2>
+            <div class="divider mx-auto bg-purple" style="width: 60px; height: 4px;"></div>
+        </div>
 
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <!-- Card Sambutan -->
+                <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                    
+                    <!-- Video YouTube di Atas (jika ada) -->
+                    <?php
+                    $videoUrl = $school_site['profile_video_url'] ?? '';
+                    $embedUrl = !empty($videoUrl) ? get_youtube_embed($videoUrl) : '';
+                    ?>
+                    
+                    <?php if (!empty($embedUrl)): ?>
+                    <div class="position-relative" style="background: linear-gradient(135deg, var(--mbs-purple) 0%, #1e2a3a 100%);">
+                        <div class="ratio ratio-16x9">
+                            <iframe src="<?= $embedUrl ?>" 
+                                    title="Video Profil <?= esc($school['name']) ?>"
+                                    frameborder="0"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                    allowfullscreen
+                                    class="rounded-top-4"></iframe>
+                        </div>
+                    </div>
+                    <?php endif; ?>
+
+                    <!-- Konten Card -->
+                    <div class="card-body p-5">
+                        <!-- Info Kepala Sekolah -->
+                        <div class="d-flex align-items-center mb-4 pb-4 border-bottom">
+                            <?php
+                            $directorPhoto = $school_site['director_photo'] ?? 'https://ui-avatars.com/api/?name=KS&background=2f3f58&color=fff&size=128';
+                            if (!filter_var($directorPhoto, FILTER_VALIDATE_URL)) {
+                                $directorPhoto = base_url($directorPhoto);
+                            }
+                            ?>
+                            <img src="<?= $directorPhoto ?>"
+                                class="rounded-circle border border-4 border-purple shadow-sm object-fit-cover me-4"
+                                width="80" height="80"
+                                alt="<?= esc($school_site['director_name']) ?>">
+
+                            <div>
+                                <h4 class="fw-bold mb-1 text-dark"><?= esc($school_site['director_name']) ?></h4>
+                                <span class="badge bg-purple text-white px-3 py-2">
+                                    <i class="bi bi-award-fill me-1"></i><?= esc($school_site['director_label'] ?? 'Kepala Sekolah') ?>
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Isi Sambutan -->
+                        <div class="position-relative">
+                            <div class="position-relative z-1 px-4">
+                                <p class="lead text-secondary lh-lg mb-0" style="text-align: justify; text-indent: 2em;">
+                                    <?= nl2br(esc($school_site['profile_description'])) ?>
+                                </p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<?php endif; ?>
 <section id="guru" class="py-5 bg-white">
     <div class="container">
 

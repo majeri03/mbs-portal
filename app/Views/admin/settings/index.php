@@ -75,27 +75,48 @@
                             </div>
 
                             <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label fw-bold">Nama Pimpinan/Direktur</label>
-                                    <input type="text" name="director_name" class="form-control"
-                                        value="<?= esc($settings['director_name'] ?? 'Ustadz Fulan, Lc.') ?>">
+                                <div class="mb-3">
+                                    <?php
+                                    // Label dinamis: Superadmin = Direktur, Admin Sekolah = Kepala Sekolah
+                                    $leaderLabel = 'Foto Kepala Sekolah';
+                                    $leaderTitle = 'Kepala Sekolah';
+
+                                    if (session('role') === 'superadmin') {
+                                        $leaderLabel = 'Foto Direktur Pesantren';
+                                        $leaderTitle = 'Direktur Pesantren';
+                                    }
+                                    ?>
+                                    <label class="form-label fw-bold"><?= $leaderLabel ?></label>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <?php if (!empty($settings['director_photo'])): ?>
+                                            <div class="position-relative">
+                                                <img src="<?= base_url($settings['director_photo']) ?>" class="rounded-circle" width="60" height="60" style="object-fit:cover;">
+                                                <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 rounded-circle p-0 delete-logo"
+                                                    data-field="director_photo" style="width: 20px; height: 20px; font-size: 10px;">
+                                                    <i class="bi bi-x"></i>
+                                                </button>
+                                            </div>
+                                        <?php endif; ?>
+                                        <input type="file" name="director_photo" class="form-control" accept="image/*">
+                                    </div>
+                                    <small class="text-muted">Foto pimpinan akan tampil di section profil & sambutan.</small>
                                 </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-bold">Nama Pimpinan</label>
+                                    <input type="text" name="director_name" class="form-control"
+                                        value="<?= esc($settings['director_name'] ?? '') ?>"
+                                        placeholder="Contoh: Dr. H. Ahmad Fulan, M.Pd.I">
+                                </div>
+
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label fw-bold">Jabatan</label>
                                     <input type="text" name="director_label" class="form-control"
-                                        value="<?= esc($settings['director_label'] ?? 'Direktur Pesantren') ?>">
+                                        value="<?= esc($settings['director_label'] ?? $leaderTitle) ?>"
+                                        placeholder="<?= $leaderTitle ?>">
                                 </div>
                             </div>
 
-                            <div class="mb-3">
-                                <label class="form-label fw-bold">Foto Direktur</label>
-                                <div class="d-flex align-items-center gap-3">
-                                    <?php if (!empty($settings['director_photo'])): ?>
-                                        <img src="<?= base_url($settings['director_photo']) ?>" class="rounded-circle" width="60" height="60" style="object-fit:cover;">
-                                    <?php endif; ?>
-                                    <input type="file" name="director_photo" class="form-control" accept="image/*">
-                                </div>
-                            </div>
 
                             <hr>
 
@@ -173,9 +194,13 @@
                             <div class="mb-4 border-bottom pb-4">
                                 <label class="form-label fw-bold text-purple">1. Logo Utama (Navbar)</label>
                                 <div class="d-flex align-items-center gap-4">
-                                    <div class="border p-2 rounded bg-light text-center" style="width: 100px; height: 100px;">
+                                    <div class="border p-2 rounded bg-light text-center position-relative" style="width: 100px; height: 100px;">
                                         <?php if (!empty($settings['site_logo'])): ?>
                                             <img src="<?= base_url($settings['site_logo']) ?>" class="w-100 h-100 object-fit-contain">
+                                            <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 rounded-circle p-0 delete-logo"
+                                                data-field="site_logo" style="width: 22px; height: 22px; font-size: 11px;">
+                                                <i class="bi bi-x"></i>
+                                            </button>
                                         <?php else: ?>
                                             <span class="text-muted small d-block mt-4">No Logo</span>
                                         <?php endif; ?>
@@ -190,9 +215,13 @@
                             <div class="mb-4 border-bottom pb-4">
                                 <label class="form-label fw-bold">2. Logo Pendukung 1 (Footer)</label>
                                 <div class="d-flex align-items-center gap-4">
-                                    <div class="border p-2 rounded bg-light text-center" style="width: 80px; height: 80px;">
+                                    <div class="border p-2 rounded bg-light text-center position-relative" style="width: 80px; height: 80px;">
                                         <?php if (!empty($settings['site_logo_2'])): ?>
                                             <img src="<?= base_url($settings['site_logo_2']) ?>" class="w-100 h-100 object-fit-contain">
+                                            <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 rounded-circle p-0 delete-logo"
+                                                data-field="site_logo_2" style="width: 20px; height: 20px; font-size: 10px;">
+                                                <i class="bi bi-x"></i>
+                                            </button>
                                         <?php else: ?>
                                             <span class="text-muted small d-block mt-3">Kosong</span>
                                         <?php endif; ?>
@@ -206,9 +235,13 @@
                             <div class="mb-2">
                                 <label class="form-label fw-bold">3. Logo Pendukung 2 (Footer)</label>
                                 <div class="d-flex align-items-center gap-4">
-                                    <div class="border p-2 rounded bg-light text-center" style="width: 80px; height: 80px;">
+                                    <div class="border p-2 rounded bg-light text-center position-relative" style="width: 80px; height: 80px;">
                                         <?php if (!empty($settings['site_logo_3'])): ?>
                                             <img src="<?= base_url($settings['site_logo_3']) ?>" class="w-100 h-100 object-fit-contain">
+                                            <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 rounded-circle p-0 delete-logo"
+                                                data-field="site_logo_3" style="width: 20px; height: 20px; font-size: 10px;">
+                                                <i class="bi bi-x"></i>
+                                            </button>
                                         <?php else: ?>
                                             <span class="text-muted small d-block mt-3">Kosong</span>
                                         <?php endif; ?>
@@ -232,5 +265,37 @@
         </div>
     </div>
 </form>
+<?= $this->endSection() ?>
 
+<?= $this->section('scripts') ?>
+<script>
+    // Hapus Logo via AJAX
+    $('.delete-logo').click(function() {
+        const btn = $(this);
+        const field = btn.data('field');
+
+        if (!confirm('Yakin ingin menghapus logo ini?')) {
+            return;
+        }
+
+        $.ajax({
+            url: '<?= base_url('admin/settings/delete-logo') ?>',
+            type: 'POST',
+            data: {
+                '<?= csrf_token() ?>': '<?= csrf_hash() ?>',
+                'logo_field': field
+            },
+            success: function(response) {
+                if (response.status === 'success') {
+                    location.reload();
+                } else {
+                    alert('Error: ' + response.message);
+                }
+            },
+            error: function(xhr) {
+                alert('Terjadi kesalahan saat menghapus logo.');
+            }
+        });
+    });
+</script>
 <?= $this->endSection() ?>

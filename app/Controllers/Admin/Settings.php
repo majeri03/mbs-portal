@@ -123,4 +123,31 @@ class Settings extends BaseAdminController
             ]);
         }
     }
+    // Hapus Logo via AJAX
+    public function deleteLogo()
+    {
+        $logoField = $this->request->getPost('logo_field');
+        $allowedFields = ['site_logo', 'site_logo_2', 'site_logo_3', 'director_photo'];
+
+        if (!in_array($logoField, $allowedFields)) {
+            return $this->response->setJSON(['status' => 'error', 'message' => 'Invalid field']);
+        }
+
+        // Ambil data logo dari database
+        $logo = $this->settingModel->where('setting_key', $logoField)
+            ->where('school_id', $this->mySchoolId)
+            ->first();
+
+        if ($logo && !empty($logo['setting_value'])) {
+            // Hapus file fisik
+            if (file_exists($logo['setting_value'])) {
+                unlink($logo['setting_value']);
+            }
+
+            // Update database jadi kosong
+            $this->settingModel->update($logo['id'], ['setting_value' => '']);
+        }
+
+        return $this->response->setJSON(['status' => 'success', 'message' => 'Logo berhasil dihapus']);
+    }
 }

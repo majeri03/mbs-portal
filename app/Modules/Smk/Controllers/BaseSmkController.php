@@ -12,7 +12,7 @@ class BaseSmkController extends BaseController
     public function initController(\CodeIgniter\HTTP\RequestInterface $request, \CodeIgniter\HTTP\ResponseInterface $response, \Psr\Log\LoggerInterface $logger)
     {
         parent::initController($request, $response, $logger);
-        
+        helper('youtube');
         // 1. Ambil Identitas Sekolah (Otomatis untuk semua halaman MTs)
         $schoolModel = new SchoolModel();
         $this->data['school'] = $schoolModel->find($this->schoolId);

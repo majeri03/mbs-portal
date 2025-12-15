@@ -163,7 +163,7 @@ $routes->group('admin', function ($routes) {
     // Settings
     $routes->get('settings', 'Admin\Settings::index');
     $routes->post('settings/update', 'Admin\Settings::update');
-
+    $routes->post('settings/delete-logo', 'Admin\Settings::deleteLogo');
     // CRUD Pages
     $routes->get('pages', 'Admin\Pages::index');
     $routes->get('pages/create', 'Admin\Pages::create');
