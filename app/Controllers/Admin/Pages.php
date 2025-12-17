@@ -133,7 +133,7 @@ class Pages extends BaseAdminController
         $data['title'] = 'Edit Halaman';
         $data['schools'] = $this->schoolModel->findAll();
         $data['currentSchoolId'] = $this->mySchoolId;
-        $data['existingMenus'] = $this->pageModel->getExistingMenus($data['page']['school_id']);
+         $data['existingMenus'] = $this->pageModel->getExistingMenus($this->mySchoolId);
         return view('admin/pages/edit', $data);
     }
 

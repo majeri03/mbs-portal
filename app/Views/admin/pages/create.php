@@ -63,6 +63,18 @@
                                                 onclick="selectMenu('<?= esc($menu['menu_title'], 'js') ?>')">
                                                 <i class="bi bi-arrow-return-right me-2"></i>
                                                 <?= esc($menu['menu_title']) ?>
+
+                                                <?php if ($menu['school_id']): ?>
+                                                    <!-- Label Sekolah -->
+                                                    <span class="badge bg-secondary ms-2" style="font-size: 0.7rem;">
+                                                        <?= esc($menu['school_name']) ?>
+                                                    </span>
+                                                <?php else: ?>
+                                                    <!-- Label Portal Pusat -->
+                                                    <span class="badge bg-primary ms-2" style="font-size: 0.7rem;">
+                                                        Portal Pusat
+                                                    </span>
+                                                <?php endif; ?>
                                             </button>
                                         </li>
                                     <?php endforeach; ?>
@@ -217,7 +229,7 @@
         const schoolSelect = document.getElementById('schoolSelect');
         const featuredDiv = document.getElementById('featuredOptionDiv');
         const mainWebInfoDiv = document.getElementById('mainWebInfoDiv');
-        
+
         if (schoolSelect.value === '') {
             // Web Utama dipilih - hide checkbox, show info
             featuredDiv.style.display = 'none';
@@ -234,11 +246,12 @@
      * @param {File} file - File gambar asli
      * @param {Function} callback - Fungsi yang dijalankan setelah kompresi selesai
      */
-    
+
     // Jalankan saat halaman load
     document.addEventListener('DOMContentLoaded', function() {
         toggleFeaturedOption();
     });
+
     function compressImage(file, callback) {
         const reader = new FileReader();
         reader.readAsDataURL(file);

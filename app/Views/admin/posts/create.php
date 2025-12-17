@@ -10,27 +10,27 @@
 </div>
 
 <?php if (session()->getFlashdata('errors')) : ?>
-<div class="alert alert-danger">
-    <ul class="mb-0">
-        <?php foreach (session()->getFlashdata('errors') as $error) : ?>
-            <li><?= $error ?></li>
-        <?php endforeach; ?>
-    </ul>
-</div>
+    <div class="alert alert-danger">
+        <ul class="mb-0">
+            <?php foreach (session()->getFlashdata('errors') as $error) : ?>
+                <li><?= $error ?></li>
+            <?php endforeach; ?>
+        </ul>
+    </div>
 <?php endif; ?>
 
 <div class="card border-0 shadow-sm">
     <div class="card-body p-4">
         <form action="<?= base_url('admin/posts/store') ?>" method="POST" enctype="multipart/form-data">
             <?= csrf_field() ?>
-            
+
             <div class="row">
                 <div class="col-md-8">
                     <div class="mb-3">
                         <label class="form-label fw-bold">Judul Berita <span class="text-danger">*</span></label>
                         <input type="text" name="title" class="form-control" value="<?= old('title') ?>" required>
                     </div>
-                     <div class="mb-3">
+                    <div class="mb-3">
                         <label class="form-label fw-bold">Penulis</label>
                         <input type="text" name="author" class="form-control" value="<?= old('author', session()->get('full_name')) ?>" placeholder="Nama Penulis">
                         <small class="text-muted">Default: <?= session()->get('full_name') ?></small>
@@ -41,24 +41,38 @@
                         <small class="text-muted">Minimal 50 karakter</small>
                     </div>
                 </div>
-                
+
                 <div class="col-md-4">
                     <div class="mb-3">
                         <label class="form-label fw-bold">Jenjang Sekolah</label>
-                        <select name="school_id" class="form-select">
-                            <option value="">Berita Umum</option>
-                            <?php foreach ($schools as $school) : ?>
-                                <option value="<?= $school['id'] ?>"><?= esc($school['name']) ?></option>
-                            <?php endforeach; ?>
-                        </select>
+
+                        <?php if (session('school_id')): ?>
+                            <!-- Admin Sekolah: Tidak ada pilihan, langsung readonly -->
+                            <input type="text" class="form-control" value="<?= esc($schools[0]['name'] ?? 'Sekolah Anda') ?>" readonly>
+                            <input type="hidden" name="school_id" value="<?= session('school_id') ?>">
+                            <small class="text-muted">
+                                <i class="bi bi-lock-fill"></i> Anda hanya dapat membuat berita untuk sekolah ini.
+                            </small>
+                        <?php else: ?>
+                            <!-- Superadmin: Ada pilihan Berita Umum + Semua Sekolah -->
+                            <select name="school_id" class="form-select">
+                                <option value="">Berita Umum (Portal Pusat)</option>
+                                <?php foreach ($schools as $school) : ?>
+                                    <option value="<?= $school['id'] ?>"><?= esc($school['name']) ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                            <small class="text-muted">
+                                <i class="bi bi-info-circle"></i> Pilih "Berita Umum" jika untuk portal pusat.
+                            </small>
+                        <?php endif; ?>
                     </div>
-                    
+
                     <div class="mb-3">
                         <label class="form-label fw-bold">Thumbnail <span class="text-danger">*</span></label>
                         <input type="file" name="thumbnail" class="form-control" accept="image/*" required>
                         <small class="text-muted">Maks 2MB (JPG, PNG)</small>
                     </div>
-                    
+
                     <div class="d-grid gap-2 mt-4">
                         <button type="submit" class="btn btn-primary btn-lg">
                             <i class="bi bi-save me-2"></i>Simpan Berita

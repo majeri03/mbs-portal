@@ -111,6 +111,32 @@
             display: none;
         }
 
+        .sidebar-submenu li a.active {
+            background: transparent !important;
+            /* Tidak ada background */
+            color: #ffd700 !important;
+            /* Teks kuning */
+            font-weight: 600;
+            border-left: none !important;
+        }
+
+        .sidebar-submenu {
+            list-style: none;
+            padding-left: 0;
+            background: rgba(0, 0, 0, 0.15);
+            transition: all 0.3s;
+        }
+
+        .sidebar-submenu li a {
+            padding-left: 55px !important;
+            font-size: 0.9rem;
+            border-left: none !important;
+        }
+
+        .sidebar-submenu li a:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
         .sidebar-logo {
             padding: 20px;
             text-align: center;
@@ -486,7 +512,6 @@
         .sidebar-submenu {
             list-style: none;
             padding-left: 0;
-            background: rgba(0, 0, 0, 0.15);
             /* Warna lebih gelap untuk submenu */
             transition: all 0.3s;
         }
@@ -498,9 +523,7 @@
             border-left: none !important;
         }
 
-        .sidebar-submenu li a:hover {
-            background: rgba(255, 255, 255, 0.05);
-        }
+
 
         /* Icon Panah Berputar saat diklik */
         .sidebar-menu a[data-bs-toggle="collapse"] .arrow-icon {
@@ -653,14 +676,12 @@
                 </a>
 
                 <ul class="collapse sidebar-submenu <?= $isContentActive ? 'show' : '' ?>" id="submenuKonten" data-bs-parent="#sidebar">
-                    <li><a href="<?= base_url('admin/posts') ?>">Berita / Artikel</a></li>
-
-                    <li><a href="<?= base_url('admin/galleries') ?>">Galeri Foto</a></li>
-
+                    <li><a href="<?= base_url('admin/posts') ?>" class="<?= str_contains($uri, 'posts') ? 'active' : '' ?>">Berita / Artikel</a></li>
+                    <li><a href="<?= base_url('admin/galleries') ?>" class="<?= str_contains($uri, 'galleries') ? 'active' : '' ?>">Galeri Foto</a></li>
                     <?php if ($userRole !== 'guru') : ?>
-                        <li><a href="<?= base_url('admin/pages') ?>">Halaman Statis</a></li>
-                        <li><a href="<?= base_url('admin/announcements') ?>">Pengumuman</a></li>
-                        <li><a href="<?= base_url('admin/sliders') ?>">Hero Slider</a></li>
+                        <li><a href="<?= base_url('admin/pages') ?>" class="<?= str_contains($uri, 'pages') ? 'active' : '' ?>">Halaman Statis</a></li>
+                        <li><a href="<?= base_url('admin/announcements') ?>" class="<?= str_contains($uri, 'announcements') ? 'active' : '' ?>">Pengumuman</a></li>
+                        <li><a href="<?= base_url('admin/sliders') ?>" class="<?= str_contains($uri, 'sliders') ? 'active' : '' ?>">Hero Slider</a></li>
                     <?php endif; ?>
                 </ul>
             </li>
@@ -677,9 +698,9 @@
                     </a>
 
                     <ul class="collapse sidebar-submenu <?= $isMasterActive ? 'show' : '' ?>" id="submenuMaster" data-bs-parent="#sidebar">
-                        <li><a href="<?= base_url('admin/schools') ?>">Jenjang Sekolah</a></li>
-                        <li><a href="<?= base_url('admin/programs') ?>">Program Unggulan</a></li>
-                        <li><a href="<?= base_url('admin/teachers') ?>">Pimpinan & Guru</a></li>
+                        <li><a href="<?= base_url('admin/schools') ?>" class="<?= str_contains($uri, 'schools') ? 'active' : '' ?>">Jenjang Sekolah</a></li>
+                        <li><a href="<?= base_url('admin/programs') ?>" class="<?= str_contains($uri, 'programs') ? 'active' : '' ?>">Program Unggulan</a></li>
+                        <li><a href="<?= base_url('admin/teachers') ?>" class="<?= str_contains($uri, 'teachers') ? 'active' : '' ?>">Pimpinan & Guru</a></li>
                     </ul>
                 </li>
             <?php endif; ?>
@@ -703,10 +724,11 @@
                     </a>
 
                     <ul class="collapse sidebar-submenu <?= $isEventsActive ? 'show' : '' ?>" id="submenuEvents" data-bs-parent="#sidebar">
-                        <li><a href="<?= base_url('admin/events') ?>">Kelola Agenda</a></li>
-                        <li><a href="<?= base_url('admin/events/internal') ?>">
+                        <li><a href="<?= base_url('admin/events') ?>" class="<?= ($uri == 'admin/events' || str_contains($uri, 'events/create') || str_contains($uri, 'events/edit')) ? 'active' : '' ?>">Kelola Agenda</a></li>
+                        <li><a href="<?= base_url('admin/events/internal') ?>" class="<?= str_contains($uri, 'events/internal') ? 'active' : '' ?>">
                                 <i class="bi bi-lock-fill text-danger me-2"></i>Agenda Internal
-                            </a></li>
+                            </a>
+                        </li>
                     </ul>
                 <?php endif; ?>
             </li>
@@ -865,14 +887,18 @@
             });
 
             // Tutup sidebar saat klik menu link di mobile
+            // Tutup sidebar saat klik menu link di mobile (KECUALI dropdown toggle)
             if (window.innerWidth <= 992) {
                 document.querySelectorAll('.sidebar-menu a').forEach(link => {
-                    link.addEventListener('click', function() {
-                        sidebar.classList.remove('active');
-                        sidebarOverlay.classList.remove('active');
-                        const icon = mobileMenuToggle.querySelector('i');
-                        if (icon.classList.contains('bi-x')) {
-                            icon.classList.replace('bi-x', 'bi-list');
+                    link.addEventListener('click', function(e) {
+                        // ✅ HANYA TUTUP jika BUKAN dropdown toggle
+                        if (!this.hasAttribute('data-bs-toggle')) {
+                            sidebar.classList.remove('active');
+                            sidebarOverlay.classList.remove('active');
+                            const icon = mobileMenuToggle.querySelector('i');
+                            if (icon.classList.contains('bi-x')) {
+                                icon.classList.replace('bi-x', 'bi-list');
+                            }
                         }
                     });
                 });

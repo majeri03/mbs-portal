@@ -59,12 +59,19 @@
                                     <?php foreach ($existingMenus as $menu): ?>
                                         <li>
                                             <button type="button"
-                                                class="dropdown-item <?= ($menu['menu_title'] == $page['menu_title']) ? 'active' : '' ?>"
-                                                onclick="selectMenuEdit('<?= esc($menu['menu_title'], 'js') ?>')">
+                                                class="dropdown-item"
+                                                onclick="selectMenu('<?= esc($menu['menu_title'], 'js') ?>')">
                                                 <i class="bi bi-arrow-return-right me-2"></i>
                                                 <?= esc($menu['menu_title']) ?>
-                                                <?php if ($menu['menu_title'] == $page['menu_title']): ?>
-                                                    <span class="badge bg-success ms-2">Saat Ini</span>
+
+                                                <?php if ($menu['school_id']): ?>
+                                                    <span class="badge bg-secondary ms-2" style="font-size: 0.7rem;">
+                                                        <?= esc($menu['school_name']) ?>
+                                                    </span>
+                                                <?php else: ?>
+                                                    <span class="badge bg-primary ms-2" style="font-size: 0.7rem;">
+                                                        Portal Pusat
+                                                    </span>
                                                 <?php endif; ?>
                                             </button>
                                         </li>

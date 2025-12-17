@@ -34,7 +34,13 @@ class Posts extends BaseAdminController
     public function create()
     {
         $data['title'] = 'Tambah Berita Baru';
-        $data['schools'] = $this->schoolModel->findAll();
+        if ($this->mySchoolId) {
+            // Admin sekolah: hanya tampilkan sekolahnya sendiri
+            $data['schools'] = $this->schoolModel->where('id', $this->mySchoolId)->findAll();
+        } else {
+            // Superadmin: tampilkan semua sekolah
+            $data['schools'] = $this->schoolModel->orderBy('order_position', 'ASC')->findAll();
+        }
 
         return view('admin/posts/create', $data);
     }
@@ -131,7 +137,13 @@ class Posts extends BaseAdminController
     {
         $data['title'] = 'Edit Berita';
         $data['post'] = $this->filterBySchool($this->postModel)->find($id);
-        $data['schools'] = $this->schoolModel->findAll();
+        if ($this->mySchoolId) {
+            // Admin sekolah: hanya tampilkan sekolahnya sendiri
+            $data['schools'] = $this->schoolModel->where('id', $this->mySchoolId)->findAll();
+        } else {
+            // Superadmin: tampilkan semua sekolah
+            $data['schools'] = $this->schoolModel->orderBy('order_position', 'ASC')->findAll();
+        }
 
         if (!$data['post']) {
             return redirect()->to('admin/posts')->with('error', 'Berita tidak ditemukan!');
